@@ -8,7 +8,7 @@
 [![Python](https://img.shields.io/badge/python-3.13-blue)](https://www.python.org/)
 [![Node](https://img.shields.io/badge/node-20-green)](https://nodejs.org/)
 [![Django](https://img.shields.io/badge/django-6.0-green)](https://www.djangoproject.com/)
-[![Next.js](https://img.shields.io/badge/next.js-15-black)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/next.js-16-black)](https://nextjs.org/)
 [![WCAG](https://img.shields.io/badge/WCAG-AAA-success)](https://www.w3.org/WAI/WCAG21/quickref/)
 [![IRAS](https://img.shields.io/badge/IRAS-2026%20Compliant-red)](https://www.iras.gov.sg/)
 
@@ -27,6 +27,7 @@
 - [Architecture](#-architecture)
 - [Technology Stack](#-technology-stack)
 - [File Structure](#-file-structure)
+- [Development Milestones](#-development-milestones)
 - [User Interaction Flow](#-user-interaction-flow)
 - [Application Logic](#-application-logic)
 - [Quick Start](#-quick-start)
@@ -66,6 +67,14 @@ Built to withstand **IRAS 2026 compliance requirements** including:
 
 **"Illuminated Carbon" Neo-Brutalist Fintech** — Dark-first, high-contrast, typographically driven, rejecting generic SaaS aesthetics while maintaining WCAG AAA accessibility.
 
+**Visual Language:**
+- **Void** (#050505) — Deep black canvas
+- **Carbon** (#121212) — Elevated surfaces
+- **Accent Primary** (#00E585) — Electric green for action/money
+- **Accent Secondary** (#D4A373) — Warm bronze for alerts
+- **Typography**: Space Grotesk (display), Inter (body), JetBrains Mono (data)
+- **Form**: Square corners (no radius), 1px borders, intentional asymmetry
+
 ---
 
 ## ✨ Key Features
@@ -104,16 +113,15 @@ Built to withstand **IRAS 2026 compliance requirements** including:
 ```mermaid
 flowchart TB
     subgraph Client["Client Layer"]
-        A[Next.js 15 PWA]
+        A[Next.js 16 PWA]
         B[Mobile Responsive UI]
-        C[Offline-First Cache]
+        C[Zustand + TanStack Query]
     end
     
     subgraph Security["Security Layer"]
-        D[Next.js Middleware]
-        E[Django CSP Middleware]
-        F[HttpOnly Cookie Auth]
-        G[CSRF Protection]
+        D[JWT Access Token]
+        E[HttpOnly Refresh Cookie]
+        F[CSRF Protection]
     end
     
     subgraph API["API Gateway - Django 6.0"]
@@ -142,12 +150,9 @@ flowchart TB
     end
     
     A --> D
-    B --> D
-    C --> D
     D --> E
     E --> F
-    F --> G
-    G --> H
+    F --> H
     H --> I
     I --> T
     H --> J
@@ -217,15 +222,17 @@ flowchart TD
 | **Database** | PostgreSQL | 16 | ACID compliance, NUMERIC precision, stored procedures, JSONB for audit |
 | **Backend** | Django | 6.0 | Native Tasks, CSP middleware, async ORM, Argon2 hashing |
 | **Language** | Python | 3.13 | Required by Django 6.0, performance improvements, latest type hints |
-| **Frontend** | Next.js | 15 | App Router, Server Components, Server Actions, Partial Prerendering |
-| **UI Library** | React | 19 | Latest concurrent features, improved hooks |
-| **Styling** | Tailwind CSS | 4.0 | Native CSS variables, engine-level performance, no config file |
-| **Components** | Shadcn-UI | Latest | Radix primitives, accessible, fully customizable |
-| **Authentication** | Django Session | HttpOnly Cookies | More secure than JWT, CSRF protected, no XSS risk |
+| **Frontend** | Next.js | 16.1.6 | App Router, Server Components, Turbopack, Partial Prerendering |
+| **UI Library** | React | 19.2.3 | Latest concurrent features, improved hooks |
+| **Styling** | Tailwind CSS | 4.0 | CSS-first @theme, engine-level performance, no config file |
+| **Components** | Radix UI + Shadcn | Latest | Headless primitives, accessible, fully customizable |
+| **Authentication** | JWT + HttpOnly Cookie | Access 15min / Refresh 7d | Secure refresh token storage, automatic token rotation |
 | **Task Queue** | Django Native Tasks | 6.0+ | Removes Celery dependency, simpler architecture |
-| **State Management** | TanStack Query + Zustand | v5 + latest | Server-state caching + UI state separation |
-| **Forms** | React Hook Form + Zod | v7 + latest | Type-safe validation, performant re-renders |
-| **Decimal Handling** | decimal.js | latest | Mirrors backend Decimal precision for client-side preview |
+| **State Management** | TanStack Query + Zustand | v5 + v5 | Server-state caching + UI state separation |
+| **Forms** | React Hook Form + Zod | v7 + v4 | Type-safe validation, performant re-renders |
+| **Decimal Handling** | decimal.js | v10.6 | Mirrors backend Decimal precision for client-side preview |
+| **Charts** | Recharts | v3.7 | GST F5 visualization, responsive SVG charts |
+| **Tables** | TanStack Table | v8.21 | Headless data tables with sorting, filtering, pagination |
 
 ---
 
@@ -234,69 +241,80 @@ flowchart TD
 ```
 ledgersg/
 ├── apps/
-│   ├── web/                          # Next.js 15 Frontend
+│   ├── web/                          # Next.js 16 Frontend
 │   │   ├── app/                      # App Router pages & layouts
 │   │   │   ├── (auth)/               # Authentication routes
+│   │   │   │   └── login/
 │   │   │   ├── (dashboard)/          # Authenticated app routes
-│   │   │   ├── api/                  # BFF route handlers
-│   │   │   └── layout.tsx            # Root layout with providers
+│   │   │   │   ├── dashboard/        # Main dashboard
+│   │   │   │   ├── invoices/         # Invoice list
+│   │   │   │   ├── invoices/new/     # Create invoice
+│   │   │   │   ├── ledger/           # General ledger
+│   │   │   │   ├── quotes/           # Quotes/Estimates
+│   │   │   │   ├── reports/          # Financial reports
+│   │   │   │   └── settings/         # Org settings
+│   │   │   ├── layout.tsx            # Root layout with providers
+│   │   │   ├── page.tsx              # Landing page
+│   │   │   └── globals.css           # Tailwind v4 + design tokens
+│   │   │
 │   │   ├── components/               # React components
-│   │   │   ├── ui/                   # Shadcn-UI primitives
-│   │   │   ├── layout/               # Shell, sidebar, header
-│   │   │   ├── invoicing/            # Invoice-specific components
-│   │   │   ├── gst/                  # GST components
-│   │   │   └── reports/              # Financial report components
+│   │   │   ├── ui/                   # Design system primitives
+│   │   │   │   ├── button.tsx        # Neo-brutalist buttons
+│   │   │   │   ├── input.tsx         # Form inputs with labels
+│   │   │   │   ├── money-input.tsx   # Currency input with validation
+│   │   │   │   ├── select.tsx        # Accessible select
+│   │   │   │   ├── badge.tsx         # Status badges
+│   │   │   │   ├── card.tsx          # Surface containers
+│   │   │   │   └── alert.tsx         # Alert notifications
+│   │   │   │
+│   │   │   ├── layout/               # Application shell
+│   │   │   │   └── shell.tsx         # Main app shell with nav
+│   │   │   │
+│   │   │   ├── invoice/              # Invoice domain components
+│   │   │   │   ├── invoice-form.tsx  # Main invoice creation form
+│   │   │   │   ├── invoice-line-row.tsx # Individual line item
+│   │   │   │   └── tax-breakdown-card.tsx # GST summary card
+│   │   │   │
+│   │   │   ├── dashboard/            # Dashboard components
+│   │   │   │   └── gst-f5-chart.tsx  # GST F5 visualization
+│   │   │   │
+│   │   │   └── ledger/               # Ledger components
+│   │   │       └── ledger-table.tsx  # TanStack Table ledger
+│   │   │
 │   │   ├── lib/                      # Utilities & API clients
-│   │   │   ├── api-client.ts         # Typed fetch wrapper
-│   │   │   ├── decimal.ts            # Decimal.js helpers
-│   │   │   └── gst.ts                # Client-side GST preview
-│   │   ├── hooks/                    # Custom React hooks
+│   │   │   ├── api-client.ts         # Typed fetch wrapper with JWT
+│   │   │   ├── gst-engine.ts         # Client-side GST calculation
+│   │   │   └── utils.ts              # Tailwind class merging
+│   │   │
+│   │   ├── hooks/                    # TanStack Query hooks
+│   │   │   ├── use-invoices.ts       # Invoice CRUD + workflow
+│   │   │   ├── use-contacts.ts       # Contact management
+│   │   │   └── use-dashboard.ts      # Dashboard metrics
+│   │   │
+│   │   ├── providers/                # React context providers
+│   │   │   ├── index.tsx             # Provider composition
+│   │   │   └── auth-provider.tsx     # JWT auth context
+│   │   │
 │   │   ├── stores/                   # Zustand stores
-│   │   └── styles/                   # Tailwind 4 CSS
+│   │   │   └── invoice-store.ts      # Invoice UI state
+│   │   │
+│   │   ├── shared/                   # Shared types & schemas
+│   │   │   └── schemas/
+│   │   │       ├── invoice.ts        # Zod invoice schemas
+│   │   │       └── dashboard.ts      # Dashboard schemas
+│   │   │
+│   │   ├── postcss.config.mjs        # Tailwind v4 PostCSS
+│   │   └── next.config.ts            # Next.js 16 + static export
 │   │
 │   ├── backend/                      # Django 6.0 Backend
-│   │   ├── config/                   # Settings, URLs, WSGI/ASGI
-│   │   │   ├── settings/             # Environment-specific settings
-│   │   │   ├── urls.py               # Root URL configuration
-│   │   │   └── wsgi.py               # WSGI entry point
-│   │   ├── apps/                     # Django applications
-│   │   │   ├── core/                 # Auth, Tenancy, Audit
-│   │   │   ├── accounting/           # COA, Journal, Ledger
-│   │   │   ├── invoicing/            # Invoices, Quotes, Credit Notes
-│   │   │   ├── compliance/           # IRAS GST, BCRS, TP, Peppol
-│   │   │   ├── reporting/            # Financial Statements
-│   │   │   └── organizations/        # Company, User, Roles
-│   │   ├── tasks/                    # Native Django Tasks
-│   │   └── utils/                    # Shared utilities
+│   │   └── ...
 │   │
 │   └── shared/                       # Shared Types & Schemas
-│       ├── types/                    # TypeScript types
-│       └── schemas/                  # Zod/Pydantic schemas
+│       └── schemas/
 │
-├── infrastructure/
-│   ├── docker/                       # Dockerfiles, Compose
-│   ├── k8s/                          # Kubernetes manifests
-│   └── terraform/                    # IaC for cloud resources
-│
-├── docs/
-│   ├── architecture/                 # ADRs, diagrams
-│   ├── compliance/                   # IRAS mapping documents
-│   ├── api/                          # OpenAPI specs
-│   └── user-guides/                  # Training materials
-│
-├── scripts/
-│   ├── setup.sh                      # Development environment
-│   ├── seed.py                       # Test data generation
-│   └── deploy.sh                     # CI/CD pipelines
-│
-├── tests/
-│   ├── e2e/                          # Playwright E2E tests
-│   └── load/                         # k6 load tests
-│
-├── docker-compose.yml                # Local development
-├── docker-compose.prod.yml           # Production deployment
-├── pyproject.toml                    # Python dependencies
-├── package.json                      # Node dependencies
+├── docs/                             # Documentation
+├── infrastructure/                   # Docker, K8s, Terraform
+├── AGENTS.md                         # AI agent guidelines
 └── README.md                         # This file
 ```
 
@@ -304,16 +322,58 @@ ledgersg/
 
 | File | Purpose |
 |------|---------|
-| `apps/backend/config/settings.py` | Django configuration with security, CSP, CSRF settings |
-| `apps/backend/apps/compliance/services/engine.py` | Centralized IRAS compliance logic |
-| `apps/backend/apps/invoicing/tasks.py` | Async Peppol transmission tasks |
-| `apps/web/app/(dashboard)/page.tsx` | Main dashboard component |
-| `apps/web/components/invoicing/invoice-form.tsx` | Invoice creation form with live GST |
-| `apps/web/lib/gst.ts` | Client-side GST calculation (Decimal.js) |
-| `apps/web/stores/invoice-store.ts` | Zustand store for invoice UI state |
-| `infrastructure/docker/docker-compose.prod.yml` | Production Docker configuration |
-| `scripts/deploy.sh` | Blue-green deployment script with rollback |
-| `tests/e2e/invoice-flow.spec.ts` | Playwright E2E test suite |
+| `apps/web/src/lib/api-client.ts` | JWT-based API client with automatic refresh, CSRF protection |
+| `apps/web/src/lib/gst-engine.ts` | Client-side GST calculation using Decimal.js |
+| `apps/web/src/providers/auth-provider.tsx` | React context for JWT auth, token refresh, org selection |
+| `apps/web/src/hooks/use-invoices.ts` | Complete invoice API hooks (CRUD, approval, Peppol) |
+| `apps/web/src/components/invoice/invoice-form.tsx` | Invoice creation form with useFieldArray, live GST |
+| `apps/web/src/components/ui/money-input.tsx` | Currency input with Decimal validation |
+| `apps/web/src/shared/schemas/invoice.ts` | Zod schemas for IRAS-compliant invoice validation |
+| `apps/web/src/stores/invoice-store.ts` | Zustand store for invoice UI state |
+
+---
+
+## 🎯 Development Milestones
+
+### ✅ Milestone 1: Brutalist Foundation
+- [x] Tailwind CSS v4 with `@theme` design tokens
+- [x] Neo-brutalist color system (void, carbon, accent-primary)
+- [x] Typography hierarchy (Space Grotesk, Inter, JetBrains Mono)
+- [x] Shell layout with navigation
+- [x] Button, Input, MoneyInput components
+- [x] Badge, Card, Alert, Select primitives
+
+### ✅ Milestone 2: Invoice Engine
+- [x] Zod schemas for Invoice, InvoiceLine, Customer
+- [x] GST calculation engine with Decimal.js
+- [x] 7 tax codes (SR, ZR, ES, OS, TX, BL, RS)
+- [x] Invoice form with useFieldArray
+- [x] TaxBreakdownCard component
+- [x] InvoiceLineRow with inline editing
+- [x] BCRS deposit toggle integration
+
+### ✅ Milestone 3: Data Visualization
+- [x] Dashboard with Recharts GST F5 chart
+- [x] Bento-grid metric layout
+- [x] LedgerTable with TanStack Table
+- [x] Metric cards with sparklines
+- [x] Compliance alerts section
+
+### ✅ Milestone 4: API Integration
+- [x] API client with JWT + HttpOnly refresh cookies
+- [x] Auth provider with automatic token refresh
+- [x] TanStack Query hooks for invoices
+- [x] TanStack Query hooks for contacts
+- [x] TanStack Query hooks for dashboard
+- [x] Org-scoped URL structure
+- [x] CSRF protection for mutations
+
+### 🚧 Milestone 5: Polish & Testing (In Progress)
+- [ ] Playwright E2E test suite
+- [ ] Security headers (CSP, HSTS)
+- [ ] Error boundary handling
+- [ ] Loading states & skeletons
+- [ ] Toast notifications
 
 ---
 
@@ -332,12 +392,12 @@ sequenceDiagram
     FE->>BE: POST /api/v1/auth/login/
     BE->>DB: Validate credentials
     DB-->>BE: User record
-    BE-->>FE: Session cookie (HttpOnly) + CSRF token
+    BE-->>FE: Access token + HttpOnly refresh cookie
     FE-->>U: Dashboard loaded
 
     U->>FE: Create Invoice
     FE->>FE: Client-side GST preview (Decimal.js)
-    FE->>BE: POST /api/v1/invoices/ (with CSRF)
+    FE->>BE: POST /api/v1/{org_id}/invoices/
     BE->>BE: Validate with ComplianceEngine
     BE->>DB: Store invoice (DECIMAL precision)
     DB-->>BE: Invoice ID
@@ -345,7 +405,7 @@ sequenceDiagram
     FE-->>U: Invoice created
 
     U->>FE: Send via Peppol
-    FE->>BE: POST /api/v1/invoices/{id}/send_peppol/
+    FE->>BE: POST /api/v1/{org_id}/invoices/{id}/send-invoicenow/
     BE->>BE: Generate PINT-SG XML
     BE->>BE: Queue async task (Django Tasks)
     BE-->>FE: Task queued
@@ -389,7 +449,7 @@ stateDiagram-v2
     }
     
     APPROVED --> SENT: User clicks [SEND]
-    APPROVED --> TRANSMITTED: Celery transmits via Peppol
+    APPROVED --> TRANSMITTED: Django Tasks transmits via Peppol
     
     state TRANSMITTED {
         [*] --> XMLSent: PINT-SG XML sent
@@ -495,13 +555,13 @@ flowchart LR
 git clone https://github.com/ledgersg/ledgersg.git
 cd ledgersg
 
-# 2. Setup Python environment
+# 2. Setup Python environment (backend)
 python -m venv .venv
 source .venv/bin/activate  # Linux/Mac
 # .venv\Scripts\activate  # Windows
 pip install -r apps/backend/requirements.txt
 
-# 3. Setup Node environment
+# 3. Setup Node environment (frontend)
 cd apps/web
 npm install
 
@@ -538,9 +598,11 @@ curl http://localhost:8000/api/v1/health/
 # Frontend health check
 curl http://localhost:3000
 
-# Run tests
-cd apps/backend && pytest
-cd ../web && npm test
+# Run frontend build
+cd apps/web && npm run build
+
+# Run linting
+cd apps/web && npm run lint
 ```
 
 ---
@@ -555,27 +617,30 @@ cd ../web && npm test
 | `SECRET_KEY` | Django secret key | - | ✅ |
 | `DATABASE_URL` | PostgreSQL connection string | - | ✅ |
 | `ALLOWED_HOSTS` | Comma-separated hostnames | `localhost` | ✅ |
-| `CSRF_COOKIE_HTTPONLY` | CSRF cookie accessibility | `False` | ✅ |
-| `SESSION_COOKIE_HTTPONLY` | Session cookie security | `True` | ✅ |
 | `NEXT_PUBLIC_API_URL` | Backend API URL | `http://localhost:8000` | ✅ |
 | `SENTRY_DSN` | Error tracking | - | ❌ |
 | `PEPPOL_ACCESS_POINT_URL` | Peppol AP endpoint | - | ✅ (prod) |
 | `PEPPOL_ACCESS_POINT_ID` | Peppol AP credentials | - | ✅ (prod) |
+
+### Frontend Environment Variables
+
+```bash
+# .env.local (Next.js)
+NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_APP_NAME=LedgerSG
+```
 
 ### Security Configuration
 
 ```python
 # Django settings.py - Production Security
 
-# CSRF for Next.js Integration
-CSRF_COOKIE_HTTPONLY = False  # Required for Next.js Server Actions
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = 'Lax'
-
-# Session Security
-SESSION_COOKIE_HTTPONLY = True  # Keep session cookie HttpOnly
-SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_SAMESITE = 'Lax'
+# JWT Configuration
+JWT_ACCESS_TOKEN_LIFETIME = timedelta(minutes=15)
+JWT_REFRESH_TOKEN_LIFETIME = timedelta(days=7)
+JWT_REFRESH_COOKIE_HTTPONLY = True
+JWT_REFRESH_COOKIE_SECURE = True
+JWT_REFRESH_COOKIE_SAMESITE = 'Lax'
 
 # Content Security Policy
 SECURE_CSP = {
@@ -615,24 +680,15 @@ docker-compose -f docker-compose.prod.yml exec backend python manage.py migrate
 docker-compose -f docker-compose.prod.yml exec backend python manage.py collectstatic
 ```
 
-### Kubernetes Deployment
+### Static Export (Frontend)
 
 ```bash
-# Apply namespace
-kubectl apply -f infrastructure/k8s/namespace.yaml
-
-# Apply secrets
-kubectl apply -f infrastructure/k8s/secrets.yaml
-
-# Apply deployments
-kubectl apply -f infrastructure/k8s/deployment.yaml
-
-# Verify rollout
-kubectl rollout status deployment/ledgersg-backend -n ledgersg-production
-
-# Check pods
-kubectl get pods -n ledgersg-production
+cd apps/web
+npm run build
+# Output: dist/ with static HTML files
 ```
+
+> **Note**: Static export (`output: 'export'`) disables API routes. For full auth flow, use server deployment.
 
 ### Production Checklist
 
@@ -658,15 +714,12 @@ kubectl get pods -n ledgersg-production
 cd apps/backend
 pytest --cov --cov-report=html
 
-# Frontend unit tests
+# Frontend build verification
 cd apps/web
-npm test
+npm run build
 
-# E2E tests (Playwright)
+# E2E tests (Playwright - pending)
 npx playwright test
-
-# Load tests (k6)
-k6 run tests/load/load-test.js
 
 # Accessibility audit
 npm run test:a11y
@@ -674,22 +727,19 @@ npm run test:a11y
 # Lighthouse CI
 npx lhci autorun
 
-# Type checking
-npm run typecheck
-
 # Linting
-npm run lint
+cd apps/web && npm run lint
 ```
 
 ### Coverage Requirements
 
 | Component | Minimum Coverage | Current |
 |-----------|------------------|---------|
-| Backend (Python) | 90% | ✅ 92% |
-| Frontend (TypeScript) | 85% | ✅ 87% |
+| Backend (Python) | 90% | 🚧 TBD |
+| Frontend (TypeScript) | 85% | 🚧 TBD |
 | GST Calculation | 100% | ✅ 100% |
-| Peppol Integration | 95% | ✅ 96% |
-| E2E Critical Flows | 100% | ✅ 100% |
+| Peppol Integration | 95% | 🚧 TBD |
+| E2E Critical Flows | 100% | 🚧 TBD |
 
 ---
 
@@ -730,8 +780,8 @@ npm run lint
 
 | Layer | Implementation | Purpose |
 |-------|----------------|---------|
-| **Authentication** | Django Session + HttpOnly Cookies | Prevent XSS token theft |
-| **CSRF Protection** | Django CSRF Middleware + Next.js integration | Prevent cross-site forgery |
+| **Authentication** | JWT + HttpOnly Refresh Cookie | Secure token storage, automatic rotation |
+| **CSRF Protection** | Django CSRF Middleware | Prevent cross-site forgery |
 | **CSP** | Django 6.0 Native Middleware | Prevent content injection |
 | **Password Hashing** | Argon2 (Django 6.0 Default) | Stronger than PBKDF2 |
 | **Rate Limiting** | Django Ratelimit | Prevent brute force |
@@ -748,22 +798,6 @@ X-Content-Type-Options: nosniff
 Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-...'
 Referrer-Policy: strict-origin-when-cross-origin
 Permissions-Policy: camera=(), microphone=(), geolocation=()
-```
-
-### Security Audit
-
-```bash
-# Run security audit
-./scripts/security-audit.sh
-
-# Expected output:
-# ✓ Python dependencies clean
-# ✓ Node dependencies clean
-# ✓ CSP header present
-# ✓ HSTS header present
-# ✓ CSRF protection active
-# ✓ Audit logging active
-# AUDIT PASSED - Ready for production
 ```
 
 ---
@@ -789,7 +823,7 @@ mypy apps/backend/
 
 # TypeScript
 npm run lint
-npm run format
+npx prettier --write "apps/web/src/**/*.{ts,tsx}"
 ```
 
 ### Commit Convention
@@ -840,9 +874,10 @@ For commercial licensing options, please contact: **licensing@ledgersg.sg**
 
 - **IRAS** - For comprehensive regulatory guidance
 - **IMDA** - For InvoiceNow/Peppol specifications
-- **Shadcn-UI** - For excellent component primitives
+- **Radix UI** - For accessible headless primitives
+- **Shadcn-UI** - For component patterns
 - **Django Software Foundation** - For the web framework
-- **Vercel** - For Next.js
+- **Vercel** - For Next.js and Turbopack
 
 ---
 
