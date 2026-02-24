@@ -5,3 +5,4 @@ venv/
 .venv
 vendor/
 bak.git/
+plan/
