@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "serve": "npx serve dist",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -34,6 +37,8 @@
     "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.1",
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20.19.33",
     "@types/react": "^19.2.14",

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, endpoints } from "@/lib/api-client";
+import { toast } from "@/hooks/use-toast";
 import type { Invoice, InvoiceInput } from "@/shared/schemas/invoice";
 
 // List invoices with optional filters
@@ -59,10 +60,22 @@ export function useCreateInvoice(orgId: string) {
       return response;
     },
     onSuccess: () => {
+      toast({
+        title: "Invoice created",
+        description: "Your invoice has been created successfully.",
+        variant: "success",
+      });
       // Invalidate invoices list
       queryClient.invalidateQueries({ queryKey: [orgId, "invoices"] });
       // Invalidate dashboard metrics
       queryClient.invalidateQueries({ queryKey: [orgId, "dashboard"] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Failed to create invoice",
+        description: error.message || "An error occurred while creating the invoice.",
+        variant: "error",
+      });
     },
   });
 }
@@ -80,8 +93,20 @@ export function useUpdateInvoice(orgId: string, invoiceId: string) {
       return response;
     },
     onSuccess: () => {
+      toast({
+        title: "Invoice updated",
+        description: "Your invoice has been updated successfully.",
+        variant: "success",
+      });
       queryClient.invalidateQueries({ queryKey: [orgId, "invoices", invoiceId] });
       queryClient.invalidateQueries({ queryKey: [orgId, "invoices"] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Failed to update invoice",
+        description: error.message || "An error occurred while updating the invoice.",
+        variant: "error",
+      });
     },
   });
 }
@@ -99,10 +124,22 @@ export function useApproveInvoice(orgId: string, invoiceId: string) {
       return response;
     },
     onSuccess: () => {
+      toast({
+        title: "Invoice approved",
+        description: "The invoice has been approved and journal entries have been created.",
+        variant: "success",
+      });
       queryClient.invalidateQueries({ queryKey: [orgId, "invoices", invoiceId] });
       queryClient.invalidateQueries({ queryKey: [orgId, "invoices"] });
       queryClient.invalidateQueries({ queryKey: [orgId, "dashboard"] });
       queryClient.invalidateQueries({ queryKey: [orgId, "ledger"] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Failed to approve invoice",
+        description: error.message || "An error occurred while approving the invoice.",
+        variant: "error",
+      });
     },
   });
 }
@@ -120,9 +157,21 @@ export function useVoidInvoice(orgId: string, invoiceId: string) {
       return response;
     },
     onSuccess: () => {
+      toast({
+        title: "Invoice voided",
+        description: "The invoice has been voided and reversal entries have been created.",
+        variant: "warning",
+      });
       queryClient.invalidateQueries({ queryKey: [orgId, "invoices", invoiceId] });
       queryClient.invalidateQueries({ queryKey: [orgId, "invoices"] });
       queryClient.invalidateQueries({ queryKey: [orgId, "dashboard"] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Failed to void invoice",
+        description: error.message || "An error occurred while voiding the invoice.",
+        variant: "error",
+      });
     },
   });
 }
@@ -140,7 +189,19 @@ export function useSendInvoice(orgId: string, invoiceId: string) {
       return response;
     },
     onSuccess: () => {
+      toast({
+        title: "Invoice sent",
+        description: "The invoice has been sent via email.",
+        variant: "success",
+      });
       queryClient.invalidateQueries({ queryKey: [orgId, "invoices", invoiceId] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Failed to send invoice",
+        description: error.message || "An error occurred while sending the invoice.",
+        variant: "error",
+      });
     },
   });
 }
@@ -159,8 +220,20 @@ export function useSendInvoiceNow(orgId: string, invoiceId: string) {
       return response;
     },
     onSuccess: () => {
+      toast({
+        title: "InvoiceNow transmission queued",
+        description: "The invoice has been queued for InvoiceNow transmission. Check status for updates.",
+        variant: "info",
+      });
       queryClient.invalidateQueries({ queryKey: [orgId, "invoices", invoiceId] });
       queryClient.invalidateQueries({ queryKey: [orgId, "peppol"] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "InvoiceNow transmission failed",
+        description: error.message || "An error occurred while queuing the InvoiceNow transmission.",
+        variant: "error",
+      });
     },
   });
 }

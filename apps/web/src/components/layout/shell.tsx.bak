@@ -59,21 +59,10 @@ export function Shell({ children }: ShellProps) {
     return pathname?.startsWith(href);
   };
 
-  // Prevent hydration mismatch by not rendering interactive elements until mounted
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-void text-text-primary flex">
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-text-muted">Loading...</div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-void text-text-primary flex">
       {/* Mobile Sidebar Overlay */}
-      {sidebarOpen && (
+      {mounted && sidebarOpen && (
         <div
           className="fixed inset-0 bg-void/80 backdrop-blur-sm z-40 md:hidden"
           onClick={() => setSidebarOpen(false)}
@@ -112,7 +101,7 @@ export function Shell({ children }: ShellProps) {
               <Link
                 key={item.label}
                 href={item.href}
-                onClick={() => setSidebarOpen(false)}
+                onClick={mounted ? () => setSidebarOpen(false) : undefined}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors rounded-sm",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/50",
@@ -155,21 +144,23 @@ export function Shell({ children }: ShellProps) {
         {/* Header */}
         <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border bg-void/90 backdrop-blur supports-[backdrop-filter]:bg-void/80 px-4 md:px-6">
           {/* Mobile Menu Toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden h-9 w-9"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-label={sidebarOpen ? "Close navigation" : "Open navigation"}
-            aria-expanded={sidebarOpen}
-            aria-controls="main-navigation"
-          >
-            {sidebarOpen ? (
-              <X className="h-5 w-5" aria-hidden="true" />
-            ) : (
-              <Menu className="h-5 w-5" aria-hidden="true" />
-            )}
-          </Button>
+          {mounted && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden h-9 w-9"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              aria-label={sidebarOpen ? "Close navigation" : "Open navigation"}
+              aria-expanded={sidebarOpen}
+              aria-controls="main-navigation"
+            >
+              {sidebarOpen ? (
+                <X className="h-5 w-5" aria-hidden="true" />
+              ) : (
+                <Menu className="h-5 w-5" aria-hidden="true" />
+              )}
+            </Button>
+          )}
 
           {/* Breadcrumb / Page Title */}
           <div className="flex-1 min-w-0">

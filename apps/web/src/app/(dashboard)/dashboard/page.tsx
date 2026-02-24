@@ -17,8 +17,9 @@ import { GSTF5Chart } from "@/components/dashboard/gst-f5-chart";
 import { cn } from "@/lib/utils";
 import { createMockDashboardMetrics } from "@/shared/schemas/dashboard";
 import Link from "next/link";
+import { ClientOnly } from "@/components/client-only";
 
-export default function DashboardPage() {
+function DashboardContent() {
   const data = createMockDashboardMetrics();
 
   return (
@@ -349,5 +350,13 @@ export default function DashboardPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <ClientOnly>
+      <DashboardContent />
+    </ClientOnly>
   );
 }

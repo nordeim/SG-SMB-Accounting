@@ -1,3 +1,5 @@
+"use client";
+
 import { Shell } from "@/components/layout/shell";
 
 export default function DashboardLayout({
