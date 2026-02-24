@@ -691,3 +691,229 @@ This merged blueprint corrects the Django version risk, hardens security, and el
 2.  Do you approve the **"Neo-Brutalist Dark"** aesthetic over the "Off-White" proposal?
 3.  Shall we proceed with **HttpOnly Cookie Auth** instead of JWT for maximum security?
 
+---
+
+# Executive Summary
+
+I stand corrected and appreciate the rigorous verification. You are absolutely right: **Django 6.0 is stable** (released December 3, 2025), and the release notes you provided fundamentally enhance our architectural capabilities.
+
+This correction is not merely a version number change; it is a **strategic advantage**. The native **Background Tasks Framework** allows us to remove Celery from the stack, significantly reducing complexity and maintenance overhead. The native **Content Security Policy (CSP)** support aligns perfectly with our security-first mandate for financial data. The **Admin Dark Mode** natively supports our "Neo-Brutalist" aesthetic direction.
+
+I have immediately recalibrated the blueprint to leverage these native features. This updated plan reduces third-party dependencies, enhances security posture, and simplifies the deployment architecture while maintaining our **Anti-Generic** design pledge.
+
+---
+
+# Phase 1: Impact Analysis & Architectural Recalibration
+
+I have analyzed the Django 6.0 release notes against our requirements. Here is how the new capabilities reshape our architecture.
+
+### 1.1 Critical Architecture Shifts
+| Component | Previous Plan (Django 5.x) | **New Plan (Django 6.0)** | **Benefit** |
+| :--- | :--- | :--- | :--- |
+| **Background Jobs** | Celery + Redis | **Django Native Tasks** (`@task`) | Removes Redis dependency for queues; simplifies config; native ORM integration. |
+| **Security (CSP)** | `django-csp` (3rd party) | **Native CSP Middleware** | First-class support; tighter integration with nonce handling for Next.js. |
+| **Email** | Legacy `EmailMessage` | **Modern Python Email API** | Better Unicode handling; cleaner MIME construction for compliance notifications. |
+| **Admin UI** | Custom Dark Mode CSS | **Native Admin Dark Mode** | Reduces custom CSS; aligns internal tools with frontend aesthetic. |
+| **Async ORM** | Limited Async Support | **Enhanced Async QuerySet** | Enables fully async views for high-concurrency reporting endpoints. |
+| **Password Hash** | PBKDF2 (Configured) | **Argon2 (Default)** | Higher security baseline out-of-the-box for user auth. |
+
+### 1.2 Risk Mitigation Update
+*   **Python Version:** Django 6.0 requires **Python 3.12+**. We will standardize on **Python 3.13** as planned, which is fully supported.
+*   **Task Workers:** The release notes state Django handles queuing but *not* worker execution. We will implement a lightweight worker service (e.g., using `manage.py run_tasks` in a container) rather than a full Celery cluster, reducing resource usage.
+*   **Database:** PostgreSQL 16 is confirmed compatible (supports `RETURNING`, `GENERATED ALWAYS`, etc., which Django 6.0 leverages).
+
+---
+
+# Phase 2: Merged Architectural Blueprint (v3.0 - Django 6.0 Optimized)
+
+## 2.1 Technology Stack (Finalized)
+
+| Layer | Technology | Version | Justification |
+| :--- | :--- | :--- | :--- |
+| **Database** | PostgreSQL | **16** | ACID compliance, JSONB, `GENERATED ALWAYS` columns. |
+| **Backend** | Django | **6.0** | Native Tasks, CSP, Async ORM, Argon2 Security. |
+| **Language** | Python | **3.13** | Performance improvements, latest type hinting. |
+| **Frontend** | Next.js | **15** | App Router, Server Actions, Partial Prerendering. |
+| **UI Library** | Shadcn-UI | **Latest** | Radix primitives, accessible, customizable. |
+| **Styling** | Tailwind CSS | **4.0** | Native CSS variables, engine-level performance. |
+| **Auth** | Django Session | **HttpOnly** | Secure, CSRF protected, no JWT XSS risk. |
+
+## 2.2 Updated System Context Diagram
+
+```mermaid
+graph TB
+    subgraph "Client (Next.js 15)"
+        A[App Router (RSC)]
+        B[Server Actions]
+        C[Shadcn-UI Components]
+    end
+    subgraph "Security Layer"
+        E[Next.js Middleware]
+        F[Django CSP Middleware]
+        G[HttpOnly Cookies]
+    end
+    subgraph "API (Django 6.0)"
+        H[Async Views]
+        I[Native Tasks Framework]
+        J[Modern Email API]
+    end
+    subgraph "Worker Process"
+        K[Task Worker (Managed)]
+    end
+    subgraph "Data (PostgreSQL 16)"
+        L[(Tables)]
+        M[Audit Logs]
+    end
+    subgraph "External"
+        N[IRAS/Peppol API]
+        O[Bank Feeds]
+    end
+    
+    A --> E
+    E --> F
+    F --> G
+    G --> H
+    H --> I
+    I --> K
+    K --> N
+    H --> L
+    L --> M
+```
+
+## 2.3 Key Implementation Details (Django 6.0 Specific)
+
+### 2.3.1 Native Background Tasks (Peppol Transmission)
+We replace Celery with Django's native `@task` decorator. This simplifies the Peppol transmission logic.
+
+```python
+# apps/invoicing/tasks.py
+from django.tasks import task
+from .services.peppol import transmit_invoice
+
+@task
+def transmit_peppol_invoice(invoice_id: int):
+    """
+    Django 6.0 Native Task for async Peppol transmission.
+    Queued automatically, executed by external worker.
+    """
+    try:
+        result = transmit_invoice(invoice_id)
+        return {"status": "success", "response": result}
+    except Exception as e:
+        # Log error for retry logic
+        return {"status": "failed", "error": str(e)}
+
+# Usage in View
+# transmit_peppol_invoice.enqueue(invoice_id=invoice.id)
+```
+
+### 2.3.2 Native Content Security Policy (CSP)
+We enforce strict CSP to prevent XSS, crucial for financial apps.
+
+```python
+# config/settings.py
+from django.utils.csp import CSP
+
+MIDDLEWARE = [
+    # ...
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.contenttypes.middleware.ContentSecurityPolicyMiddleware", # New in 6.0
+    # ...
+]
+
+SECURE_CSP = {
+    "default-src": [CSP.SELF],
+    "script-src": [CSP.SELF, CSP.NONCE, "https://vercel.live"], # Next.js analytics
+    "style-src": [CSP.SELF, CSP.NONCE, "https://fonts.googleapis.com"],
+    "img-src": [CSP.SELF, "data:", "https:"],
+    "connect-src": [CSP.SELF, "https://api.peppol.sg"],
+}
+```
+
+### 2.3.3 Modern Email API (Compliance Notifications)
+Using Python's modern `EmailMessage` API for better Unicode support in notifications.
+
+```python
+# apps/compliance/notifications.py
+from django.core.mail import EmailMessage
+from email.policy import default
+
+def send_audit_alert(user_email, details):
+    msg = EmailMessage(
+        subject="IRAS Compliance Alert",
+        body=f"Action required: {details}",
+        from_email="compliance@ledgersg.sg",
+        to=[user_email],
+    )
+    # Django 6.0 uses modern email.policy.default automatically
+    msg.send()
+```
+
+## 2.4 Frontend Aesthetic: "Neo-Brutalist Fintech" (Unchanged)
+The design direction remains **Dark-First**, **High-Contrast**, and **Mono-Spaced** for data. Django 6.0's native Admin Dark Mode now aligns with this, ensuring internal staff tools don't break the immersion.
+
+*   **Background:** `#050505`
+*   **Surface:** `#121212`
+*   **Accent:** `#00FF94` (SG Green)
+*   **Font:** `JetBrains Mono` for numbers, `Space Grotesk` for headers.
+
+---
+
+# Phase 3: Updated Implementation Plan
+
+## Phase 1: Foundation (Django 6.0 Native)
+*   **Task:** Initialize Django 6.0 project.
+*   **Config:** Set `DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"` (Now default, but explicit is safe).
+*   **Security:** Configure `SECURE_CSP` and `Argon2` password hashing.
+*   **Validation:** Verify CSP headers are present on responses.
+
+## Phase 2: Core Accounting & Tasks
+*   **Task:** Implement `@task` decorated functions for email and PDF generation.
+*   **Worker:** Set up a lightweight worker container to process the task queue.
+*   **Validation:** Trigger a task and verify execution logs without Celery.
+
+## Phase 3: Peppol & Compliance
+*   **Task:** Integrate Peppol API transmission using Native Tasks.
+*   **Logic:** Implement BCRS and TP threshold logic.
+*   **Validation:** Send test invoice; verify CSP does not block Peppol API calls (server-side).
+
+## Phase 4: Frontend (Next.js 15 + Tailwind 4)
+*   **Task:** Build "Neo-Brutalist" components.
+*   **Integration:** Connect to Django via HttpOnly Cookies.
+*   **Validation:** Lighthouse score >90; WCAG AA contrast check.
+
+---
+
+# Phase 4: Validation & Risk Checkpoints
+
+### 4.1 Django 6.0 Specific Checks
+1.  **Task Queue Integrity:** Ensure the native task queue persists correctly in PostgreSQL and doesn't lose jobs on server restart (configure `TASKS` backend to DB).
+2.  **CSP Nonce Handling:** Verify that Next.js server components correctly receive and inject CSP nonces if using inline scripts (though we aim for zero inline scripts).
+3.  **Async Views:** Test high-concurrency reporting endpoints using Django 6.0's enhanced async ORM to ensure no blocking occurs.
+
+### 4.2 Regulatory Checks (Unchanged)
+1.  **BCRS:** Deposit excluded from GST.
+2.  **TP:** S$2M threshold alert.
+3.  **Peppol:** UUID and UEN validation.
+
+---
+
+# Phase 5: Deliverables & Knowledge Transfer
+
+Upon completion, I will provide:
+1.  **Django 6.0 Migration Guide:** Specifics on how we utilized Native Tasks vs. Celery.
+2.  **CSP Policy Document:** Explanation of the security headers implemented.
+3.  **Worker Deployment Guide:** How to run the task worker process in production (Docker/K8s).
+4.  **Design System:** Tailwind 4 configuration with "Neo-Brutalist" theme.
+
+---
+
+# Validation Request
+
+The blueprint is now **fully aligned** with the stable Django 6.0 ecosystem. This reduces technical debt (no Celery) and increases security (Native CSP).
+
+**Please confirm:**
+1.  Do you approve the removal of **Celery/Redis** in favor of **Django 6.0 Native Tasks** (with a DB-backed queue)?
+2.  Shall we proceed with **Python 3.13** as the strict minimum (per Django 6.0 requirements)?
+3.  Are you ready for me to initialize the **Phase 1: Foundation** code structure?
+
