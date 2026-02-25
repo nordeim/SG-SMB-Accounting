@@ -204,17 +204,17 @@ CREATE TABLE core.organisation (
     name                VARCHAR(255) NOT NULL,
     legal_name          VARCHAR(255),                -- Official registered name (may differ from trading name)
     uen                 VARCHAR(20) UNIQUE,           -- ACRA Unique Entity Number (e.g., 202301234A)
-    entity_type         VARCHAR(20) NOT NULL
-        CHECK (entity_type IN ('sole_prop', 'partnership', 'llp', 'pte_ltd')),
+    entity_type         VARCHAR(50) NOT NULL
+        CHECK (entity_type IN ('SOLE_PROPRIETORSHIP', 'PARTNERSHIP', 'PRIVATE_LIMITED', 'PUBLIC_LIMITED', 'LIMITED_LIABILITY_PARTNERSHIP', 'NON_PROFIT')),
 
     -- GST Configuration
     gst_registered      BOOLEAN NOT NULL DEFAULT FALSE,
     gst_reg_number      VARCHAR(20),                  -- Format: M90312345A (only if gst_registered = TRUE)
     gst_reg_date        DATE,                         -- Effective date of GST registration
-    gst_scheme          VARCHAR(30) DEFAULT 'standard'
-        CHECK (gst_scheme IN ('standard', 'cash', 'margin')),  -- Accounting basis for GST
-    gst_filing_frequency VARCHAR(15) NOT NULL DEFAULT 'quarterly'
-        CHECK (gst_filing_frequency IN ('monthly', 'quarterly', 'semi_annual')),
+    gst_scheme          VARCHAR(30) DEFAULT 'STANDARD'
+        CHECK (gst_scheme IN ('STANDARD', 'CASH_ACCOUNTING', 'SECOND_HAND', 'TOURIST_REFUND')),  -- Accounting basis for GST
+    gst_filing_frequency VARCHAR(15) NOT NULL DEFAULT 'QUARTERLY'
+        CHECK (gst_filing_frequency IN ('MONTHLY', 'QUARTERLY', 'SEMI_ANNUAL')),
 
     -- InvoiceNow / Peppol Configuration
     peppol_participant_id VARCHAR(64),                -- Peppol network identifier (e.g., 0195:202301234A)
@@ -234,12 +234,15 @@ CREATE TABLE core.organisation (
     -- Business Address
     address_line_1      VARCHAR(255),
     address_line_2      VARCHAR(255),
+    city                VARCHAR(100),                 -- City/town
     postal_code         VARCHAR(10),
     country             CHAR(2) NOT NULL DEFAULT 'SG',
 
     -- Contact
     phone               VARCHAR(30),
     email               VARCHAR(255),
+    contact_email       VARCHAR(255),                 -- Primary contact email
+    contact_phone       VARCHAR(50),                  -- Primary contact phone
     website             VARCHAR(255),
 
     -- Logo / Branding (path to S3/MinIO object)
@@ -247,6 +250,8 @@ CREATE TABLE core.organisation (
 
     -- Lifecycle
     is_active           BOOLEAN NOT NULL DEFAULT TRUE,
+    deleted_at          TIMESTAMPTZ,                  -- Soft delete timestamp
+    deleted_by          UUID,                        -- User who deleted
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
@@ -281,11 +286,12 @@ CREATE TRIGGER trg_organisation_updated_at
 CREATE TABLE core.app_user (
     id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email               VARCHAR(255) NOT NULL UNIQUE,
+    password            VARCHAR(128) NOT NULL,  -- Django password hash
     full_name           VARCHAR(150) NOT NULL,
     phone               VARCHAR(30),
     is_active           BOOLEAN NOT NULL DEFAULT TRUE,
     is_superadmin       BOOLEAN NOT NULL DEFAULT FALSE,  -- Platform-level admin (not org-level)
-    last_login_at       TIMESTAMPTZ,
+    last_login          TIMESTAMPTZ,
     password_changed_at TIMESTAMPTZ,
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -305,7 +311,8 @@ CREATE TRIGGER trg_app_user_updated_at
 
 CREATE TABLE core.role (
     id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name                VARCHAR(50) NOT NULL UNIQUE,
+    org_id              UUID NOT NULL REFERENCES core.organisation(id) ON DELETE CASCADE,
+    name                VARCHAR(50) NOT NULL,
     description         TEXT,
     -- Granular permission flags
     can_manage_org      BOOLEAN NOT NULL DEFAULT FALSE,  -- Edit org settings, invite users
@@ -320,7 +327,11 @@ CREATE TABLE core.role (
     can_view_reports    BOOLEAN NOT NULL DEFAULT FALSE,  -- Financial reports
     can_export_data     BOOLEAN NOT NULL DEFAULT FALSE,  -- Data export/download
     is_system           BOOLEAN NOT NULL DEFAULT FALSE,  -- System-defined (cannot be deleted)
-    created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    deleted_at          TIMESTAMPTZ,                      -- Soft delete timestamp
+    created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    
+    UNIQUE(org_id, name)
 );
 
 COMMENT ON TABLE core.role
@@ -340,8 +351,10 @@ CREATE TABLE core.user_organisation (
     role_id             UUID NOT NULL REFERENCES core.role(id) ON DELETE RESTRICT,
     is_default          BOOLEAN NOT NULL DEFAULT FALSE,  -- Default org for this user on login
     invited_at          TIMESTAMPTZ,
+    invited_by          UUID,                              -- User who sent the invitation
     accepted_at         TIMESTAMPTZ,
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     UNIQUE(user_id, org_id)
 );
 
@@ -1865,13 +1878,15 @@ BEGIN
     IF TG_OP = 'INSERT' THEN
         v_action    := 'CREATE';
         v_new_data  := to_jsonb(NEW);
-        v_org_id    := NEW.org_id;
+        -- Handle tables without org_id (e.g., core.organisation)
+        v_org_id    := COALESCE(v_new_data->>'org_id', v_new_data->>'id')::UUID;
         v_entity_id := NEW.id;
     ELSIF TG_OP = 'UPDATE' THEN
         v_action    := 'UPDATE';
         v_old_data  := to_jsonb(OLD);
         v_new_data  := to_jsonb(NEW);
-        v_org_id    := NEW.org_id;
+        -- Handle tables without org_id (e.g., core.organisation)
+        v_org_id    := COALESCE(v_new_data->>'org_id', v_new_data->>'id')::UUID;
         v_entity_id := NEW.id;
 
         -- Detect changed fields
@@ -1883,7 +1898,8 @@ BEGIN
     ELSIF TG_OP = 'DELETE' THEN
         v_action    := 'DELETE';
         v_old_data  := to_jsonb(OLD);
-        v_org_id    := OLD.org_id;
+        -- Handle tables without org_id (e.g., core.organisation)
+        v_org_id    := COALESCE(v_old_data->>'org_id', v_old_data->>'id')::UUID;
         v_entity_id := OLD.id;
     END IF;
 
@@ -2034,10 +2050,10 @@ DECLARE
     v_table RECORD;
 BEGIN
     -- List of all tables that have an org_id column and need RLS
+    -- Note: core.organisation is excluded (handled separately with 'id' column)
     FOR v_table IN
         SELECT schemaname, tablename
         FROM (VALUES
-            ('core', 'organisation'),
             ('core', 'fiscal_year'),
             ('core', 'fiscal_period'),
             ('core', 'exchange_rate'),
@@ -2197,23 +2213,11 @@ CREATE INDEX idx_bank_txn_unreconciled ON banking.bank_transaction(bank_account_
 -- ──────────────────────────────────────────────
 -- 14a. System Roles
 -- ──────────────────────────────────────────────
-
-INSERT INTO core.role (name, description, is_system,
-    can_manage_org, can_manage_users, can_manage_coa,
-    can_create_invoices, can_approve_invoices, can_void_invoices,
-    can_create_journals, can_manage_banking, can_file_gst,
-    can_view_reports, can_export_data
-) VALUES
-    ('Owner', 'Business owner with full access',
-        TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE),
-    ('Admin', 'Administrator — manages settings and users',
-        TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE),
-    ('Accountant', 'Full accounting access without org management',
-        TRUE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE),
-    ('Bookkeeper', 'Day-to-day transaction entry',
-        TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, FALSE),
-    ('Viewer', 'Read-only access to reports and documents',
-        TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE);
+-- Note: Roles are now per-organisation. The application seeds default
+-- roles when an organisation is created via seed_default_chart_of_accounts().
+-- 
+-- INSERT INTO core.role (org_id, name, description, is_system, ...)
+-- VALUES (...);
 
 
 -- ──────────────────────────────────────────────

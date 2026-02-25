@@ -61,6 +61,7 @@ def test_organisation(test_user) -> Organisation:
         name="Test Organisation",
         legal_name="Test Organisation Pte Ltd",
         uen="123456789A",
+        entity_type="PRIVATE_LIMITED",
         gst_registered=True,
         gst_reg_number="M12345678",
         gst_reg_date=date(2024, 1, 1),
@@ -253,10 +254,16 @@ def pytest_configure(config):
 
 @pytest.fixture(scope="session")
 def django_db_setup(django_db_setup, django_db_blocker):
-    """Set up test database."""
+    """Set up test database with schemas."""
     with django_db_blocker.unblock():
-        # Any global database setup
-        pass
+        from django.db import connection
+        with connection.cursor() as cursor:
+            # Create schemas
+            schemas = ['core', 'coa', 'gst', 'journal', 'invoicing', 'banking', 'audit']
+            for schema in schemas:
+                cursor.execute(f'CREATE SCHEMA IF NOT EXISTS {schema}')
+            # Grant usage
+            cursor.execute("GRANT USAGE ON SCHEMA core, coa, gst, journal, invoicing, banking, audit TO PUBLIC")
 
 
 # Markers

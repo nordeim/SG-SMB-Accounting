@@ -104,7 +104,7 @@ class ImmutableModel(BaseModel):
 
 
 class ImmutabilityError(Exception):
-    ""Raised when attempting to modify an immutable record."""
+    """Raised when attempting to modify an immutable record."""
     pass
 
 

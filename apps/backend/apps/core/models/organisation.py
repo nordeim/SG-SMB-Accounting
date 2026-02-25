@@ -38,7 +38,7 @@ class Organisation(BaseModel):
     )
     entity_type = models.CharField(
         max_length=50,
-        blank=True,
+        default="PRIVATE_LIMITED",
         db_column="entity_type",
         choices=[
             ("SOLE_PROPRIETORSHIP", "Sole Proprietorship"),
@@ -67,7 +67,7 @@ class Organisation(BaseModel):
     )
     gst_scheme = models.CharField(
         max_length=50,
-        blank=True,
+        default="STANDARD",
         db_column="gst_scheme",
         choices=[
             ("STANDARD", "Standard GST"),

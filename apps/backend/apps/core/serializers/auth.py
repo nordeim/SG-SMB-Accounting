@@ -44,6 +44,15 @@ class TokenResponseSerializer(serializers.Serializer):
     access_expires = serializers.DateTimeField()
 
 
+class UserSerializer(serializers.ModelSerializer):
+    """Serializer for user (read-only)."""
+    
+    class Meta:
+        model = AppUser
+        fields = ["id", "email", "full_name", "phone", "is_active", "created_at"]
+        read_only_fields = ["id", "email", "created_at"]
+
+
 class UserProfileSerializer(serializers.ModelSerializer):
     """Serializer for user profile."""
     

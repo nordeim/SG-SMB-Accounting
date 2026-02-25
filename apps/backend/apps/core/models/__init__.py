@@ -8,6 +8,10 @@ from .role import Role
 from .user_organisation import UserOrganisation
 from .fiscal_year import FiscalYear
 from .fiscal_period import FiscalPeriod
+from .tax_code import TaxCode
+from .account import Account
+from .contact import Contact
+from .invoice_document import InvoiceDocument
 
 __all__ = [
     "AppUser",
@@ -16,4 +20,8 @@ __all__ = [
     "UserOrganisation",
     "FiscalYear",
     "FiscalPeriod",
+    "TaxCode",
+    "Account",
+    "Contact",
+    "InvoiceDocument",
 ]

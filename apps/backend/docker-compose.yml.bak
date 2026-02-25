@@ -1,0 +1,120 @@
+version: "3.8"
+
+services:
+  # PostgreSQL 16 Database
+  db:
+    image: postgres:16-alpine
+    container_name: ledgersg_db
+    environment:
+      POSTGRES_DB: ledgersg_dev
+      POSTGRES_USER: ledgersg
+      POSTGRES_PASSWORD: ledgersg_secret_to_change
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database_schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ledgersg"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Redis for caching and Celery
+  redis:
+    image: redis:7-alpine
+    container_name: ledgersg_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Django API Server
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ledgersg_api
+    environment:
+      DEBUG: "true"
+      SECRET_KEY: "django-insecure-development-key-change-in-production"
+      DB_NAME: ledgersg_dev
+      DB_USER: ledgersg
+      DB_PASSWORD: ledgersg
+      DB_HOST: db
+      DB_PORT: "5432"
+      REDIS_URL: "redis://redis:6379/0"
+      DJANGO_SETTINGS_MODULE: config.settings.development
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "python manage.py migrate --run-syncdb &&
+             python manage.py runserver 0.0.0.0:8000"
+
+  # Celery Worker
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ledgersg_celery
+    environment:
+      DEBUG: "true"
+      SECRET_KEY: "django-insecure-development-key-change-in-production"
+      DB_NAME: ledgersg_dev
+      DB_USER: ledgersg
+      DB_PASSWORD: ledgersg
+      DB_HOST: db
+      DB_PORT: "5432"
+      REDIS_URL: "redis://redis:6379/0"
+      DJANGO_SETTINGS_MODULE: config.settings.development
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "celery -A config worker -l info"
+
+  # Celery Beat Scheduler
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ledgersg_celery_beat
+    environment:
+      DEBUG: "true"
+      SECRET_KEY: "django-insecure-development-key-change-in-production"
+      DB_NAME: ledgersg_dev
+      DB_USER: ledgersg
+      DB_PASSWORD: ledgersg
+      DB_HOST: db
+      DB_PORT: "5432"
+      REDIS_URL: "redis://redis:6379/0"
+      DJANGO_SETTINGS_MODULE: config.settings.development
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+
+volumes:
+  postgres_data:
+  redis_data:

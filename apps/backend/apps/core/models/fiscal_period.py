@@ -7,10 +7,10 @@ Maps to core.fiscal_period table.
 
 from django.db import models
 
-from common.models import BaseModel, TenantModel
+from common.models import TenantModel
 
 
-class FiscalPeriod(BaseModel, TenantModel):
+class FiscalPeriod(TenantModel):
     """
     Fiscal period (usually a month) within a fiscal year.
     

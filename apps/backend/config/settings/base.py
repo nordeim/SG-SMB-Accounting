@@ -49,6 +49,7 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
+    "common",
     "apps.core",
     "apps.coa",
     "apps.gst",
@@ -119,7 +120,7 @@ ASGI_APPLICATION = "config.asgi.application"
 # PostgreSQL with custom backend for schema search_path
 DATABASES = {
     "default": {
-        "ENGINE": "common.db.backend.base",
+        "ENGINE": "common.db.backend",
         "NAME": config("DB_NAME", default="ledgersg"),
         "USER": config("DB_USER", default="ledgersg"),
         "PASSWORD": config("DB_PASSWORD", default="ledgersg"),

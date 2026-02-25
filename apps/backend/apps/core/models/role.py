@@ -7,10 +7,10 @@ Maps to core.role table.
 
 from django.db import models
 
-from common.models import BaseModel, TenantModel
+from common.models import TenantModel
 
 
-class Role(BaseModel, TenantModel):
+class Role(TenantModel):
     """
     Role model for RBAC (Role-Based Access Control).
     

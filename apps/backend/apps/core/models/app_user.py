@@ -5,14 +5,14 @@ Extends AbstractBaseUser to use email as the username.
 Maps to core.app_user table.
 """
 
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 from django.utils import timezone
 
 from common.models import BaseModel
 
 
-class AppUserManager(models.Manager):
+class AppUserManager(BaseUserManager):
     """Custom manager for AppUser."""
     
     def create_user(self, email, password=None, **extra_fields):

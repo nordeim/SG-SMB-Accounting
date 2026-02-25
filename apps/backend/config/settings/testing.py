@@ -19,7 +19,13 @@ DEBUG = False
 # DATABASE (Testing)
 # =============================================================================
 
-DATABASES["default"]["NAME"] = config("TEST_DB_NAME", default="ledgersg_test")
+# Use the development database for tests (DDL-managed schema)
+# Tests run in transactions that are rolled back
+DATABASES["default"]["NAME"] = config("DB_NAME", default="ledgersg_dev")
+# Test database configuration - use same database with transaction rollback
+DATABASES["default"]["TEST"] = {
+    "NAME": "ledgersg_dev",  # Same as default to avoid DB creation
+}
 
 # =============================================================================
 # PASSWORD HASHING (Fast for tests)
@@ -95,7 +101,7 @@ SENTRY_DSN = None
 # TEST RUNNER
 # =============================================================================
 
-TEST_RUNNER = "django.test.runner.DiscoverRunner"
+TEST_RUNNER = "common.test_runner.SchemaTestRunner"
 
 # Speed up tests
 DEBUG_PROPAGATE_EXCEPTIONS = True

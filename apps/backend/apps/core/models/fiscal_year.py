@@ -7,10 +7,10 @@ Maps to core.fiscal_year table.
 
 from django.db import models
 
-from common.models import BaseModel, TenantModel
+from common.models import TenantModel
 
 
-class FiscalYear(BaseModel, TenantModel):
+class FiscalYear(TenantModel):
     """
     Fiscal year for an organisation.
     
