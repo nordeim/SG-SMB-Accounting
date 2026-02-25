@@ -705,44 +705,6 @@ CREATE TRIGGER trg_gst_return_updated_at
 
 
 -- ──────────────────────────────────────────────
--- 5c. Peppol Transmission Log (InvoiceNow)
--- ──────────────────────────────────────────────
--- Immutable log of InvoiceNow/Peppol transmission attempts.
--- Enables retry tracking and audit trail for e-invoicing.
-
-CREATE TABLE gst.peppol_transmission_log (
-    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    org_id              UUID NOT NULL REFERENCES core.organisation(id) ON DELETE CASCADE,
-    document_id         UUID NOT NULL REFERENCES invoicing.document(id) ON DELETE CASCADE,
-    attempt_number      SMALLINT NOT NULL DEFAULT 1,
-    status              VARCHAR(20) NOT NULL
-        CHECK (status IN ('PENDING', 'TRANSMITTING', 'DELIVERED', 'FAILED', 'REJECTED')),
-    peppol_message_id   UUID,
-    access_point_id     VARCHAR(100),
-    request_hash        VARCHAR(64),                        -- SHA-256 of XML payload
-    response_code       VARCHAR(20),
-    error_code          VARCHAR(50),
-    error_message       TEXT,
-    transmitted_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    response_at         TIMESTAMPTZ,
-
-    CONSTRAINT chk_attempt_positive CHECK (attempt_number > 0)
-);
-
-COMMENT ON TABLE gst.peppol_transmission_log
-    IS 'Immutable log of InvoiceNow/Peppol transmission attempts. Each row = one attempt. Enables retry tracking and audit trail.';
-
--- Performance indexes
-CREATE INDEX idx_peppol_log_doc ON gst.peppol_transmission_log(document_id, attempt_number);
-CREATE INDEX idx_peppol_log_org ON gst.peppol_transmission_log(org_id, transmitted_at DESC);
-CREATE INDEX idx_peppol_log_status ON gst.peppol_transmission_log(status)
-    WHERE status IN ('PENDING', 'FAILED');
-
--- Grant app access
-GRANT SELECT, INSERT, UPDATE ON gst.peppol_transmission_log TO ledgersg_app;
-
-
--- ──────────────────────────────────────────────
 -- 5c. GST Threshold Monitor (for Non-Registered Businesses)
 -- ──────────────────────────────────────────────
 -- Tracks rolling 12-month taxable turnover to alert when nearing S$1M.
@@ -991,7 +953,7 @@ CREATE TABLE invoicing.document (
     total_gst           NUMERIC(10,4) NOT NULL DEFAULT 0,  -- Sum of line GST amounts
     total_amount        NUMERIC(10,4) NOT NULL DEFAULT 0,  -- subtotal + total_gst
     amount_paid         NUMERIC(10,4) NOT NULL DEFAULT 0,  -- Running total of payments received
-    amount_due          NUMERIC(10,4) GENERATED ALWAYS AS (total_amount - amount_paid) STORED  -- Auto-computed
+    amount_due          NUMERIC(10,4) GENERATED ALWAYS AS (total_amount - amount_paid) STORED,  -- Auto-computed
 
     -- Base currency equivalents (for multi-currency reporting)
     base_subtotal       NUMERIC(10,4) NOT NULL DEFAULT 0,
@@ -1142,6 +1104,44 @@ CREATE TABLE invoicing.document_attachment (
 
 COMMENT ON TABLE invoicing.document_attachment
     IS 'File attachments linked to invoices/documents. Stored externally in S3/MinIO.';
+
+
+-- ──────────────────────────────────────────────
+-- 7f. Peppol Transmission Log (InvoiceNow)
+-- ──────────────────────────────────────────────
+-- NOTE: Moved from §5 to §7 to satisfy FK dependency on invoicing.document.
+-- Immutable log of InvoiceNow/Peppol transmission attempts.
+-- Enables retry tracking and audit trail for e-invoicing.
+
+CREATE TABLE gst.peppol_transmission_log (
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    org_id              UUID NOT NULL REFERENCES core.organisation(id) ON DELETE CASCADE,
+    document_id         UUID NOT NULL REFERENCES invoicing.document(id) ON DELETE CASCADE,
+    attempt_number      SMALLINT NOT NULL DEFAULT 1,
+    status              VARCHAR(20) NOT NULL
+        CHECK (status IN ('PENDING', 'TRANSMITTING', 'DELIVERED', 'FAILED', 'REJECTED')),
+    peppol_message_id   UUID,
+    access_point_id     VARCHAR(100),
+    request_hash        VARCHAR(64),                        -- SHA-256 of XML payload
+    response_code       VARCHAR(20),
+    error_code          VARCHAR(50),
+    error_message       TEXT,
+    transmitted_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    response_at         TIMESTAMPTZ,
+
+    CONSTRAINT chk_attempt_positive CHECK (attempt_number > 0)
+);
+
+COMMENT ON TABLE gst.peppol_transmission_log
+    IS 'Immutable log of InvoiceNow/Peppol transmission attempts. Each row = one attempt. Enables retry tracking and audit trail.';
+
+-- Performance indexes
+CREATE INDEX idx_peppol_log_doc ON gst.peppol_transmission_log(document_id, attempt_number);
+CREATE INDEX idx_peppol_log_org ON gst.peppol_transmission_log(org_id, transmitted_at DESC);
+CREATE INDEX idx_peppol_log_status ON gst.peppol_transmission_log(status)
+    WHERE status IN ('PENDING', 'FAILED');
+
+-- NOTE: Permissions granted in §15 Application Roles & Grants
 
 
 -- ============================================================================
@@ -2168,7 +2168,7 @@ BEGIN
     FOR v_table IN
         SELECT schemaname, tablename
         FROM (VALUES
-            ('core', 'organisation'),
+            -- NOTE: core.organisation is handled separately below (uses 'id' not 'org_id')
             ('core', 'fiscal_year'),
             ('core', 'fiscal_period'),
             ('core', 'exchange_rate'),
