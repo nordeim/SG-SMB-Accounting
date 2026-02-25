@@ -87,6 +87,12 @@ try:
 except ImportError:
     pass
 
+try:
+    from apps.gst import urls as gst_urls
+    org_scoped_urlpatterns.append(path("gst/", include("apps.gst.urls")))
+except ImportError:
+    pass
+
 
 urlpatterns = [
     # Health check

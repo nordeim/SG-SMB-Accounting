@@ -565,3 +565,102 @@ Success Criteria
 • [ ] Audit trail for adjustments
 • [ ] Permission checks on filing
 
+---
+
+• ✅ Phase 2B: GST Module - Complete
+
+Files Created (1,962 lines total)
+
+ File                                  Lines   Purpose
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ gst/services/tax_code_service.py      434     TaxCode CRUD, validation, IRAS code definitions
+ gst/services/calculation_service.py   335     Line/document GST calculation, BCRS exemption
+ gst/services/return_service.py        404     F5 generation, filing workflow, payment tracking
+ gst/serializers.py                    269     Serializers for TaxCode, GSTReturn, calculations
+ gst/views.py                          461     API views for all GST endpoints
+ gst/urls.py                           42      URL routing for GST module
+
+IRAS Tax Codes (Seeded)
+
+ Code     Name                Rate   F5 Box
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ SR       Standard-Rated      9%     Box 1
+ ZR       Zero-Rated          0%     Box 2
+ ES       Exempt              -      Box 3
+ OS       Out-of-Scope        -      -
+ IM       Import              9%     Box 9
+ ME       Metered             9%     Box 1
+ TX-E33   Purchase with GST   9%     Box 6
+ BL       BCRS Deposit        0%     - (Exempt)
+
+F5 Form Boxes (All 15)
+
+Box 1: Standard-rated supplies    Box 9:  Goods imported
+Box 2: Zero-rated supplies        Box 10: GST on imports (MG/IGDS)
+Box 3: Exempt supplies            Box 11: Service imports
+Box 4: Total supplies (1+2+3)     Box 12: Output tax on reverse charge
+Box 5: Output tax due             Box 13: Revenue
+Box 6: Taxable purchases          Box 14: Exempt supplies
+Box 7: Input tax claims           Box 15: Imports/exports indicator
+Box 8: Net GST (5-7)
+
+Key Features
+
+TaxCodeService:
+
+• System codes (IRAS) protected from modification
+• Custom tax code creation with box mapping
+• GST rate retrieval with effective dates
+• Auto-seeding on organisation creation
+
+GSTCalculationService:
+
+• Line-level GST with BCRS exemption
+• Document totals with summary
+• Tax-inclusive back-calculation
+• IRAS-compliant rounding (2dp, half-up)
+
+GSTReturnService:
+
+• Monthly/Quarterly period generation
+• F5 auto-calculation from invoice data
+• Status workflow: DRAFT → FILED → PAID
+• Amendment support with audit trail
+• Payment recording
+
+API Endpoints Summary
+
+ Endpoint                    Method             Permission
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ /gst/tax-codes/             GET/POST           IsOrgMember / CanManageCoA
+ /gst/tax-codes/iras-info/   GET                IsAuthenticated
+ /gst/tax-codes/{id}/        GET/PATCH/DELETE   IsOrgMember / CanManageCoA
+ /gst/calculate/             POST               IsAuthenticated
+ /gst/calculate/document/    POST               IsAuthenticated
+ /gst/returns/               GET/POST           IsOrgMember + CanFileGST
+ /gst/returns/deadlines/     GET                IsOrgMember
+ /gst/returns/{id}/          GET/POST           IsOrgMember + CanFileGST
+ /gst/returns/{id}/file/     POST               IsOrgMember + CanFileGST
+ /gst/returns/{id}/amend/    POST               IsOrgMember + CanFileGST
+ /gst/returns/{id}/pay/      POST               IsOrgMember + CanFileGST
+
+BCRS Handling (Singapore-specific)
+
+• Beverage container deposits are GST exempt per Singapore law
+• is_bcrs_exempt flag on tax codes and calculations
+• Excluded from Box 6 (taxable purchases)
+• Preserved across all calculation paths
+
+---
+
+Backend Status:
+
+• ✅ Phase 0: Django Foundation (35 files)
+• ✅ Phase 1: Auth System (8 endpoints)
+• ✅ Phase 2A: CoA Module (500+ lines service)
+• ✅ Phase 2B: GST Module (1,962 lines)
+• 🔄 Phase 2C: Invoicing Module (planned)
+• 🔄 Phase 2D: Journal Entry (planned)
+
+Ready for Phase 2C (Invoicing) or Phase 3 (Integration Testing)?
+
