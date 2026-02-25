@@ -99,3 +99,88 @@ Final Project Statistics
 
 LedgerSG v0.1.0 Frontend is Production Ready. Backend implementation is planned and ready to begin with Phase 0.
 
+---
+
+Phase 0: Project Foundation — MAJOR PROGRESS ✅
+
+I have successfully implemented the foundational infrastructure for the LedgerSG Django backend. Here's the comprehensive summary:
+
+Files Created (35 files)
+
+apps/backend/
+├── pyproject.toml              # Dependencies, ruff, mypy, pytest config
+├── manage.py                   # Django management
+├── Makefile                    # Dev commands
+├── Dockerfile                  # Production container
+├── docker-compose.yml          # PostgreSQL 16, Redis, API, Celery
+├── .env.example                # Environment template
+├── README.md                   # Backend documentation
+│
+├── config/
+│   ├── __init__.py
+│   ├── settings/
+│   │   ├── __init__.py
+│   │   ├── base.py             # Base settings (RLS, JWT, DB)
+│   │   ├── development.py      # Dev overrides
+│   │   ├── production.py       # Production hardening
+│   │   └── testing.py          # Test optimizations
+│   ├── urls.py                 # URL routing with health check
+│   ├── wsgi.py                 # WSGI entry
+│   ├── asgi.py                 # ASGI entry
+│   └── celery.py               # Celery app factory
+│
+└── common/
+    ├── __init__.py
+    ├── models.py               # BaseModel, TenantModel, ImmutableModel
+    ├── decimal_utils.py        # Money precision (4dp), GST calculations
+    ├── exceptions.py           # Custom exceptions + DRF handler
+    ├── pagination.py           # Standard, Large, Cursor pagination
+    ├── renderers.py            # Decimal-safe JSON renderer
+    │
+    ├── middleware/
+    │   ├── __init__.py
+    │   ├── tenant_context.py   # CRITICAL: RLS session variables
+    │   └── audit_context.py    # Request metadata capture
+    │
+    └── db/
+        ├── __init__.py
+        ├── backend/
+        │   ├── __init__.py
+        │   └── base.py         # Custom PostgreSQL backend
+        └── routers.py          # Database router
+
+Key Components Implemented
+
+ Component       Features
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ Settings        4 environments (base/dev/prod/test), JWT config, database with custom backend
+ Decimal Utils   money(), sum_money(), calculate_gst(), Money class - float rejection
+ Base Models     BaseModel (UUID), TenantModel (org_id), ImmutableModel (no updates)
+ Middleware      TenantContextMiddleware (RLS variables), AuditContextMiddleware (metadata)
+ Exceptions      10+ custom exceptions with DRF handler
+ Docker          PostgreSQL 16, Redis, API, Celery Worker + Beat
+
+Critical Implementation: Tenant Context Middleware
+
+# Sets RLS session variables for EVERY org-scoped request
+with connection.cursor() as cursor:
+    cursor.execute("SET LOCAL app.current_org_id = %s", [str(org_id)])
+    cursor.execute("SET LOCAL app.current_user_id = %s", [str(user.id)])
+
+Decimal Safety (Financial Precision)
+
+def money(value: Union[str, int, float, Decimal]) -> Decimal:
+    """Convert to Decimal at 4dp. REJECTS float to prevent precision loss."""
+    if isinstance(value, float):
+        raise TypeError("Float is not allowed for monetary values.")
+    return Decimal(str(value)).quantize(MONEY_PLACES)
+
+Next: Complete Phase 0 & Start Phase 1
+
+Remaining Phase 0 tasks:
+
+1. Create test stubs for common utilities
+2. Verify python manage.py check passes
+
+Phase 1 Ready: Core Module (Auth, Organisation, Users, RBAC)
+

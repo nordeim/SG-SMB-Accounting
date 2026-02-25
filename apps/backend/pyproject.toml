@@ -1,0 +1,115 @@
+[project]
+name = "ledgersg-api"
+version = "1.0.0"
+description = "Enterprise-grade accounting API for Singapore SMBs"
+requires-python = ">=3.13"
+readme = "README.md"
+license = {text = "AGPL-3.0"}
+authors = [
+    {name = "LedgerSG Team", email = "dev@ledgersg.sg"}
+]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Framework :: Django :: 5.2",
+]
+
+dependencies = [
+    # Core Framework
+    "django>=5.2,<6.1",
+    "djangorestframework>=3.15,<4.0",
+    "djangorestframework-simplejwt>=5.3,<6.0",
+    "django-cors-headers>=4.4,<5.0",
+    "django-filter>=24.0",
+
+    # Database
+    "psycopg[binary]>=3.2,<4.0",          # Psycopg 3 (not psycopg2)
+
+    # Async / Task Queue
+    "celery[redis]>=5.4,<6.0",
+    "django-celery-beat>=2.6,<3.0",
+    "redis>=5.0,<6.0",
+
+    # Decimal / Financial
+    "py-moneyed>=3.0,<4.0",               # Currency-aware Decimal
+
+    # Serialization / Validation
+    "pydantic>=2.7,<3.0",                  # Internal validation
+
+    # PDF Generation
+    "weasyprint>=62.0",
+
+    # XML (Peppol PINT-SG)
+    "lxml>=5.2",
+
+    # Utilities
+    "python-decouple>=3.8",
+    "whitenoise>=6.7",
+    "gunicorn>=22.0",
+    "structlog>=24.0",                      # Structured logging
+    "sentry-sdk[django]>=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2",
+    "pytest-django>=4.8",
+    "pytest-cov>=5.0",
+    "pytest-xdist>=3.5",
+    "model-bakery>=1.18",                   # Test fixture factories
+    "factory-boy>=3.3",
+    "faker>=25.0",
+    "httpx>=0.27",                          # Async test client
+    "ruff>=0.5",                            # Linter + formatter
+    "mypy>=1.10",
+    "django-stubs>=5.0",
+    "djangorestframework-stubs>=3.15",
+    "pre-commit>=3.7",
+    "ipython>=8.25",
+    "django-debug-toolbar>=4.4",
+    "django-extensions>=3.2",
+]
+
+[project.scripts]
+ledgersg = "manage:main"
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "S", "B", "A", "C4", "SIM", "TCH"]
+ignore = ["S101"]  # Allow assert in tests
+
+[tool.ruff.lint.isort]
+known-first-party = ["apps", "common", "config"]
+
+[tool.mypy]
+python_version = "3.13"
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+show_error_codes = true
+
+[tool.django-stubs]
+django_settings_module = "config.settings.development"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.testing"
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "--strict-markers --tb=short -q"
+markers = [
+    "slow: marks tests as slow",
+    "integration: marks integration tests",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

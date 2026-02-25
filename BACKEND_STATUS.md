@@ -2,119 +2,79 @@
 
 ## Overview
 
-The LedgerSG backend is currently in the **planning phase**. All design documents are complete, and the database schema v1.0.1 is ready for implementation.
+**Phase**: Phase 0 - Project Foundation (In Progress)
 
-| Component | Status | Notes |
-|-----------|--------|-------|
-| **MASTER_EXECUTION_PLAN.md** | ✅ Complete | 102KB comprehensive implementation plan |
-| **database_schema.sql** | ✅ Complete | v1.0.1 with 8 critical patches applied |
-| **Django Project** | 🚧 Not Started | Phase 0 pending |
-| **Core Module** | 🚧 Not Started | Phase 1 pending |
-| **COA Module** | 🚧 Not Started | Phase 2 pending |
-| **GST Module** | 🚧 Not Started | Phase 3 pending |
-| **Journal Module** | 🚧 Not Started | Phase 4 pending |
-| **Invoicing Module** | 🚧 Not Started | Phase 5 pending |
-| **Banking Module** | 🚧 Not Started | Phase 6 pending |
-| **Peppol Module** | 🚧 Not Started | Phase 7 pending |
-| **Reporting Module** | 🚧 Not Started | Phase 8 pending |
-| **Integration Tests** | 🚧 Not Started | Phase 9 pending |
+## Completed Components
 
----
+### ✅ Configuration
+| File | Status | Description |
+|------|--------|-------------|
+| `pyproject.toml` | ✅ | Dependencies, tool config (ruff, mypy, pytest) |
+| `config/settings/base.py` | ✅ | Base settings with RLS, JWT, DB config |
+| `config/settings/development.py` | ✅ | Dev overrides (debug, CORS) |
+| `config/settings/production.py` | ✅ | Production hardening (HSTS, HTTPS) |
+| `config/settings/testing.py` | ✅ | Test optimizations (fast passwords) |
+| `config/urls.py` | ✅ | URL routing with health check |
+| `config/wsgi.py` | ✅ | WSGI entry point |
+| `config/asgi.py` | ✅ | ASGI entry point |
+| `config/celery.py` | ✅ | Celery app factory |
 
-## Database Schema v1.0.1
+### ✅ Common Utilities
+| File | Status | Description |
+|------|--------|-------------|
+| `common/decimal_utils.py` | ✅ | Money precision (4dp), GST calc, Money class |
+| `common/models.py` | ✅ | BaseModel, TenantModel, ImmutableModel |
+| `common/exceptions.py` | ✅ | Custom exception hierarchy + DRF handler |
+| `common/renderers.py` | ✅ | Decimal-safe JSON renderer |
+| `common/pagination.py` | ✅ | Standard, Large, Cursor pagination |
+| `common/middleware/tenant_context.py` | ✅ | **Critical**: RLS session variables |
+| `common/middleware/audit_context.py` | ✅ | Request metadata capture |
+| `common/db/backend/base.py` | ✅ | Custom PostgreSQL backend |
+| `common/db/routers.py` | ✅ | Database router |
 
-### Schema Structure
+### ✅ Infrastructure
+| File | Status | Description |
+|------|--------|-------------|
+| `docker-compose.yml` | ✅ | PostgreSQL 16, Redis, API, Celery |
+| `Dockerfile` | ✅ | Production container |
+| `Makefile` | ✅ | Dev commands (dev, test, lint, format) |
+| `manage.py` | ✅ | Django management |
+| `.env.example` | ✅ | Environment template |
+| `README.md` | ✅ | Backend documentation |
 
-| Schema | Purpose | Tables |
-|--------|---------|--------|
-| `core` | Organisation, users, roles, fiscal | 15+ tables |
-| `coa` | Chart of Accounts | 3 tables |
-| `gst` | Tax codes, rates, F5 returns | 5+ tables |
-| `journal` | General Ledger | 4 tables |
-| `invoicing` | Contacts, documents, lines | 6 tables |
-| `banking` | Bank accounts, payments | 4 tables |
-| `audit` | Immutable audit trail | 2 tables |
+## Phase 0 Progress
 
-### Critical Patches Applied
+| Task | Status |
+|------|--------|
+| Project structure | ✅ 100% |
+| Dependencies | ✅ 100% |
+| Settings (base/dev/prod/test) | ✅ 100% |
+| Decimal utilities | ✅ 100% |
+| Base models | ✅ 100% |
+| Middleware (tenant, audit) | ✅ 100% |
+| Custom DB backend | ✅ 100% |
+| Docker setup | ✅ 100% |
+| Exceptions & handlers | ✅ 100% |
+| Pagination & renderers | ✅ 100% |
 
-1. ✅ **GST Function Volatility**: IMMUTABLE → STABLE
-2. ✅ **BCRS Deposit Flag**: `is_bcrs_deposit` column added
-3. ✅ **Journal Balance Trigger**: Deferrable constraint trigger
-4. ✅ **GST F5 All 15 Boxes**: Complete IRAS compliance
-5. ✅ **amount_due Generated Column**: Auto-calculated
-6. ✅ **Audit Org-Scoped View**: `audit.org_event_log`
-7. ✅ **Peppol Transmission Log**: Retry tracking
-8. ✅ **Fiscal Period Audit Trail**: locked_by, closed_by
+## Next Steps (Phase 0 Completion)
 
----
+1. Create `apps/core/` module (Phase 1 start)
+2. Create test stubs for common utilities
+3. Set up pre-commit hooks
+4. Verify `python manage.py check` passes
+5. Run database schema
 
-## Implementation Plan
+## Phase 1 Preview (Core Module)
 
-### Phase Breakdown
-
-```
-Phase 0: Foundation (2-3 days)
-├── pyproject.toml
-├── config/settings/
-├── common/ (middleware, utils)
-└── docker-compose.yml
-
-Phase 1: Core Module (4-5 days)
-├── Auth (JWT, registration, login)
-├── Organisation CRUD
-├── RBAC (roles, permissions)
-└── Fiscal management
-
-Phase 2-8: Business Modules (20-25 days)
-├── COA, GST, Journal
-├── Invoicing, Banking
-├── Peppol, Reporting
-
-Phase 9: Integration (3-4 days)
-├── API testing
-├── Security audit
-└── Performance optimization
-```
+| Component | Files |
+|-----------|-------|
+| Models | `organisation.py`, `app_user.py`, `role.py`, `user_organisation.py` |
+| Services | `auth_service.py`, `organisation_service.py` |
+| Views | `auth.py`, `organisation.py` |
+| Tests | `test_auth.py`, `test_organisation.py` |
 
 ---
 
-## Technology Stack
-
-| Component | Technology | Version |
-|-----------|------------|---------|
-| Language | Python | 3.13+ |
-| Framework | Django | 5.2 LTS |
-| API | Django REST Framework | 3.15+ |
-| Auth | djangorestframework-simplejwt | 5.3+ |
-| Database | PostgreSQL | 16+ |
-| Cache/Broker | Redis | 7+ |
-| Tasks | Celery | 5.4+ |
-| Testing | pytest-django | 4.8+ |
-
----
-
-## Key Architectural Decisions
-
-1. **Unmanaged Models**: Schema is DDL-managed, Django models use `managed = False`
-2. **RLS Security**: Multi-tenancy via PostgreSQL Row-Level Security
-3. **Service Layer**: Business logic in services/, thin views
-4. **Decimal Precision**: All money as `NUMERIC(10,4)` with `ROUND_HALF_UP`
-5. **Atomic Requests**: Every view in single transaction for RLS
-
----
-
-## Next Actions
-
-1. Create `pyproject.toml` with dependencies
-2. Initialize Django project structure
-3. Configure custom database backend
-4. Implement tenant context middleware
-5. Create base model classes
-6. Set up Docker Compose (PostgreSQL + Redis)
-7. Run database schema
-8. Begin Core Module development
-
----
-
-**Status**: Ready for Phase 0 Implementation
-**Updated**: 2026-02-24
+**Updated**: 2026-02-24  
+**Status**: Phase 0 Foundation - Core Infrastructure Complete
