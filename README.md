@@ -395,11 +395,12 @@ ledgersg/
 
 ---
 
-## ✅ Project Status: All Milestones Complete
+## ✅ Project Status
+
+### Frontend (Complete) ✅
 
 **LedgerSG Frontend v0.1.0** is production-ready with comprehensive testing, security hardening, and documentation.
 
-### Quick Stats
 | Metric | Value |
 |--------|-------|
 | Static Pages | 18 |
@@ -408,6 +409,20 @@ ledgersg/
 | Security Headers | 7 configured |
 | TypeScript Errors | 0 |
 | Build Status | ✅ Passing |
+
+### Backend (Planning Complete) 🚧
+
+Comprehensive 9-phase implementation plan ready with complete database schema v1.0.1.
+
+| Component | Status |
+|-----------|--------|
+| MASTER_EXECUTION_PLAN.md | ✅ 102KB detailed plan |
+| database_schema.sql | ✅ v1.0.1 (3,000+ lines) |
+| Schema Patches | ✅ 8 critical fixes applied |
+| Django Foundation | 🚧 Phase 0 ready |
+| Core Module (Auth/Org) | 🚧 Phase 1 ready |
+| Business Modules | 🚧 Phases 2-8 planned |
+| Integration Tests | 🚧 Phase 9 planned |
 
 ---
 
@@ -868,6 +883,58 @@ apps/web/src/
 
 ---
 
+## 🏗 Backend Architecture
+
+### Technology Stack
+
+| Layer | Technology | Purpose |
+|-------|------------|---------|
+| **Framework** | Django 5.2 LTS | Web framework |
+| **API** | Django REST Framework 3.15+ | REST API endpoints |
+| **Auth** | djangorestframework-simplejwt | JWT authentication |
+| **Database** | PostgreSQL 16+ | Primary data store |
+| **Cache/Queue** | Redis 7+ | Celery broker, caching |
+| **Tasks** | Celery 5.4+ | Async processing |
+| **Testing** | pytest-django | Unit/integration tests |
+
+### Design Principles
+
+| Principle | Implementation |
+|-----------|----------------|
+| **Unmanaged Models** | Django models use `managed = False` — schema is DDL-managed via SQL |
+| **Service Layer** | Business logic in `services/`, thin views as controllers |
+| **RLS Security** | Row-Level Security via PostgreSQL session variables |
+| **Decimal Precision** | All monetary values use `NUMERIC(10,4)` with `ROUND_HALF_UP` |
+| **Atomic Requests** | Every view runs in a single transaction for RLS consistency |
+
+### Database Schema
+
+```sql
+-- 7 schemas with logical separation
+CREATE SCHEMA core;      -- Organisation, users, roles, fiscal
+CREATE SCHEMA coa;       -- Chart of Accounts
+CREATE SCHEMA gst;       -- GST tax codes, rates, returns
+CREATE SCHEMA journal;   -- General Ledger (immutable)
+CREATE SCHEMA invoicing; -- Contacts, invoices, documents
+CREATE SCHEMA banking;   -- Bank accounts, payments
+CREATE SCHEMA audit;     -- Immutable audit trail
+```
+
+### Module Structure
+
+```
+apps/
+├── core/           # Auth, Organisation, Users, Fiscal
+├── coa/            # Chart of Accounts
+├── gst/            # Tax codes, GST calculation, F5 returns
+├── journal/        # General Ledger entries
+├── invoicing/      # Contacts, invoices, documents
+├── banking/        # Bank accounts, payments
+└── peppol/         # InvoiceNow integration
+```
+
+---
+
 ## 🔒 Security
 
 ### Security Features
@@ -879,6 +946,7 @@ apps/web/src/
 | **CSP** | Next.js headers + Django Middleware | Prevent content injection |
 | **HSTS** | Next.js headers | Enforce HTTPS connections |
 | **X-Frame-Options** | Next.js headers | Prevent clickjacking |
+| **RLS** | PostgreSQL Row-Level Security | Multi-tenant data isolation |
 | **Password Hashing** | Argon2 (Django 6.0 Default) | Stronger than PBKDF2 |
 | **Rate Limiting** | Django Ratelimit | Prevent brute force |
 | **Data Encryption** | PostgreSQL pgcrypto | Encrypt sensitive fields |
