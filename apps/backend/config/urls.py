@@ -93,6 +93,12 @@ try:
 except ImportError:
     pass
 
+try:
+    from apps.invoicing import urls as invoicing_urls
+    org_scoped_urlpatterns.append(path("invoicing/", include("apps.invoicing.urls")))
+except ImportError:
+    pass
+
 
 urlpatterns = [
     # Health check

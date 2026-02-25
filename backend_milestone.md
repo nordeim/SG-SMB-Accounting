@@ -664,3 +664,99 @@ Backend Status:
 
 Ready for Phase 2C (Invoicing) or Phase 3 (Integration Testing)?
 
+---
+
+• ✅ Phase 2C: Invoicing Module - Complete
+
+Files Created (1,592 lines total)
+
+ File                                     Lines   Purpose
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ invoicing/services/contact_service.py    313     Contact CRUD, UEN validation, Peppol ID
+ invoicing/services/document_service.py   528     Document lifecycle, sequencing, status workflow
+ invoicing/serializers.py                 242     Serializers for Contact, InvoiceDocument, InvoiceLine
+ invoicing/views.py                       454     API views for all invoicing endpoints
+ invoicing/urls.py                        40      URL routing for invoicing module
+
+Document Types & Status Workflow
+
+Document Types:
+
+• INVOICE - Customer invoice (INV-00001)
+• CREDIT_NOTE - Credit memo (CN-00001)
+• DEBIT_NOTE - Debit memo (DN-00001)
+• QUOTE - Sales quote (QUO-00001)
+
+Status Transitions:
+
+DRAFT → SENT → APPROVED → PAID_PARTIAL → PAID
+  ↓       ↓        ↓           ↓
+VOIDED  VOIDED   VOIDED      VOIDED
+
+Key Features
+
+ContactService:
+
+• UEN validation (Singapore formats)
+• Peppol ID validation for e-invoicing
+• Customer/Supplier dual classification
+• Open invoice check before deactivation
+
+DocumentService:
+
+• PostgreSQL sequence-based numbering (race-condition safe)
+• Line-level GST calculation via GSTCalculationService
+• BCRS deposit exemption support
+• Quote → Invoice conversion
+• Journal posting hooks (integration with Journal module)
+• Void reversal support
+
+API Endpoints Summary
+
+ Endpoint                                     Method             Permission
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ /invoicing/contacts/                         GET/POST           IsOrgMember
+ /invoicing/contacts/{id}/                    GET/PATCH/DELETE   IsOrgMember
+ /invoicing/documents/                        GET/POST           IsOrgMember / CanCreateInvoices
+ /invoicing/documents/summary/                GET                IsOrgMember + CanViewReports
+ /invoicing/documents/status-transitions/     GET                IsAuthenticated
+ /invoicing/documents/{id}/                   GET/PATCH          IsOrgMember / CanCreateInvoices
+ /invoicing/documents/{id}/status/            POST               IsOrgMember + CanApproveInvoices
+ /invoicing/documents/{id}/lines/             POST               IsOrgMember + CanCreateInvoices
+ /invoicing/documents/{id}/lines/{line_id}/   DELETE             IsOrgMember + CanCreateInvoices
+ /invoicing/quotes/convert/                   POST               IsOrgMember + CanCreateInvoices
+
+---
+📊 Backend Implementation Status
+
+ Phase                        Status        Files         Lines
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ Phase 0: Django Foundation   ✅ Complete   35            ~2,500
+ Phase 1: Auth System         ✅ Complete   8 endpoints   ~800
+ Phase 2A: CoA Module         ✅ Complete   4 files       1,045
+ Phase 2B: GST Module         ✅ Complete   6 files       1,962
+ Phase 2C: Invoicing Module   ✅ Complete   5 files       1,592
+ Total                                      50+ files     ~8,000+
+
+Available API Endpoints (35+ total)
+
+Authentication (6):
+
+• Register, Login, Logout, Refresh, Profile, Change Password
+
+Organisation (6):
+
+• List/Create, Detail/Update/Delete, GST Registration, Fiscal Years, Summary
+
+CoA (8):
+
+• Accounts CRUD, Search, Types, Hierarchy, Trial Balance, Balance
+
+GST (11):
+
+• Tax Codes CRUD, IRAS Info, Calculate, Returns, F5, File, Amend, Pay
+
+Invoicing (12):
+
+• Contacts CRUD, Documents CRUD, Status, Lines, Quote Convert, Summary
+
