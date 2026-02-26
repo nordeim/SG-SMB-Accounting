@@ -379,6 +379,7 @@ CREATE TABLE core.fiscal_year (
     closed_at           TIMESTAMPTZ,
     closed_by           UUID REFERENCES core.app_user(id),
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     CONSTRAINT chk_fy_dates CHECK (end_date > start_date),
     CONSTRAINT chk_fy_max_duration CHECK (end_date <= start_date + INTERVAL '18 months'),
@@ -404,6 +405,7 @@ CREATE TABLE core.fiscal_period (
     is_open             BOOLEAN NOT NULL DEFAULT TRUE,    -- Only open periods accept entries
     is_adjustment       BOOLEAN NOT NULL DEFAULT FALSE,   -- Period 13: year-end adjustments only
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     CONSTRAINT chk_period_number CHECK (period_number BETWEEN 1 AND 13),
     CONSTRAINT chk_period_dates CHECK (end_date >= start_date),
