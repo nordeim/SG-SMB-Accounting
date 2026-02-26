@@ -3,7 +3,7 @@
 > **Single Source of Truth** for coding agents and human developers  
 > **Version**: 1.0.2  
 > **Last Updated**: 2026-02-26  
-> **Status**: Production Ready ✅ (Architecture Validated)
+> **Status**: Integration Work Required ⚠️
 
 ---
 
@@ -31,10 +31,10 @@
 
 | Component | Version | Status | Key Metrics |
 |-----------|---------|--------|-------------|
-| **Frontend** | v0.1.0 | ✅ Production Ready | 18 static pages, 105 tests |
+| **Frontend** | v0.1.0 | ⚠️ Integration Needed | 18 static pages, 105 tests |
 | **Backend** | v0.3.1 | ✅ Production Ready | 53 API endpoints, schema hardened |
 | **Database** | v1.0.2 | ✅ Complete | 7 schemas, RLS enforced, 28 tables |
-| **Overall** | — | ✅ Core Platform Ready | WCAG AAA, IRAS Compliant |
+| **Overall** | — | ⚠️ Integration Pending | Auth ✅, Invoices ❌, Dashboard ❌
 
 ### Regulatory Foundation
 
@@ -500,6 +500,110 @@ npm run dev
 
 ---
 
+## 🔗 Frontend-Backend Integration
+
+> **Status**: ⚠️ Integration Work Required  
+> **Last Audit**: 2026-02-26
+
+This section documents the current state of frontend-backend API integration and identifies gaps that require resolution before full functionality.
+
+### Integration Status Overview
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| Authentication | ✅ Working | JWT flow matches |
+| Organisations | ✅ Working | Endpoints align |
+| Tax Codes | ✅ Working | GST API aligned |
+| Invoice API | ❌ Path Mismatch | See details below |
+| Contacts API | ❌ Path Mismatch | See details below |
+| Dashboard API | ❌ Does Not Exist | Backend stubs only |
+| Banking API | ❌ Does Not Exist | Stubs only |
+
+### API Endpoint Mismatches
+
+#### 1. Invoice Endpoints — CRITICAL
+
+| Frontend Expects | Backend Provides | Status |
+|-----------------|------------------|--------|
+| `/{orgId}/invoices/` | `/{orgId}/invoicing/documents/` | ❌ |
+| `/{orgId}/invoices/{id}/` | `/{orgId}/invoicing/documents/{id}/` | ❌ |
+| `/{orgId}/invoices/{id}/approve/` | — | ❌ Missing |
+| `/{orgId}/invoices/{id}/void/` | — | ❌ Missing |
+| `/{orgId}/invoices/{id}/pdf/` | — | ❌ Missing |
+| `/{orgId}/invoices/{id}/send/` | — | ❌ Missing |
+| `/{orgId}/invoices/{id}/send-invoicenow/` | — | ❌ Missing |
+| `/{orgId}/invoices/{id}/invoicenow-status/` | — | ❌ Missing |
+
+**Backend currently provides**:
+- `/{orgId}/invoicing/documents/` — List/create
+- `/{orgId}/invoicing/documents/{id}/` — Retrieve/update/delete
+- `/{orgId}/invoicing/documents/{id}/status/` — Status operations
+- `/{orgId}/invoicing/documents/{id}/lines/` — Line items
+
+**Required Fix**: Update `api-client.ts` to use backend paths, or add missing backend endpoints.
+
+#### 2. Contacts Endpoints — Path Mismatch
+
+| Frontend Expects | Backend Provides | Status |
+|-----------------|------------------|--------|
+| `/{orgId}/contacts/` | `/{orgId}/invoicing/contacts/` | ❌ |
+| `/{orgId}/contacts/{id}/` | `/{orgId}/invoicing/contacts/{id}/` | ❌ |
+
+**Required Fix**: Update `api-client.ts` contacts endpoint to use `/invoicing/contacts/`.
+
+#### 3. Dashboard Endpoints — Does Not Exist
+
+| Frontend Expects | Backend Provides | Status |
+|-----------------|------------------|--------|
+| `/{orgId}/dashboard/metrics/` | — | ❌ Missing |
+| `/{orgId}/dashboard/alerts/` | — | ❌ Missing |
+
+**Required Fix**: Implement dashboard backend endpoints.
+
+#### 4. Banking Endpoints — Stub Only
+
+| Frontend Expects | Backend Provides | Status |
+|-----------------|------------------|--------|
+| `/{orgId}/bank-accounts/` | — | ❌ Missing |
+| `/{orgId}/payments/` | — | ❌ Missing |
+| `/{orgId}/payments/receive/` | — | ❌ Missing |
+| `/{orgId}/payments/make/` | — | ❌ Missing |
+
+**Required Fix**: Implement full banking module.
+
+### Data Schema Differences
+
+| Field | Frontend Schema | Backend Serializer | Action |
+|-------|-----------------|-------------------|--------|
+| customer | Nested object | `contact_id` FK | Align |
+| status | DRAFT/SENT/PAID/OVERDUE | `document_status` choices | Document |
+| peppol_status | Various states | Different enum | Align |
+| invoice_number | Client-generated | Sequence-generated | Use backend |
+
+### Working Integrations
+
+These endpoints are correctly aligned:
+
+| Endpoint | Frontend Call | Backend Route | Status |
+|----------|--------------|----------------|--------|
+| Login | `POST /api/v1/auth/login/` | ✅ Matches | ✅ |
+| Logout | `POST /api/v1/auth/logout/` | ✅ Matches | ✅ |
+| Refresh | `POST /api/v1/auth/refresh/` | ✅ Matches | ✅ |
+| Me | `GET /api/v1/auth/me/` | ✅ Matches | ✅ |
+| Change Password | `POST /api/v1/auth/change-password/` | ✅ Matches | ✅ |
+| Tax Codes | `GET /api/v1/{orgId}/gst/tax-codes/` | ✅ Matches | ✅ |
+| Organisations | `GET /api/v1/organisations/` | ✅ Matches | ✅ |
+
+### Integration Fix Priority
+
+1. **P0 — Critical**: Fix API client paths for invoices and contacts
+2. **P1 — High**: Add missing invoice operation endpoints (approve, void, PDF, send)
+3. **P1 — High**: Implement dashboard backend endpoints
+4. **P2 — Medium**: Align data schemas between frontend and backend
+5. **P2 — Medium**: Implement banking module
+
+---
+
 ## 🔧 Troubleshooting
 
 ### Database Issues
@@ -547,6 +651,7 @@ source venv/bin/activate
 - **ACCOMPLISHMENTS.md**: Development milestones
 - **database-schema-design.md**: Full SQL schema documentation
 - **BACKEND_REMEDIATION_PLAN.md**: Known issues and fixes
+- **Comprehensive_Validation_Report.md**: Frontend-backend integration audit findings
 
 ---
 

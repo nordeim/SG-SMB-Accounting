@@ -277,3 +277,189 @@ Comprehensive single-source-of-truth document including:
 - Troubleshooting section
 
 The project is **production-ready** from an architectural and code quality standpoint. The codebase demonstrates exceptional fidelity between documentation and implementation.
+
+---
+
+# Frontend-Backend Integration Audit
+
+## Executive Summary
+
+I've completed a meticulous audit of the frontend-backend integration. The audit reveals **significant endpoint mismatches** between what the frontend expects and what the backend actually provides.
+
+---
+
+## 🚨 Critical Integration Issues
+
+### 1. Invoice API Endpoints - CRITICAL MISMATCH
+
+**Frontend expects** (`api-client.ts:168-177`):
+```
+/api/v1/{orgId}/invoices/
+/api/v1/{orgId}/invoices/{id}/
+/api/v1/{orgId}/invoices/{id}/approve/
+/api/v1/{orgId}/invoices/{id}/void/
+/api/v1/{orgId}/invoices/{id}/pdf/
+/api/v1/{orgId}/invoices/{id}/send/
+/api/v1/{orgId}/invoices/{id}/send-invoicenow/
+/api/v1/{orgId}/invoices/{id}/invoicenow-status/
+```
+
+**Backend actually provides** (`invoicing/urls.py`):
+```
+/api/v1/{orgId}/invoicing/documents/
+/api/v1/{orgId}/invoicing/documents/{id}/
+/api/v1/{orgId}/invoicing/documents/{id}/status/
+/api/v1/{orgId}/invoicing/documents/{id}/lines/
+/api/v1/{orgId}/invoicing/documents/{id}/lines/{lineId}/
+/api/v1/{orgId}/invoicing/quotes/convert/
+```
+
+**Missing on backend**:
+- ❌ `/approve/` endpoint
+- ❌ `/void/` endpoint  
+- ❌ `/pdf/` endpoint
+- ❌ `/send/` endpoint
+- ❌ `/send-invoicenow/` endpoint
+- ❌ `/invoicenow-status/` endpoint
+
+---
+
+### 2. Contacts API Endpoints - PATH MISMATCH
+
+**Frontend expects** (`api-client.ts:180-183`):
+```
+/api/v1/{orgId}/contacts/
+/api/v1/{orgId}/contacts/{id}/
+```
+
+**Backend provides**:
+```
+/api/v1/{orgId}/invoicing/contacts/
+/api/v1/{orgId}/invoicing/contacts/{id}/
+```
+
+---
+
+### 3. Dashboard API Endpoints - DOES NOT EXIST
+
+**Frontend expects** (`api-client.ts:186-189`):
+```
+/api/v1/{orgId}/dashboard/metrics/
+/api/v1/{orgId}/dashboard/alerts/
+```
+
+**Backend provides**:
+- ❌ **NO DASHBOARD ENDPOINTS EXIST**
+
+The dashboard hook (`use-dashboard.ts:52`) calls `/gst/f5-compute/` which also doesn't exist.
+
+---
+
+### 4. Banking API Endpoints - STUB ONLY
+
+**Frontend expects** (`api-client.ts:192-197`):
+```
+/api/v1/{orgId}/bank-accounts/
+/api/v1/{orgId}/payments/
+/api/v1/{orgId}/payments/receive/
+/api/v1/{orgId}/payments/make/
+```
+
+**Backend provides**:
+- ❌ **NO BANKING ENDPOINTS** (banking module is stubs only)
+
+---
+
+### 5. Auth Endpoints - MATCHES ✅
+
+**Frontend expects** (`api-client.ts:152-158`):
+```
+/api/v1/auth/login/
+/api/v1/auth/logout/
+/api/v1/auth/refresh/
+/api/v1/auth/me/
+/api/v1/auth/change-password/
+```
+
+**Backend provides** - All match ✅
+
+---
+
+### 6. Data Structure Differences
+
+**Invoice Schema Mismatches**:
+
+| Field | Frontend | Backend |
+|-------|----------|---------|
+| customer | nested object | separate contact_id |
+| status | DRAFT/SENT/PAID/OVERDUE/VOID | Uses document_status choices |
+| peppol_status | NOT_REQUIRED/PENDING/SENT/ACCEPTED/REJECTED | Different enum |
+| invoice_number | Generated client-side | Generated via sequence |
+
+---
+
+## 🔧 Required Fixes
+
+### Priority 1: Fix API Client Endpoints
+
+Update `api-client.ts` to match backend:
+
+```typescript
+// Change from:
+invoices: (orgId: string) => ({
+  list: `/api/v1/${orgId}/invoices/`,
+  // ...
+}),
+
+// To:
+invoices: (orgId: string) => ({
+  list: `/api/v1/${orgId}/invoicing/documents/`,
+  detail: (id: string) => `/api/v1/${orgId}/invoicing/documents/${id}/`,
+  // Remove endpoints that don't exist
+}),
+
+// Change contacts:
+contacts: (orgId: string) => ({
+  list: `/api/v1/${orgId}/invoicing/contacts/`,
+  detail: (id: string) => `/api/v1/${orgId}/invoicing/contacts/${id}/`,
+}),
+```
+
+### Priority 2: Add Missing Backend Endpoints
+
+The backend needs these endpoints for full integration:
+1. Invoice approve/void operations
+2. PDF generation
+3. Email sending
+4. InvoiceNow (Peppol) transmission
+5. Dashboard metrics
+6. Dashboard alerts
+
+### Priority 3: Align Data Schemas
+
+Frontend and backend invoice schemas need alignment.
+
+---
+
+## ✅ Working Integrations
+
+- JWT authentication flow (15min access/7d refresh) ✅
+- Auth endpoints (login, logout, refresh, me, change-password) ✅
+- Organisation listing ✅
+- Tax codes API ✅
+- GST calculations ✅
+
+---
+
+## Summary
+
+| Category | Status |
+|----------|--------|
+| Auth Integration | ✅ Working |
+| Invoice API | ❌ Path mismatch + missing endpoints |
+| Contacts API | ❌ Path mismatch |
+| Dashboard API | ❌ Does not exist |
+| Banking API | ❌ Does not exist |
+| Data Schemas | ⚠️ Need alignment |
+
+**The frontend and backend require significant integration work before the application will function correctly.**
