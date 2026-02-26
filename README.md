@@ -412,7 +412,7 @@ ledgersg/
 
 ### Backend (Production Ready) ✅
 
-**LedgerSG Backend v0.2.0** — All core business modules implemented with 53 API endpoints.
+**LedgerSG Backend v0.3.1** — All core business modules implemented with 53 API endpoints, plus comprehensive database hardening.
 
 | Component | Status | Details |
 |-----------|--------|---------|
@@ -423,7 +423,8 @@ ledgersg/
 | Invoicing Module | ✅ Phase 2C | 12 endpoints, documents, contacts |
 | Journal Module | ✅ Phase 2D | 8 endpoints, double-entry, reversals |
 | Integration Tests | ✅ Phase 3 | 51 tests, API, Security, Workflows |
-| **Total** | **53 Endpoints** | **75+ files, ~12,000 lines, 51 tests** |
+| Database Hardening | ✅ Phase 4 | Schema audit, 15+ patches, 100% org API tests |
+| **Total** | **53 Endpoints** | **85+ files, ~12,500 lines, 51+ tests** |
 
 | Metric | Value |
 |--------|-------|
@@ -431,7 +432,9 @@ ledgersg/
 | Service Files | 6 |
 | Models | 14 |
 | Lines of Code | ~9,800+ |
-| Integration Tests | 51 (Phase 3 Complete) |
+| Integration Tests | 51+ (Phase 3 & 4 Complete) |
+| Organisation API Tests | 13/13 (100% Passing) |
+| Schema Patches | 15+ columns, 4 constraints |
 | Test Coverage | API, Security, Workflows |
 | Documentation | ✅ Complete |
 

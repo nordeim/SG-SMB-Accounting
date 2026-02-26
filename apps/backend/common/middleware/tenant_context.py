@@ -21,8 +21,11 @@ from typing import Optional
 from django.db import connection
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.core.cache import cache
+from django.contrib.auth import get_user_model
 
 from common.exceptions import UnauthorizedOrgAccess
+
+User = get_user_model()
 
 
 # Contextvars for application-layer access
@@ -59,9 +62,15 @@ class TenantContextMiddleware:
         if not self._is_org_scoped(request.path):
             return self.get_response(request)
         
+        # Try to authenticate user if not already authenticated
+        user = self._get_authenticated_user(request)
+        
         # Skip for unauthenticated users (let view handle auth)
-        if not request.user or not request.user.is_authenticated:
+        if not user or not user.is_authenticated:
             return self.get_response(request)
+        
+        # Set user on request for downstream use
+        request.user = user
         
         try:
             # Extract org_id from URL
@@ -72,7 +81,7 @@ class TenantContextMiddleware:
                 return self.get_response(request)
             
             # Verify user belongs to this org
-            if not self._verify_org_membership(request.user, org_id):
+            if not self._verify_org_membership(user, org_id):
                 return JsonResponse(
                     {
                         "error": {
@@ -172,6 +181,35 @@ class TenantContextMiddleware:
             return uuid.UUID(org_id_str)
         except (ValueError, IndexError):
             return None
+    
+    def _get_authenticated_user(self, request: HttpRequest) -> Optional[User]:
+        """
+        Get authenticated user from request.
+        
+        First checks request.user (set by Django's AuthenticationMiddleware).
+        If not authenticated, tries JWT authentication from Authorization header.
+        
+        Returns:
+            User instance if authenticated, None otherwise
+        """
+        # Check if user is already authenticated by Django's middleware
+        if hasattr(request, 'user') and request.user is not None and request.user.is_authenticated:
+            return request.user
+        
+        # Try JWT authentication from Authorization header
+        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+        if auth_header.startswith('Bearer '):
+            token = auth_header[7:]  # Remove 'Bearer ' prefix
+            try:
+                from rest_framework_simplejwt.tokens import AccessToken
+                access_token = AccessToken(token)
+                user_id = access_token['user_id']
+                return User.objects.get(id=user_id)
+            except Exception:
+                # Invalid token - let the view handle it
+                pass
+        
+        return None
     
     def _verify_org_membership(self, user, org_id: uuid.UUID) -> bool:
         """

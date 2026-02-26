@@ -64,7 +64,7 @@ def test_create_organisation_success(auth_client, test_user):
     assert org.base_currency == "SGD"
     
     # Verify user is Owner
-    membership = org.user_organisations.filter(user=test_user).first()
+    membership = org.user_memberships.filter(user=test_user).first()
     assert membership is not None
     assert membership.role.name == "Owner"
 
@@ -86,11 +86,13 @@ def test_get_organisation_detail_success(auth_client, test_organisation):
 def test_get_organisation_detail_not_member(auth_client):
     """Test getting org details when not a member fails."""
     # Create org without adding user
+    import uuid
     from apps.core.models import Organisation
     other_org = Organisation.objects.create(
         name="Other Org",
         legal_name="Other Org Pte Ltd",
-        base_currency="SGD"
+        base_currency="SGD",
+        uen=f"UEN{uuid.uuid4().hex[:8]}".upper()
     )
     
     url = f"/api/v1/{other_org.id}/"

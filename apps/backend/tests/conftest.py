@@ -90,11 +90,14 @@ def test_organisation(test_user) -> Organisation:
     )
     
     # Assign user as Owner
+    from datetime import datetime
     UserOrganisation.objects.create(
         user=test_user,
         org=org,
         role=owner_role,
         is_default=True,
+        invited_at=datetime.now(),
+        accepted_at=datetime.now(),
     )
     
     return org

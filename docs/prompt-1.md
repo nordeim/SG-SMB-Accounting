@@ -27,3 +27,7 @@ Awesome job on your meticulous research, analysis and planning. Please keep up t
 ---
 
 please meticulously review @README.md , @ACCOMPLISHMENTS.md , @BACKEND_STATUS.md and @BACKEND_EXECUTION_PLAN.md to have a deep understanding of the project and its codebase design and architecture, then meticulously validate your deep understanding against the codebase.
+
+---
+
+please meticulously review the project documents @CLAUDE.md , @README.md , @ACCOMPLISHMENTS.md , @code_review_backend.md , @BACKEND_REMEDIATION_PLAN.md , @database-schema-design.md to have a deep understanding of the project and its codebase design and architecture, then meticulously and systematically validate your deep understanding against the actual codebase.

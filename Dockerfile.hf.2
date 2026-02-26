@@ -1,3 +1,4 @@
+# LedgerSG API Dockerfile
 # Optimized for Hugging Face Spaces (Single-Stage, Non-Root, Persistent Services)
 # Database Configuration: PostgreSQL (ledgersg_dev) + Redis (localhost:6379)
 FROM python:3.13-trixie
@@ -13,7 +14,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV APP_PORT=7860
 ENV XDG_RUNTIME_DIR=/tmp/runtime-user
 ENV PATH="/home/user/.local/bin:/usr/local/bin:${PATH}"
-ENV PGDATA=/var/lib/postgresql/data
+
+# CRITICAL: Use /data for PostgreSQL (persistent & user-writable)
+ENV PGDATA=/data/postgresql
 ENV PGHOST=/tmp
 ENV PGPORT=5432
 
@@ -41,8 +44,6 @@ RUN apt-get update && apt-get install -y \
 # ──────────────────────────────────────────────────────────────────────────────
 # 3. Toolchain Installation (UV, Bun)
 # ──────────────────────────────────────────────────────────────────────────────
-# SECURITY NOTE: Downloading binaries from raw GitHub URLs is a supply-chain risk.
-# Ensure you trust the source 'nordeim/HF-Space'.
 RUN cd /usr/bin && \
     wget -q https://github.com/nordeim/HF-Space/raw/refs/heads/main/bun && \
     wget -q https://github.com/nordeim/HF-Space/raw/refs/heads/main/uv && \
@@ -59,10 +60,9 @@ RUN pip install --upgrade pip && \
     pip install fastapi uvicorn httpx pydantic python-multipart sqlalchemy alembic aiofiles jinja2
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 5. Node.js Installation (Corrected to LTS 20.x)
+# 5. Node.js Installation (LTS 20.x)
 # ──────────────────────────────────────────────────────────────────────────────
-# Node 24.x does not exist. Using 20.x LTS for stability with Next.js/Tooling.
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && \
     apt-get install -y nodejs && \
     rm -rf /var/lib/apt/lists/* && \
     node --version && \
@@ -75,8 +75,11 @@ RUN groupadd -g 1000 user && \
     useradd -m -u 1000 -g user -d /home/user user && \
     echo "user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/user && \
     chmod 0440 /etc/sudoers.d/user && \
-    mkdir -p ${XDG_RUNTIME_DIR} /data /app /var/run/postgresql && \
-    chown -R user:user ${XDG_RUNTIME_DIR} /data /app /var/run/postgresql
+    # Create ALL required directories
+    mkdir -p ${XDG_RUNTIME_DIR} /data /app /var/run/postgresql /data/postgresql && \
+    # CRITICAL FIX: Own ALL postgres-related directories
+    chown -R user:user ${XDG_RUNTIME_DIR} /data /app /var/run/postgresql /var/lib/postgresql && \
+    chmod 700 /data/postgresql
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 7. Global NPM & Playwright
@@ -88,7 +91,6 @@ RUN npm install -g --omit=dev pnpm@latest vite@latest vitest@latest && \
 # ──────────────────────────────────────────────────────────────────────────────
 # 8. Database & Server Bootstrap Scripts (Embedded)
 # ──────────────────────────────────────────────────────────────────────────────
-# Create a minimal FastAPI app to satisfy Healthcheck & Keep-Alive
 RUN mkdir -p /app/core && \
     chown -R user:user /app
 
@@ -113,21 +115,27 @@ if __name__ == "__main__":
 EOF
 
 # Create Entrypoint Script to manage Postgres, Redis, and Web Server
+# CRITICAL: Uses sudo instead of su for passwordless execution
 COPY <<EOF /usr/local/bin/entrypoint.sh
 #!/bin/bash
 set -e
 
 echo "=== LedgerSG Development Space Starting ==="
 
-# Ensure Postgres data directory exists and is owned by user
+# Ensure PostgreSQL data directory exists and is owned by user
 mkdir -p \$PGDATA
 chown -R user:user \$PGDATA
-chown -R user:user /var/run/postgresql
+chmod 700 \$PGDATA
 
-# Initialize Postgres if not exists (as user)
+# Ensure PostgreSQL socket directory is accessible
+mkdir -p /var/run/postgresql
+chown -R user:user /var/run/postgresql
+chmod 777 /var/run/postgresql
+
+# Initialize Postgres if not exists (as user via sudo)
 if [ ! -f "\$PGDATA/PG_VERSION" ]; then
-    echo "Initializing PostgreSQL cluster..."
-    su - user -c "initdb -D \$PGDATA"
+    echo "Initializing PostgreSQL cluster at \$PGDATA..."
+    sudo -u user initdb -D \$PGDATA
     
     # Configure PostgreSQL for password authentication
     echo "Configuring PostgreSQL authentication..."
@@ -141,22 +149,22 @@ host    all             all             ::1/128                 md5
 PGHBA
 
     # Configure listen addresses
-    sed -i "s/#listen_addresses = 'localhost'/listen_addresses = 'localhost'/" \$PGDATA/postgresql.conf
     echo "listen_addresses = 'localhost'" >> \$PGDATA/postgresql.conf
+    echo "port = 5432" >> \$PGDATA/postgresql.conf
 fi
 
 # Start Redis in background
 echo "Starting Redis on port 6379..."
 redis-server --daemonize yes
 
-# Start Postgres in background (as user)
+# Start Postgres in background (as user via sudo)
 echo "Starting PostgreSQL on port 5432..."
-su - user -c "pg_ctl -D \$PGDATA -l /tmp/postgres.log start"
+sudo -u user pg_ctl -D \$PGDATA -l /tmp/postgres.log start
 
 # Wait for Postgres to be ready
 echo "Waiting for PostgreSQL to accept connections..."
 for i in {1..30}; do
-    if su - user -c "pg_isready -h localhost -p 5432" > /dev/null 2>&1; then
+    if sudo -u user pg_isready -h localhost -p 5432 > /dev/null 2>&1; then
         echo "✓ PostgreSQL is ready"
         break
     fi
@@ -170,12 +178,14 @@ done
 
 # Create database user and database if not exists
 echo "Setting up database user and database..."
-su - user -c "psql -h localhost -p 5432 -d postgres -c \"SELECT 1 FROM pg_roles WHERE rolname='\$DB_USER'\" | grep -q 1 || psql -h localhost -p 5432 -d postgres -c \"CREATE ROLE \$DB_USER WITH LOGIN PASSWORD '\$DB_PASSWORD';\""
+sudo -u user psql -h localhost -p 5432 -d postgres -c "SELECT 1 FROM pg_roles WHERE rolname='\$DB_USER'" | grep -q 1 || \
+sudo -u user psql -h localhost -p 5432 -d postgres -c "CREATE ROLE \$DB_USER WITH LOGIN PASSWORD '\$DB_PASSWORD';"
 
-su - user -c "psql -h localhost -p 5432 -d postgres -c \"SELECT 1 FROM pg_database WHERE datname='\$DB_NAME'\" | grep -q 1 || psql -h localhost -p 5432 -d postgres -c \"CREATE DATABASE \$DB_NAME OWNER \$DB_USER;\""
+sudo -u user psql -h localhost -p 5432 -d postgres -c "SELECT 1 FROM pg_database WHERE datname='\$DB_NAME'" | grep -q 1 || \
+sudo -u user psql -h localhost -p 5432 -d postgres -c "CREATE DATABASE \$DB_NAME OWNER \$DB_USER;"
 
 # Grant all privileges
-su - user -c "psql -h localhost -p 5432 -d \$DB_NAME -c \"GRANT ALL PRIVILEGES ON DATABASE \$DB_NAME TO \$DB_USER;\""
+sudo -u user psql -h localhost -p 5432 -d \$DB_NAME -c "GRANT ALL PRIVILEGES ON DATABASE \$DB_NAME TO \$DB_USER;"
 
 echo "✓ Database setup complete: \$DB_NAME (user: \$DB_USER)"
 
@@ -188,9 +198,9 @@ else
     exit 1
 fi
 
-# Execute the main command (Web Server)
+# Execute the main command (Web Server) AS USER
 echo "=== Starting Web Server on port \$APP_PORT ==="
-exec "\$@"
+exec sudo -u user "\$@"
 EOF
 
 RUN chmod +x /usr/local/bin/entrypoint.sh && \
@@ -199,7 +209,8 @@ RUN chmod +x /usr/local/bin/entrypoint.sh && \
 # ──────────────────────────────────────────────────────────────────────────────
 # 9. Finalization
 # ──────────────────────────────────────────────────────────────────────────────
-USER user
+# CRITICAL: Do NOT switch to user here - entrypoint handles it
+# USER user  ← REMOVED - entrypoint runs as root, switches user for web server
 WORKDIR /app
 COPY --chown=user:user . /app
 

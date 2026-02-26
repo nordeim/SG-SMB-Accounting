@@ -64,6 +64,10 @@ def create_organisation(
     Returns:
         Created Organisation instance
     """
+    # Set default entity_type if empty
+    if not entity_type:
+        entity_type = "PRIVATE_LIMITED"
+    
     with transaction.atomic():
         # Create organisation
         org = Organisation.objects.create(
@@ -79,11 +83,8 @@ def create_organisation(
             **kwargs
         )
         
-        # Seed Chart of Accounts via PostgreSQL function
+        # Seed Chart of Accounts via PostgreSQL function (includes document sequences)
         _seed_chart_of_accounts(org.id, gst_registered)
-        
-        # Create document sequences
-        _create_document_sequences(org.id)
         
         # Create first fiscal year
         _create_first_fiscal_year(org, fy_start_month)
@@ -131,9 +132,9 @@ def _create_document_sequences(org_id: uuid.UUID) -> None:
                 """
                 INSERT INTO core.document_sequence (
                     id, org_id, document_type, prefix, next_number, 
-                    padding_width, is_active, created_at, updated_at
+                    padding, fiscal_year_reset, created_at, updated_at
                 ) VALUES (
-                    gen_random_uuid(), %s, %s, %s, %s, 5, true, NOW(), NOW()
+                    gen_random_uuid(), %s, %s, %s, %s, 5, false, NOW(), NOW()
                 )
                 """,
                 [str(org_id), doc_type, prefix, start_num]

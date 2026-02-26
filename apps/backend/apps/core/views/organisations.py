@@ -32,7 +32,6 @@ from apps.core.models import (
     FiscalYear,
     FiscalPeriod,
     Account,
-    DocumentSequence,
 )
 from common.exceptions import ValidationError, DuplicateResource, UnauthorizedOrgAccess
 from common.views import wrap_response
@@ -50,7 +49,7 @@ class OrganisationListCreateView(APIView):
     def get(self, request) -> Response:
         """List organisations where user is a member."""
         orgs = Organisation.objects.filter(
-            user_organisations__user=request.user
+            user_memberships__user=request.user
         ).distinct()
         
         serializer = OrganisationSerializer(orgs, many=True)
@@ -94,9 +93,9 @@ class OrganisationDetailView(APIView):
         
         # Add additional data
         data = serializer.data
-        data["member_count"] = org.user_organisations.count()
-        data["fiscal_year_count"] = org.fiscal_years.count()
-        data["account_count"] = org.accounts.filter(is_system=False).count()
+        data["member_count"] = org.user_memberships.count()
+        data["fiscal_year_count"] = org.fiscalyear_set.count()
+        data["account_count"] = org.account_set.filter(is_system=False).count()
         
         return Response(data)
     
@@ -250,7 +249,7 @@ class OrganisationSummaryView(APIView):
         ).count()
         
         # Get member count
-        member_count = org.user_organisations.count()
+        member_count = org.user_memberships.count()
         
         return Response({
             "organisation": OrganisationSerializer(org).data,

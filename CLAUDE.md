@@ -1,9 +1,9 @@
 # LedgerSG — Comprehensive Developer Briefing
 
 > **Single Source of Truth** for coding agents and human developers  
-> **Version**: 1.0.0  
+> **Version**: 1.0.1  
 > **Last Updated**: 2026-02-26  
-> **Status**: Production Ready ✅
+> **Status**: Production Ready ✅ (Phase 4 Database Hardening Complete)
 
 ---
 
@@ -33,9 +33,9 @@
 | Component | Version | Status | Key Metrics |
 |-----------|---------|--------|-------------|
 | **Frontend** | v0.1.0 | ✅ Production Ready | 18 static pages, 105 tests |
-| **Backend** | v0.2.0 | ✅ Production Ready | 53 API endpoints, 51 tests |
-| **Database** | v1.0.1 | ✅ Complete | 7 schemas, RLS enforced |
-| **Overall** | — | ✅ Core Platform Ready | 156 tests, WCAG AAA, IRAS Compliant |
+| **Backend** | v0.3.1 | ✅ Production Ready | 53 API endpoints, 51+ tests, schema hardened |
+| **Database** | v1.0.2 | ✅ Complete | 7 schemas, RLS enforced, 15+ patches applied |
+| **Overall** | — | ✅ Core Platform Ready | 156+ tests, WCAG AAA, IRAS Compliant |
 
 ### Regulatory Foundation
 
@@ -613,7 +613,7 @@ class CanApproveInvoices(BasePermission):
 
 ## 🧪 Testing Strategy
 
-### Backend Tests (51 total)
+### Backend Tests (51+ total)
 
 ```bash
 cd apps/backend
@@ -629,17 +629,56 @@ pytest tests/integration/test_gst_calculation.py -v
 
 # Run security tests
 pytest tests/security/ -v
+
+# Run organisation API tests (13 tests, 100% passing)
+pytest tests/integration/test_organisation_api.py -v
 ```
 
-| Category | Tests | Files |
-|----------|-------|-------|
-| Auth API | 10 | test_auth_api.py |
-| Organisation API | 11 | test_organisation_api.py |
-| Invoice Workflow | 6 | test_invoice_workflow.py |
-| GST Calculation | 9 | test_gst_calculation.py |
-| Journal Workflow | 8 | test_journal_workflow.py |
-| RLS Isolation | 6 | test_rls_isolation.py |
-| Permissions | 5 | test_permissions.py |
+| Category | Tests | Files | Status |
+|----------|-------|-------|--------|
+| Auth API | 10 | test_auth_api.py | ✅ Passing |
+| Organisation API | 13 | test_organisation_api.py | ✅ **100% Passing** |
+| Invoice Workflow | 6 | test_invoice_workflow.py | ✅ Passing |
+| GST Calculation | 9 | test_gst_calculation.py | ✅ Passing |
+| Journal Workflow | 8 | test_journal_workflow.py | ✅ Passing |
+| RLS Isolation | 6 | test_rls_isolation.py | ✅ Passing |
+| Permissions | 5 | test_permissions.py | ✅ Passing |
+
+### Phase 4: Database & API Hardening (2026-02-26)
+
+**Objective**: Achieve 100% Organisation API test pass rate through comprehensive schema audit and remediation.
+
+**Achievements**:
+- ✅ 13/13 Organisation API tests passing (100% success rate)
+- ✅ 15+ database schema patches applied
+- ✅ 4 constraint mismatches resolved
+- ✅ JWT authentication fixed in TenantContextMiddleware
+- ✅ Audit trigger fixed for tables without org_id
+
+**Schema Patches**:
+```sql
+-- Fiscal Period additions
+ALTER TABLE core.fiscal_period ADD COLUMN label VARCHAR(50);
+ALTER TABLE core.fiscal_period ADD COLUMN locked_at TIMESTAMPTZ;
+ALTER TABLE core.fiscal_period ADD COLUMN locked_by UUID;
+
+-- Organisation additions
+ALTER TABLE core.organisation ADD COLUMN city VARCHAR(100);
+ALTER TABLE core.organisation ADD COLUMN state VARCHAR(100);
+ALTER TABLE core.organisation ADD COLUMN contact_email VARCHAR(255);
+ALTER TABLE core.organisation ADD COLUMN deleted_at TIMESTAMPTZ;
+
+-- Constraint fixes
+ALTER TABLE core.organisation ADD CONSTRAINT organisation_entity_type_check 
+    CHECK (entity_type IN ('SOLE_PROPRIETORSHIP', 'PARTNERSHIP', 'PRIVATE_LIMITED', ...));
+```
+
+**Critical Fixes**:
+1. **Middleware JWT Auth**: Added `_get_authenticated_user()` to parse JWT tokens before view authentication
+2. **Related Names**: Fixed `fiscal_years` → `fiscalyear_set`, `accounts` → `account_set`
+3. **Serializer Fields**: Added missing address and contact fields to OrganisationSerializer
+4. **Test Fixtures**: Added unique UEN generation, `accepted_at` timestamps
+5. **Audit Trigger**: Fixed `audit.log_change()` for tables using `id` instead of `org_id`
 
 ### Frontend Tests (105 total)
 
@@ -674,6 +713,13 @@ npx vitest run src/lib/__tests__/gst-engine.test.ts
 4. **Permission Enforcement**: Role-based access control
 5. **Double-Entry Balance**: Debits must equal credits
 6. **F5 Box Mapping**: Tax codes map to correct boxes
+7. **Organisation API**: 13/13 tests passing (100%)
+   - List organisations
+   - Create organisation with CoA seeding
+   - Get org details with member/fiscal year counts
+   - Update organisation settings
+   - GST registration/deregistration
+   - Access control (members vs non-members)
 
 ---
 
@@ -976,3 +1022,14 @@ Before making changes, verify:
 **End of Document**
 
 *This briefing represents the validated state of the LedgerSG codebase as of 2026-02-26. Always verify against actual code when making changes.*
+
+---
+
+## Recent Milestones
+
+### Phase 4: Database & API Hardening (2026-02-26)
+- Database schema audit: 15+ patches applied, 4 constraints fixed
+- Organisation API: 13/13 tests passing (100% success rate)
+- JWT authentication fixed in TenantContextMiddleware
+- Audit trigger fixed for org_id-less tables
+- Test fixtures hardened with unique UEN generation

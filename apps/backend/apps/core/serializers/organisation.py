@@ -29,6 +29,8 @@ class OrganisationSerializer(serializers.ModelSerializer):
             "gst_registered", "gst_reg_number", "gst_reg_date",
             "peppol_participant_id", "invoicenow_enabled",
             "fy_start_month", "base_currency", "is_active",
+            "address_line_1", "address_line_2", "city", "postal_code", "country",
+            "contact_email", "contact_phone",
             "created_at", "updated_at"
         ]
         read_only_fields = ["id", "created_at", "updated_at"]

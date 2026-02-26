@@ -65,6 +65,14 @@ def api_root(request):
 # Org-scoped URLs - will be expanded as modules are built
 org_scoped_urlpatterns = []
 
+# Core module org-scoped URLs (org detail, gst, fiscal-years, summary)
+try:
+    from apps.core.urls import org_scoped_urlpatterns as core_org_urls
+    # Include core org-scoped URLs at root of org_id path
+    org_scoped_urlpatterns.append(path("", include(core_org_urls)))
+except ImportError:
+    pass
+
 # Try to include app URLs if they exist
 try:
     from apps.coa import urls as coa_urls
