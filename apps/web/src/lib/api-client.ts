@@ -164,22 +164,23 @@ export const endpoints = {
     settings: (id: string) => `/api/v1/${id}/settings/`,
   },
 
-  // Invoices (org-scoped)
+  // Invoices (org-scoped) - Aligned with backend: /invoicing/documents/
   invoices: (orgId: string) => ({
-    list: `/api/v1/${orgId}/invoices/`,
-    detail: (id: string) => `/api/v1/${orgId}/invoices/${id}/`,
-    approve: (id: string) => `/api/v1/${orgId}/invoices/${id}/approve/`,
-    void: (id: string) => `/api/v1/${orgId}/invoices/${id}/void/`,
-    pdf: (id: string) => `/api/v1/${orgId}/invoices/${id}/pdf/`,
-    send: (id: string) => `/api/v1/${orgId}/invoices/${id}/send/`,
-    sendInvoiceNow: (id: string) => `/api/v1/${orgId}/invoices/${id}/send-invoicenow/`,
-    invoiceNowStatus: (id: string) => `/api/v1/${orgId}/invoices/${id}/invoicenow-status/`,
+    list: `/api/v1/${orgId}/invoicing/documents/`,
+    detail: (id: string) => `/api/v1/${orgId}/invoicing/documents/${id}/`,
+    // Phase 2: These endpoints will be implemented in the backend
+    approve: (id: string) => `/api/v1/${orgId}/invoicing/documents/${id}/approve/`,
+    void: (id: string) => `/api/v1/${orgId}/invoicing/documents/${id}/void/`,
+    pdf: (id: string) => `/api/v1/${orgId}/invoicing/documents/${id}/pdf/`,
+    send: (id: string) => `/api/v1/${orgId}/invoicing/documents/${id}/send/`,
+    sendInvoiceNow: (id: string) => `/api/v1/${orgId}/invoicing/documents/${id}/send-invoicenow/`,
+    invoiceNowStatus: (id: string) => `/api/v1/${orgId}/invoicing/documents/${id}/invoicenow-status/`,
   }),
 
-  // Contacts (org-scoped)
+  // Contacts (org-scoped) - Aligned with backend: /invoicing/contacts/
   contacts: (orgId: string) => ({
-    list: `/api/v1/${orgId}/contacts/`,
-    detail: (id: string) => `/api/v1/${orgId}/contacts/${id}/`,
+    list: `/api/v1/${orgId}/invoicing/contacts/`,
+    detail: (id: string) => `/api/v1/${orgId}/invoicing/contacts/${id}/`,
   }),
 
   // Dashboard (org-scoped)

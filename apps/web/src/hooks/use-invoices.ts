@@ -1,3 +1,17 @@
+/**
+ * Invoice Hooks - LedgerSG Frontend
+ * 
+ * Provides hooks for invoice operations including:
+ * - Listing and filtering invoices
+ * - Creating and updating invoices
+ * - Approving and voiding invoices
+ * - Sending invoices via email
+ * - Sending via InvoiceNow (Peppol)
+ * - PDF generation
+ * 
+ * All hooks use TanStack Query for caching and state management.
+ */
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, endpoints } from "@/lib/api-client";
 import { toast } from "@/hooks/use-toast";

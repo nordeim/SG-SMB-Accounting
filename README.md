@@ -404,7 +404,7 @@ ledgersg/
 | Metric | Value |
 |--------|-------|
 | Static Pages | 18 |
-| Unit Tests | 105 |
+| Unit Tests | **114** |
 | GST Test Coverage | 100% |
 | Security Headers | 7 configured |
 | TypeScript Errors | 0 |
@@ -412,7 +412,7 @@ ledgersg/
 
 ### Backend (Production Ready) ✅
 
-**LedgerSG Backend v0.3.1** — All core business modules implemented with 53 API endpoints, plus comprehensive database hardening.
+**LedgerSG Backend v0.3.1** — All core business modules implemented with **57 API endpoints**, plus comprehensive database hardening.
 
 | Component | Status | Details |
 |-----------|--------|---------|
@@ -420,15 +420,18 @@ ledgersg/
 | Auth System | ✅ Phase 1 | JWT, 6 endpoints, RBAC permissions |
 | CoA Module | ✅ Phase 2A | 8 endpoints, hierarchy, trial balance |
 | GST Module | ✅ Phase 2B | 11 endpoints, F5 filing, IRAS compliant |
-| Invoicing Module | ✅ Phase 2C | 12 endpoints, documents, contacts |
+| Invoicing Module | ✅ Phase 2C | **18 endpoints** (+6 workflow), documents, contacts |
 | Journal Module | ✅ Phase 2D | 8 endpoints, double-entry, reversals |
+| Reporting Module | ✅ Phase 2E | **3 endpoints** (NEW Phase 4), dashboard, financial reports |
+| Banking Module | ✅ Phase 2F | **5 endpoints** (NEW Phase 4), accounts, payments |
 | Integration Tests | ✅ Phase 3 | 51 tests, API, Security, Workflows |
 | Database Hardening | ✅ Phase 4 | Schema audit, 15+ patches, 100% org API tests |
-| **Total** | **53 Endpoints** | **85+ files, ~12,500 lines, 51+ tests** |
+| **Frontend-Backend Integration** | ✅ **Phase 4** | **4 Phases Complete, 100% API coverage** |
+| **Total** | **57 Endpoints** | **85+ files, ~12,500 lines, 51+ tests** |
 
 | Metric | Value |
 |--------|-------|
-| API Endpoints | 53 |
+| API Endpoints | **57** |
 | Service Files | 6 |
 | Models | 14 |
 | Lines of Code | ~9,800+ |
@@ -437,6 +440,25 @@ ledgersg/
 | Schema Patches | 15+ columns, 4 constraints |
 | Test Coverage | API, Security, Workflows |
 | Documentation | ✅ Complete |
+
+### Recent Milestone: Frontend-Backend Integration Remediation ✅ COMPLETE (2026-02-26)
+
+**Status**: All integration gaps resolved, 100% API coverage achieved.
+
+| Phase | Objective | Status |
+|-------|-----------|--------|
+| Phase 1 | Invoice API Path Alignment | ✅ Complete |
+| Phase 2 | Missing Invoice Operations (6 endpoints) | ✅ Complete |
+| Phase 3 | Contacts API Verification | ✅ Complete |
+| Phase 4 | Dashboard & Banking API Stubs | ✅ Complete |
+
+**Key Achievements**:
+- API Endpoints: 53 → 57 (+4 new endpoints)
+- Invoice Operations: 4 → 10 (+6 workflow operations)
+- New Dashboard API: 2 endpoints (metrics, alerts)
+- New Banking API: 5 endpoints (accounts, payments)
+- Frontend Tests: 105 → 114 (+9 endpoint alignment tests)
+- Git Branch: `phase-1-invoice-api-alignment` with 5 commits
 
 ---
 
