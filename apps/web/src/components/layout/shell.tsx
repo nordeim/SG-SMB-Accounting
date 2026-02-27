@@ -59,17 +59,6 @@ export function Shell({ children }: ShellProps) {
     return pathname?.startsWith(href);
   };
 
-  // Prevent hydration mismatch by not rendering interactive elements until mounted
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-void text-text-primary flex">
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-text-muted">Loading...</div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-void text-text-primary flex">
       {/* Mobile Sidebar Overlay */}

@@ -50,6 +50,14 @@ please meticulously review @README.md , @CLAUDE.md , @ACCOMPLISHMENTS.md , @AGEN
 
 ---
 
+please meticulously review  @README.md , @Project_Architecture_Document.md, @AGENT_BRIEF.md , @CLAUDE.md and @GEMINI.md to have a deep understanding of the project and its codebase design and architecture, then meticulously validate your deep understanding against the codebase.
+
+---
+
+Awesome job on your meticulous review, analysis and planning. Please keep up the good work in your rigorous and meticulous approach to planning and execution. Now, please meticulously review the runtime error
+
+---
+
 please meticulously review @Project_Architecture_Document.md and validate it carefully and systematically against the actual codebase to ensure its correctness and accuracy.
 
 ---

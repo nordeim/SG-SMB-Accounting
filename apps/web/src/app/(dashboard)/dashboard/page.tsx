@@ -1,7 +1,4 @@
-"use client";
-
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   TrendingUp,
@@ -13,13 +10,14 @@ import {
   Calendar,
   RefreshCw,
 } from "lucide-react";
-import { GSTF5Chart } from "@/components/dashboard/gst-f5-chart";
-import { cn } from "@/lib/utils";
 import { createMockDashboardMetrics } from "@/shared/schemas/dashboard";
 import Link from "next/link";
-import { ClientOnly } from "@/components/client-only";
+import { cn } from "@/lib/utils";
+import { DashboardActions } from "./dashboard-actions";
+import { GSTChartWrapper } from "./gst-chart-wrapper";
 
-function DashboardContent() {
+// Server Component - renders immediately without Suspense
+export default function DashboardPage() {
   const data = createMockDashboardMetrics();
 
   return (
@@ -34,22 +32,7 @@ function DashboardContent() {
             Real-time compliance and financial overview
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="rounded-sm border-border text-text-secondary"
-          >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
-          </Button>
-          <Link href="/invoices/new">
-            <Button className="rounded-sm bg-accent-primary text-void hover:bg-accent-primary-dim">
-              <Receipt className="h-4 w-4 mr-2" />
-              New Invoice
-            </Button>
-          </Link>
-        </div>
+        <DashboardActions />
       </div>
 
       {/* Compliance Alerts */}
@@ -81,13 +64,12 @@ function DashboardContent() {
                 </p>
                 <p className="text-xs text-text-secondary">{alert.message}</p>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-sm border-border text-xs flex-shrink-0"
+              <Link
+                href="#"
+                className="px-3 py-1.5 text-xs font-medium rounded-sm border border-border bg-surface text-text-secondary hover:text-text-primary hover:bg-carbon transition-colors"
               >
                 {alert.action_required}
-              </Button>
+              </Link>
             </div>
           ))}
         </div>
@@ -132,16 +114,15 @@ function DashboardContent() {
                 <h3 className="text-sm font-medium text-text-primary">
                   GST F5 Breakdown
                 </h3>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-sm border-border text-xs"
+                <Link
+                  href="#"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-sm border border-border bg-surface text-text-secondary hover:text-text-primary hover:bg-carbon transition-colors"
                 >
-                  <FileText className="h-3 w-3 mr-1" />
+                  <FileText className="h-3 w-3" />
                   File F5
-                </Button>
+                </Link>
               </div>
-              <GSTF5Chart gstPayable={data.gst_payable_display} />
+              <GSTChartWrapper gstPayable={data.gst_payable_display} />
             </div>
           </CardContent>
         </Card>
@@ -350,13 +331,5 @@ function DashboardContent() {
         </Card>
       </div>
     </div>
-  );
-}
-
-export default function DashboardPage() {
-  return (
-    <ClientOnly>
-      <DashboardContent />
-    </ClientOnly>
   );
 }

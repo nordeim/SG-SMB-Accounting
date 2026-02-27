@@ -22,14 +22,15 @@ export function ClientOnly({ children, fallback }: ClientOnlyProps) {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
-    return (
-      fallback || (
-        <div className="min-h-[50vh] flex items-center justify-center">
-          <SkeletonCard className="w-full max-w-md p-6" />
-        </div>
-      )
-    );
+  // Render children immediately on server, no loading fallback
+  // This prevents hydration mismatch and layout shift
+  if (!mounted && !fallback) {
+    return <>{children}</>;
+  }
+
+  // If a custom fallback is provided, use it during loading
+  if (!mounted && fallback) {
+    return <>{fallback}</>;
   }
 
   return <>{children}</>;

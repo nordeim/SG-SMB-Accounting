@@ -17,7 +17,7 @@
     "===============================================================": "",
     "================ SERVER MODE (Backend API) ====================": "",
     "===============================================================": "",
-    "build:server": "NEXT_OUTPUT_MODE=standalone next build",
+    "build:server": "NEXT_OUTPUT_MODE=standalone next build && cp -r .next/static .next/standalone/.next/",
     "start": "node .next/standalone/server.js",
     "start:prod": "NODE_ENV=production PORT=3000 node .next/standalone/server.js",
     "start:port": "node .next/standalone/server.js",
