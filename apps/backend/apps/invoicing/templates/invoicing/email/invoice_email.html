@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; }
+        .header { background-color: #00E585; padding: 10px; text-align: center; font-weight: bold; }
+        .content { padding: 20px; }
+        .footer { font-size: 12px; color: #999; text-align: center; margin-top: 20px; }
+        .btn { display: inline-block; padding: 10px 20px; background-color: #00E585; color: #000; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            LedgerSG — Invoice Notification
+        </div>
+        <div class="content">
+            <p>Dear {{ contact_name }},</p>
+            <p>Please find attached your invoice <strong>{{ document_number }}</strong> from <strong>{{ org_name }}</strong>.</p>
+            <table style="width: 100%; border-top: 1px solid #eee; padding-top: 10px;">
+                <tr>
+                    <td><strong>Amount Due:</strong></td>
+                    <td>{{ currency }} {{ total_amount }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Due Date:</strong></td>
+                    <td>{{ due_date }}</td>
+                </tr>
+            </table>
+            <p>Thank you for your business!</p>
+        </div>
+        <div class="footer">
+            Sent via LedgerSG — Singapore's Neo-Brutalist Accounting Platform
+        </div>
+    </div>
+</body>
+</html>

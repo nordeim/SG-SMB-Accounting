@@ -7,6 +7,7 @@ Contact management and document (invoice/quote) operations.
 from typing import Optional
 from datetime import date
 
+from django.http import FileResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -68,7 +69,7 @@ class ContactListCreateView(APIView):
         from uuid import UUID
 
         contacts = ContactService.list_contacts(
-            org_id=UUID(org_id),
+            org_id=UUID(str(org_id)),
             is_customer=is_customer,
             is_supplier=is_supplier,
             is_active=is_active,
@@ -86,7 +87,7 @@ class ContactListCreateView(APIView):
 
         from uuid import UUID
 
-        contact = ContactService.create_contact(org_id=UUID(org_id), **serializer.validated_data)
+        contact = ContactService.create_contact(org_id=UUID(str(org_id)), **serializer.validated_data)
 
         return Response(ContactDetailSerializer(contact).data, status=status.HTTP_201_CREATED)
 
@@ -106,7 +107,7 @@ class ContactDetailView(APIView):
         """Get contact details."""
         from uuid import UUID
 
-        contact = ContactService.get_contact(UUID(org_id), UUID(contact_id))
+        contact = ContactService.get_contact(UUID(str(org_id)), UUID(str(contact_id)))
         return Response(ContactDetailSerializer(contact).data)
 
     @wrap_response
@@ -118,7 +119,7 @@ class ContactDetailView(APIView):
         serializer.is_valid(raise_exception=True)
 
         contact = ContactService.update_contact(
-            UUID(org_id), UUID(contact_id), **serializer.validated_data
+            UUID(str(org_id)), UUID(str(contact_id)), **serializer.validated_data
         )
 
         return Response(ContactDetailSerializer(contact).data)
@@ -128,7 +129,7 @@ class ContactDetailView(APIView):
         """Deactivate contact."""
         from uuid import UUID
 
-        contact = ContactService.deactivate_contact(UUID(org_id), UUID(contact_id))
+        contact = ContactService.deactivate_contact(UUID(str(org_id)), UUID(str(contact_id)))
 
         return Response(
             {"message": "Contact deactivated", "contact": ContactDetailSerializer(contact).data}
@@ -157,10 +158,10 @@ class InvoiceDocumentListCreateView(APIView):
         from uuid import UUID
 
         if contact_id:
-            contact_id = UUID(contact_id)
+            contact_id = UUID(str(contact_id))
 
         documents = DocumentService.list_documents(
-            org_id=UUID(org_id),
+            org_id=UUID(str(org_id)),
             document_type=doc_type,
             status=status_filter,
             contact_id=contact_id,
@@ -186,7 +187,7 @@ class InvoiceDocumentListCreateView(APIView):
         data = serializer.validated_data
 
         document = DocumentService.create_document(
-            org_id=UUID(org_id),
+            org_id=UUID(str(org_id)),
             document_type=data["document_type"],
             contact_id=data["contact_id"],
             issue_date=data["issue_date"],
@@ -225,7 +226,7 @@ class InvoiceDocumentDetailView(APIView):
         """Get document details."""
         from uuid import UUID
 
-        document = DocumentService.get_document(UUID(org_id), UUID(document_id))
+        document = DocumentService.get_document(UUID(str(org_id)), UUID(str(document_id)))
         return Response(InvoiceDocumentDetailSerializer(document).data)
 
     @wrap_response
@@ -239,7 +240,7 @@ class InvoiceDocumentDetailView(APIView):
         serializer.is_valid(raise_exception=True)
 
         document = DocumentService.update_document(
-            UUID(org_id), UUID(document_id), **serializer.validated_data
+            UUID(str(org_id)), UUID(str(document_id)), **serializer.validated_data
         )
 
         return Response(InvoiceDocumentDetailSerializer(document).data)
@@ -279,7 +280,7 @@ class InvoiceDocumentStatusView(APIView):
             self._check_permission(request, "can_void_invoices")
 
         document = DocumentService.transition_status(
-            UUID(org_id), UUID(document_id), new_status, user_id=request.user.id
+            UUID(str(org_id)), UUID(str(document_id)), new_status, user_id=request.user.id
         )
 
         return Response(
@@ -318,8 +319,8 @@ class InvoiceLineAddView(APIView):
         data = serializer.validated_data
 
         line = DocumentService.add_line(
-            org_id=UUID(org_id),
-            document_id=UUID(document_id),
+            org_id=UUID(str(org_id)),
+            document_id=UUID(str(document_id)),
             account_id=data["account_id"],
             description=data["description"],
             quantity=data.get("quantity", 1),
@@ -349,7 +350,7 @@ class InvoiceLineRemoveView(APIView):
         """Remove line from document."""
         from uuid import UUID
 
-        DocumentService.remove_line(UUID(org_id), UUID(document_id), UUID(line_id))
+        DocumentService.remove_line(UUID(str(org_id)), UUID(str(document_id)), UUID(line_id))
 
         return Response({"message": "Line removed"})
 
@@ -371,7 +372,7 @@ class QuoteConvertView(APIView):
         serializer.is_valid(raise_exception=True)
 
         invoice = DocumentService.convert_quote_to_invoice(
-            UUID(org_id), serializer.validated_data["quote_id"], user_id=request.user.id
+            UUID(str(org_id)), serializer.validated_data["quote_id"], user_id=request.user.id
         )
 
         return Response(
@@ -456,7 +457,7 @@ class InvoiceApproveView(APIView):
         from apps.invoicing.services import DocumentService
 
         document = DocumentService.approve_document(
-            org_id=UUID(org_id), document_id=UUID(document_id), user=request.user
+            org_id=UUID(str(org_id)), document_id=UUID(str(document_id)), user=request.user
         )
 
         return Response(InvoiceDocumentDetailSerializer(document).data, status=status.HTTP_200_OK)
@@ -484,7 +485,7 @@ class InvoiceVoidView(APIView):
             raise ValidationError("Void reason is required.")
 
         document = DocumentService.void_document(
-            org_id=UUID(org_id), document_id=UUID(document_id), user=request.user, reason=reason
+            org_id=UUID(str(org_id)), document_id=UUID(str(document_id)), user=request.user, reason=reason
         )
 
         return Response(InvoiceDocumentDetailSerializer(document).data, status=status.HTTP_200_OK)
@@ -494,21 +495,30 @@ class InvoicePDFView(APIView):
     """
     GET: Generate PDF for invoice
 
-    Returns PDF download URL and metadata.
+    Returns PDF file directly.
     """
 
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsOrgMember]
 
-    @wrap_response
-    def get(self, request, org_id: str, document_id: str) -> Response:
-        """Generate PDF and return download URL."""
+    def get(self, request, org_id: str, document_id: str) -> FileResponse:
+        """Generate PDF and return file response."""
         from uuid import UUID
         from apps.invoicing.services import DocumentService
 
-        pdf_data = DocumentService.generate_pdf(org_id=UUID(org_id), document_id=UUID(document_id))
+        # Get document for filename
+        document = DocumentService.get_document(UUID(str(org_id)), UUID(str(document_id)))
+        
+        # Generate PDF stream
+        pdf_stream = DocumentService.generate_pdf(org_id=UUID(str(org_id)), document_id=UUID(str(document_id)))
 
-        return Response(pdf_data, status=status.HTTP_200_OK)
+        response = FileResponse(
+            pdf_stream,
+            content_type="application/pdf"
+        )
+        response['Content-Disposition'] = f'inline; filename="{document.sequence_number}.pdf"'
+        
+        return response
 
 
 class InvoiceSendView(APIView):
@@ -536,7 +546,7 @@ class InvoiceSendView(APIView):
         }
 
         result = DocumentService.send_email(
-            org_id=UUID(org_id), document_id=UUID(document_id), email_data=email_data
+            org_id=UUID(str(org_id)), document_id=UUID(str(document_id)), email_data=email_data
         )
 
         return Response(result, status=status.HTTP_200_OK)
@@ -559,7 +569,7 @@ class InvoiceSendInvoiceNowView(APIView):
         from apps.invoicing.services import DocumentService
 
         result = DocumentService.send_invoicenow(
-            org_id=UUID(org_id), document_id=UUID(document_id), user=request.user
+            org_id=UUID(str(org_id)), document_id=UUID(str(document_id)), user=request.user
         )
 
         return Response(result, status=status.HTTP_200_OK)
@@ -582,7 +592,7 @@ class InvoiceInvoiceNowStatusView(APIView):
         from apps.invoicing.services import DocumentService
 
         status_data = DocumentService.get_invoicenow_status(
-            org_id=UUID(org_id), document_id=UUID(document_id)
+            org_id=UUID(str(org_id)), document_id=UUID(str(document_id))
         )
 
         return Response(status_data, status=status.HTTP_200_OK)

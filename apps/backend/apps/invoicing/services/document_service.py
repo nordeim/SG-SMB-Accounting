@@ -9,13 +9,18 @@ Handles invoices, quotes, credit notes, debit notes including:
 - Journal posting on approval
 """
 
-from typing import Optional, List, Dict, Any
-from uuid import UUID
+from typing import Optional, List, Dict, Any, Tuple
+from uuid import UUID, uuid4
 from decimal import Decimal
 from datetime import date, timedelta
+import io
 
 from django.db import connection, transaction
+from django.template.loader import render_to_string
+from django.utils import timezone
+from django.db import models
 
+from weasyprint import HTML
 from apps.core.models import InvoiceDocument, InvoiceLine, Contact, Account
 from apps.gst.services import TaxCodeService, GSTCalculationService
 from common.exceptions import ValidationError, DuplicateResource, ResourceNotFound
@@ -619,31 +624,48 @@ class DocumentService:
             return document
 
     @staticmethod
-    def generate_pdf(org_id: UUID, document_id: UUID) -> dict:
+    def generate_pdf(org_id: UUID, document_id: UUID) -> io.BytesIO:
         """
-        Generate PDF for a document.
+        Generate PDF for a document using WeasyPrint.
 
         Args:
             org_id: Organisation ID
             document_id: Document ID
 
         Returns:
-            Dictionary with PDF download URL and metadata
+            io.BytesIO: In-memory PDF stream
 
         Raises:
             ResourceNotFound: If document doesn't exist
         """
-        document = InvoiceDocument.objects.get(id=document_id, org_id=org_id)
+        context = DocumentService._get_pdf_context(org_id, document_id)
+        
+        # Render HTML string
+        html_string = render_to_string("invoicing/invoice_pdf.html", context)
+        
+        # Create PDF in memory
+        output = io.BytesIO()
+        HTML(string=html_string).write_pdf(target=output)
+        output.seek(0)
+        
+        return output
 
-        # TODO: Implement actual PDF generation
-        # For now, return placeholder data
+    @staticmethod
+    def _get_pdf_context(org_id: UUID, document_id: UUID) -> Dict[str, Any]:
+        """Gather all data needed for PDF rendering."""
+        from apps.core.models import Organisation
+        
+        document = DocumentService.get_document(org_id, document_id)
+        org = Organisation.objects.get(id=org_id)
+        contact = document.contact
+        lines = document.lines.all().order_by("line_number")
+        
         return {
-            "document_id": str(document_id),
-            "download_url": f"/api/v1/{org_id}/invoicing/documents/{document_id}/pdf/download/",
-            "filename": f"{document.document_number}.pdf",
-            "content_type": "application/pdf",
-            "status": "generated",
-            "generated_at": timezone.now().isoformat(),
+            "document": document,
+            "org": org,
+            "contact": contact,
+            "lines": lines,
+            "generated_at": timezone.now(),
         }
 
     @staticmethod
@@ -663,21 +685,27 @@ class DocumentService:
             ResourceNotFound: If document doesn't exist
             ValidationError: If email data is invalid
         """
-        document = InvoiceDocument.objects.get(id=document_id, org_id=org_id)
+        from apps.invoicing.tasks import send_invoice_email_task
+        
+        document = DocumentService.get_document(org_id, document_id)
 
         # Validate recipients
         to_emails = email_data.get("to", [])
         if not to_emails:
-            raise ValidationError("At least one recipient email is required.")
+            if document.contact.email:
+                to_emails = [document.contact.email]
+            else:
+                raise ValidationError("At least one recipient email is required.")
 
-        # TODO: Implement actual email sending
-        # For now, return placeholder data
+        # Trigger background task
+        send_invoice_email_task.delay(str(org_id), str(document_id), to_emails)
+
         return {
             "document_id": str(document_id),
             "sent": True,
             "recipients": to_emails,
             "sent_at": timezone.now().isoformat(),
-            "message": "Email queued for sending",
+            "message": "Invoice email has been queued for sending.",
         }
 
     @staticmethod
@@ -765,8 +793,3 @@ class DocumentService:
         """
         # TODO: Implement in Journal module
         pass
-
-
-# Import at end to avoid circular imports
-from django.utils import timezone
-from django.db import models

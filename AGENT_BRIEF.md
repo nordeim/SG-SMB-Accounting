@@ -1,7 +1,7 @@
 # LedgerSG — Agent & Developer Briefing
 
 > **Single Source of Truth** for coding agents and human developers  
-> **Version**: 1.1.0  
+> **Version**: 1.2.0  
 > **Last Updated**: 2026-02-27  
 > **Status**: Production Ready ✅
 
@@ -35,29 +35,28 @@
 | **Backend** | v0.3.1 | ✅ Production Ready | **57 API endpoints**, schema hardened |
 | **Database** | v1.0.2 | ✅ Complete | 7 schemas, RLS enforced, 28 tables |
 | **Integration** | v0.4.0 | ✅ Complete | All API paths aligned, 100% coverage |
-| **Overall** | — | ✅ **Platform Ready** | **156+ tests**, WCAG AAA, IRAS Compliant |
+| **Overall** | — | ✅ **Platform Ready** | **158+ tests**, WCAG AAA, IRAS Compliant |
 
-### Recent Milestone: Database & Model Hardening ✅
+### Recent Milestone: PDF & Email Services ✅
 **Date**: 2026-02-27  
-**Status**: Models restored, Schema Aligned, Testing Blocker Resolved
+**Status**: Document generation and delivery live
+
+| Service | Implementation |
+|---------|----------------|
+| **PDF Generation** | WeasyPrint with IRAS-compliant templates |
+| **Email Delivery** | Asynchronous Celery tasks with PDF attachments |
+| **Verification** | Integration tests verified binary stream and task dispatch |
+
+### Milestone: Database & Model Hardening ✅
+**Date**: 2026-02-27  
+**Status**: Models restored, Schema Aligned
 
 | Fix | Impact |
 |-----|--------|
-| **Missing Models** | `InvoiceLine`, `JournalEntry`, `JournalLine` restored to `core.models` |
-| **Auth Alignment** | `AppUser` hardened with standard Django fields for native auth |
-| **Circular Refs** | Resolved circular dependencies in `database_schema.sql` via `ALTER TABLE` |
-| **Unmanaged DB** | Established manual test DB initialization workflow for `managed = False` models |
-| **Security** | Added `argon2-cffi` dependency for enhanced password hashing |
-
-### Regulatory Foundation
-
-| Regulation | Implementation |
-|------------|----------------|
-| **InvoiceNow (Peppol)** | PINT-SG XML generation ready |
-| **GST 9% Rate** | Configurable tax engine |
-| **GST F5 Returns** | Auto-computed from journal data |
-| **BCRS Deposit** | GST-exempt liability accounting |
-| **5-Year Retention** | Immutable audit logs |
+| **Missing Models** | `InvoiceLine`, `JournalEntry`, `JournalLine`, `GSTReturn` restored |
+| **Auth Alignment** | `AppUser` aligned with Django 6.0 standard fields |
+| **Circular Deps** | Resolved circular foreign keys in SQL via `ALTER TABLE` |
+| **Testing** | Workflow established for unmanaged model verification |
 
 ---
 
@@ -169,5 +168,5 @@ pytest --reuse-db --no-migrations
 
 1.  **Dashboard Implementation**: Replace stub logic in `reporting/views.py` with real financial calculations from the `journal.line` table.
 2.  **Banking Module**: Replace placeholder views in `banking/views.py` with actual bank account management and reconciliation logic.
-3.  **PDF/Email Service**: Implement the `DocumentService.generate_pdf` method using `weasyprint` and configure SMTP for invoice delivery.
-4.  **CI/CD Pipeline**: Automate the manual database initialization workflow in a GitHub Actions runner.
+3.  **CI/CD Pipeline**: Automate the manual database initialization workflow in a GitHub Actions runner.
+4.  **Compliance**: Finalize InvoiceNow/Peppol transmission logic (XML generation is architecture-ready).

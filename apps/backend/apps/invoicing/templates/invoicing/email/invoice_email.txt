@@ -1,0 +1,11 @@
+Dear {{ contact_name }},
+
+Please find attached your invoice {{ document_number }} from {{ org_name }}.
+
+Amount Due: {{ currency }} {{ total_amount }}
+Due Date: {{ due_date }}
+
+Thank you for your business!
+
+---
+Sent via LedgerSG — Singapore's Neo-Brutalist Accounting Platform

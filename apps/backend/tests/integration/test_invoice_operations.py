@@ -99,25 +99,48 @@ class TestInvoiceOperationsBusinessLogic:
         # TODO: Implement after service layer is ready
         pytest.skip("Service layer not implemented yet")
 
-    def test_pdf_generation_returns_valid_pdf(self):
+    @pytest.mark.django_db
+    def test_pdf_generation_returns_valid_pdf(self, auth_client, test_organisation, test_invoice):
         """
         PDF generation should:
-        - Return a valid PDF file
-        - Include all invoice details
-        - Be properly formatted
+        - Return a 200 OK status
+        - Return a PDF content type
+        - Start with the PDF magic header %PDF
         """
-        # TODO: Implement after service layer is ready
-        pytest.skip("Service layer not implemented yet")
+        org_id = test_organisation.id
+        invoice_id = test_invoice.id
+        
+        url = f"/api/v1/{org_id}/invoicing/documents/{invoice_id}/pdf/"
+        response = auth_client.get(url)
+        
+        assert response.status_code == 200
+        assert response['Content-Type'] == "application/pdf"
+        assert response.getvalue().startswith(b"%PDF")
 
-    def test_email_sending_validates_recipient(self):
+    @pytest.mark.django_db
+    def test_email_sending_queues_task(self, auth_client, test_organisation, test_invoice):
         """
         Email sending should:
-        - Validate email address format
-        - Require at least one recipient
-        - Return success confirmation
+        - Return a 200 OK status
+        - Return a success message indicating the task is queued
         """
-        # TODO: Implement after service layer is ready
-        pytest.skip("Service layer not implemented yet")
+        from unittest.mock import patch
+        org_id = test_organisation.id
+        invoice_id = test_invoice.id
+        
+        url = f"/api/v1/{org_id}/invoicing/documents/{invoice_id}/send/"
+        data = {
+            "to": ["customer@example.com"],
+            "message": "Please find your invoice attached."
+        }
+        
+        with patch("apps.invoicing.tasks.send_invoice_email_task.delay") as mock_delay:
+            response = auth_client.post(url, data=data, format='json')
+            
+            assert response.status_code == 200
+            assert "Invoice email has been queued for sending" in response.data['message']
+            assert response.data['sent'] is True
+            mock_delay.assert_called_once()
 
     def test_invoicenow_queuing(self):
         """

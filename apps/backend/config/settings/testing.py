@@ -112,5 +112,9 @@ SENTRY_DSN = None
 
 TEST_RUNNER = "common.test_runner.SchemaTestRunner"
 
+# Synchronous Celery
+CELERY_TASK_ALWAYS_EAGER = True
+CELERY_TASK_EAGER_PROPAGATES = True
+
 # Speed up tests
 DEBUG_PROPAGATE_EXCEPTIONS = True

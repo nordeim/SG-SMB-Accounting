@@ -1113,6 +1113,7 @@ CREATE TABLE invoicing.document_line (
     item_code           VARCHAR(30),
 
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     CONSTRAINT uq_docline_doc_lineno UNIQUE(document_id, line_number),
     CONSTRAINT chk_quantity_positive CHECK (quantity > 0),

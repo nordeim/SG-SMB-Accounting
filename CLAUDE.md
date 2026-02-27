@@ -1,9 +1,9 @@
 # LedgerSG — Comprehensive Developer Briefing
 
 > **Single Source of Truth** for coding agents and human developers  
-> **Version**: 1.1.0  
+> **Version**: 1.2.0  
 > **Last Updated**: 2026-02-27  
-> **Status**: Production Ready ✅ (Database & Model Hardening Complete)
+> **Status**: Production Ready ✅ (PDF & Email Services Live)
 
 ---
 
@@ -35,47 +35,7 @@
 | **Frontend** | v0.1.0 | ✅ Production Ready | 18 static pages, 114 tests |
 | **Backend** | v0.3.1 | ✅ Production Ready | 57 API endpoints, schema hardened |
 | **Database** | v1.0.2 | ✅ Complete | 7 schemas, RLS enforced, 28 tables |
-| **Overall** | — | ✅ Platform Ready | 156+ tests, WCAG AAA, IRAS Compliant |
-
----
-
-## 🏗 Project Architecture
-
-### System Overview
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        CLIENT LAYER                              │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │   Next.js    │  │  Zustand     │  │  TanStack    │          │
-│  │   16 PWA     │  │  (UI State)  │  │  Query       │          │
-│  └──────┬───────┘  └──────────────┘  └──────────────┘          │
-└─────────┼───────────────────────────────────────────────────────┘
-          │ HTTPS + JWT Access Token (15min)
-          ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                       SECURITY LAYER                             │
-│  JWT Auth │ HttpOnly Refresh Cookie │ CSRF │ Rate Limiting      │
-└─────────┬───────────────────────────────────────────────────────┘
-          │
-          ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      API LAYER (Django)                          │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │  DRF Views   │  │   Services   │  │  Middleware  │          │
-│  │  (Thin)      │  │ (Business)   │  │ (RLS/Auth)   │          │
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘          │
-└─────────┼─────────────────┼─────────────────┼──────────────────┘
-          │                 │                 │
-          ▼                 ▼                 ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     DATA LAYER (PostgreSQL)                      │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │  7 Schemas   │  │     RLS      │  │  NUMERIC     │          │
-│  │ (domain)     │  │ (session)    │  │ (10,4)       │          │
-│  └──────────────┘  └──────────────┘  └──────────────┘          │
-└─────────────────────────────────────────────────────────────────┘
-```
+| **Overall** | — | ✅ Platform Ready | 158+ tests, WCAG AAA, IRAS Compliant |
 
 ---
 
@@ -96,75 +56,27 @@
 
 | Metric | Value | Notes |
 |--------|-------|-------|
-| API Endpoints | **57** | 100% Alignment |
+| API Endpoints | **57** | 100% Path Alignment |
 | Service Files | 6 | Core business logic |
-| Models | **17** | 14 core + 3 restored |
-| Test Files | 11 | 156+ total tests |
-| Lines of Code | **~10,500+** | Business logic |
-
-### Design Principles
-
-| Principle | Implementation | Critical Notes |
-|-----------|----------------|----------------|
-| **Unmanaged Models** | `managed = False` | Schema is DDL-managed via SQL. Models map to existing tables. |
-| **Service Layer** | `services/` modules | Views are thin controllers. ALL business logic lives in services. |
-| **RLS Security** | PostgreSQL session variables | `SET LOCAL app.current_org_id = 'uuid'` per transaction |
-| **Decimal Precision** | `NUMERIC(10,4)` | NEVER use float for money. Use `common.decimal_utils.money()` |
-| **Atomic Requests** | `ATOMIC_REQUESTS: True` | Every view runs in single transaction for RLS consistency |
-| **JWT Auth** | Access 15min / Refresh 7d | HttpOnly cookies for refresh tokens |
+| Models | **18** | Aligned with SQL schema |
+| Test Files | 11 | 158+ total tests |
+| Lines of Code | **~11,200+** | Logic & Templates |
 
 ### Directory Structure
 
 ```
 apps/backend/
 ├── apps/
-│   ├── core/              # Auth, Organisation, Users, Fiscal
-│   │   ├── models/        # Restored: AppUser, Role, JournalEntry, InvoiceLine, etc.
-│   │   ├── services/      # auth_service.py, organisation_service.py
-│   │   ├── views/         # auth.py, organisations.py
-│   │   └── serializers/   # auth.py, organisation.py
+│   ├── core/              # Restored: AppUser, Role, JournalEntry, InvoiceLine, GSTReturn, etc.
 │   ├── coa/               # Chart of Accounts
 │   ├── gst/               # GST Module
-│   ├── invoicing/         # Invoicing
+│   ├── invoicing/         # Invoicing (PDF & Email Logic)
 │   ├── journal/           # Journal Entry
 │   ├── banking/           # Banking
 │   └── reporting/         # Dashboard & Reports
-├── common/                # Shared utilities
-│   ├── decimal_utils.py   # CRITICAL: Money precision utilities
-│   ├── models.py          # BaseModel, TenantModel, SequenceModel
-│   ├── middleware/        # tenant_context.py (RLS), audit_context.py
-├── config/                # Django configuration
-└── tests/                 # Test suite
-```
-
----
-
-## 🎨 Frontend Deep Dive
-
-### Technology Stack
-
-| Layer | Technology | Version | Purpose |
-|-------|------------|---------|---------|
-| Framework | Next.js | 16.1.6 | App Router, SSG, Static Export |
-| UI Library | React | 19.2.3 | Concurrent features |
-| Styling | Tailwind CSS | 4.0 | CSS-first @theme configuration |
-| Components | Radix UI + Shadcn | Latest | Headless primitives |
-| State (Server) | TanStack Query | v5 | Server-state caching |
-| State (Client) | Zustand | v5 | UI state |
-| Decimal | decimal.js | v10.6 | Client-side GST preview |
-
-### Directory Structure
-
-```
-apps/web/src/
-├── app/                          # Next.js App Router
-├── components/                   # UI Primitives & Domain components
-├── lib/                          # api-client.ts, gst-engine.ts
-├── hooks/                        # TanStack Query hooks (use-invoices.ts, etc.)
-├── providers/                    # AuthProvider, ToastProvider
-├── stores/                       # Zustand stores (invoice-store.ts)
-└── shared/
-    └── schemas/                  # Zod validation schemas
+├── common/                # BaseModel, TenantModel, decimal_utils
+├── config/                # settings/base.py, celery.py
+└── tests/                 # integration/, security/
 ```
 
 ---
@@ -178,64 +90,50 @@ apps/web/src/
 | **Schemas** | 7 (core, coa, gst, journal, invoicing, banking, audit) | Domain separation |
 | **Money Precision** | `NUMERIC(10,4)` | 4 decimal places for all amounts |
 | **RLS** | Session variable `app.current_org_id` | Multi-tenant isolation |
-| **Primary Keys** | UUID (`gen_random_uuid()`) | Distributed-safe |
+| **Integrity** | Circular Deps Resolved | ALTER TABLE FK strategy |
 
 ---
 
 ## 🧪 Testing Strategy
 
-### Backend Tests (156+ total across system)
+### Backend Tests (Unmanaged Database Workflow)
 
+**MANDATORY Workflow:**
 ```bash
-# Manual test database setup for unmanaged models
+# 1. Manually initialize the test database
 export PGPASSWORD=ledgersg_secret_to_change
 dropdb -h localhost -U ledgersg test_ledgersg_dev
 createdb -h localhost -U ledgersg test_ledgersg_dev
 psql -h localhost -U ledgersg -d test_ledgersg_dev -f database_schema.sql
 
-# Run tests with reuse flags
+# 2. Run tests with reuse flags
 source /opt/venv/bin/activate
 cd apps/backend
 pytest --reuse-db --no-migrations
-```
-
-### Frontend Tests (114 total)
-
-```bash
-cd apps/web
-npm test
 ```
 
 ---
 
 ## 🔧 Troubleshooting
 
-### Unmanaged Models & Testing
-**Problem**: Tests fail with `relation "core.app_user" does not exist`.
-**Cause**: `pytest-django` cannot run migrations on unmanaged models (`managed = False`).
-**Solution**: Manually initialize the test database using `database_schema.sql` and run `pytest --reuse-db --no-migrations`.
-
-### SQL Circular Dependencies
-**Problem**: Database initialization fails on foreign keys.
-**Cause**: Circular references (e.g., `organisation` <-> `app_user`).
-**Solution**: Schema now uses `ALTER TABLE` statements at the end of the script to resolve circular dependencies.
+### Database Issues
+- **relation "core.app_user" does not exist**: The test database is empty. Load `database_schema.sql` manually.
+- **TypeError: X() got unexpected keyword arguments**: Model and Schema out of sync. LedgerSG is **SQL-First**; update models to match DB columns.
+- **circular dependency on DB init**: FKs must be added via `ALTER TABLE` at the end of the script.
 
 ### Import Errors
-**Problem**: `ImportError: cannot import name 'JournalEntry'`.
-**Solution**: Models have been restored to `apps/backend/apps/core/models/`. Ensure virtual environment is sourced.
+- **ImportError: cannot import name 'X' from 'apps.core.models'**: Check `apps/core/models/__init__.py`. New models must be explicitly exported.
 
 ---
 
 ## 🚀 Recent Milestones
 
-### Database & Model Hardening (2026-02-27) ✅
-- **Restored Models**: `InvoiceLine`, `JournalEntry`, `JournalLine`.
-- **Django 6.0 Alignment**: `AppUser` updated with `password`, `is_staff`, `is_superuser`.
-- **Schema Patches**: 11 versions of updates applied to `database_schema.sql`.
-- **Circular Deps**: Resolved via `ALTER TABLE` statements.
-- **Testing**: Workflow established for unmanaged model verification.
+### PDF & Email Services (2026-02-27) ✅
+- **PDF Generation**: Live via WeasyPrint with IRAS-compliant templates.
+- **Email Delivery**: Asynchronous Celery tasks with PDF attachments.
+- **API Alignment**: `InvoicePDFView` returns `FileResponse` binary.
 
-### Frontend-Backend Integration Remediation (2026-02-26) ✅
-- **API Alignment**: 57 endpoints perfectly matched between FE and BE.
-- **Workflow Endpoints**: Added `approve`, `void`, `pdf`, `send`, `send-invoicenow`.
-- **Stubs**: Implemented Dashboard and Banking stubs.
+### Database & Model Hardening (2026-02-27) ✅
+- **Restored Models**: `InvoiceLine`, `JournalEntry`, `JournalLine`, `GSTReturn`.
+- **Django 6.0 Alignment**: `AppUser` hardened with `password`, `is_staff`, `is_superuser`.
+- **Schema Patches**: 20+ columns added to align SQL with Python models.

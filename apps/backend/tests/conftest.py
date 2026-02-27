@@ -24,6 +24,7 @@ from apps.core.models import (
     FiscalPeriod,
     TaxCode,
     Account,
+    InvoiceDocument,
 )
 
 
@@ -194,6 +195,13 @@ def test_fiscal_period(test_organisation) -> FiscalPeriod:
     return period
 
 
+@pytest.fixture
+def test_invoice(test_organisation) -> InvoiceDocument:
+    """Create and return a test invoice."""
+    contact = create_test_contact(test_organisation)
+    return create_test_invoice(test_organisation, contact)
+
+
 # =============================================================================
 # Helper Functions
 # =============================================================================
@@ -229,11 +237,12 @@ def create_test_invoice(org: Organisation, contact: "Contact", **kwargs) -> "Inv
     from apps.invoicing.services import DocumentService
     
     defaults = {
-        "document_type": "INVOICE",
+        "document_type": "SALES_INVOICE",
         "contact": contact,
         "issue_date": date.today(),
         "due_date": date.today() + timedelta(days=30),
         "status": "DRAFT",
+        "notes": "Test notes",
     }
     defaults.update(kwargs)
     

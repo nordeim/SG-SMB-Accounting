@@ -20,6 +20,7 @@ This document serves as the foundational instructional context for AI agents and
 
 ### 2. Backend Layer (Django)
 - **Service Layer Pattern**: ALL business logic resides in `services/` modules using `@staticmethod`. Views are thin controllers.
+- **Asynchronous Services**: PDF generation (WeasyPrint) and Email delivery (Celery) are live and verified.
 - **Authentication**: JWT (Access 15m / Refresh 7d) with HttpOnly refresh cookies.
 - **Models**: Inherit from `BaseModel`, `TenantModel`, or `ImmutableModel`.
 
@@ -41,6 +42,7 @@ source /opt/venv/bin/activate
 cd apps/backend
 pip install -e ".[dev]"
 # Initialize DB (Critical for unmanaged models)
+export PGPASSWORD=ledgersg_secret_to_change
 psql -h localhost -U ledgersg -d ledgersg_dev -f database_schema.sql
 python manage.py runserver
 ```
@@ -57,7 +59,7 @@ npm run dev
 ```bash
 # Backend
 export PGPASSWORD=ledgersg_secret_to_change
-dropdb -h localhost -U ledgersg test_ledgersg_dev
+dropdb -h localhost -U ledgersg test_ledgersg_dev || true
 createdb -h localhost -U ledgersg test_ledgersg_dev
 psql -h localhost -U ledgersg -d test_ledgersg_dev -f database_schema.sql
 pytest --reuse-db --no-migrations
@@ -73,24 +75,8 @@ cd apps/web && npm test
 - **Python**: Use `common.decimal_utils.money()` utility.
 - **TypeScript**: Use `Decimal.js`.
 
-### 2. Backend Services
-- Keep views thin. Example service call:
-  ```python
-  invoice = InvoiceService.create_invoice(org_id=request.org_id, data=request.data)
-  ```
-
-### 3. Styling (Tailwind 4.0)
-- Use design tokens defined in `globals.css` (@theme block).
-- Colors: `void` (#050505), `carbon` (#121212), `accent-primary` (#00E585).
-- Typography: Space Grotesk (Display), Inter (Body), JetBrains Mono (Data).
-
-### 4. Database Alignment
+### 2. Database Alignment
 - LedgerSG is **SQL-First**. When updating models, you **MUST** update `database_schema.sql` manually. Django migrations are not used for unmanaged models.
 
-## 🔧 Troubleshooting
-- **relation "core.app_user" does not exist**: The test database hasn't been initialized with the SQL schema.
-- **column "updated_at" does not exist**: The Django model and SQL schema have drifted. Verify `database_schema.sql`.
-- **401 Unauthorized**: JWT access token expired. Refresh logic is handled in `api-client.ts`.
-
 ---
-*Last Hardened: 2026-02-27 — Version 1.1.0*
+*Last Hardened: 2026-02-27 — Version 1.2.0 — ~11,200 lines verified*

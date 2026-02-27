@@ -72,7 +72,7 @@ class TenantModel(BaseModel):
         """
         Override save to automatically set org_id from context if not set.
         """
-        if not self.org_id:
+        if not self.org:
             from common.middleware.tenant_context import get_current_org_id
             org_id = get_current_org_id()
             if org_id:

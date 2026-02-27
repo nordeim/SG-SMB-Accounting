@@ -9,6 +9,7 @@ from .user_organisation import UserOrganisation
 from .fiscal_year import FiscalYear
 from .fiscal_period import FiscalPeriod
 from .tax_code import TaxCode
+from .gst_return import GSTReturn
 from .account import Account
 from .contact import Contact
 from .invoice_document import InvoiceDocument
@@ -24,6 +25,7 @@ __all__ = [
     "FiscalYear",
     "FiscalPeriod",
     "TaxCode",
+    "GSTReturn",
     "Account",
     "Contact",
     "InvoiceDocument",
