@@ -1,0 +1,1834 @@
+===== Build Queued at 2026-02-27 08:50:26 / Commit SHA: 1b33b49 =====
+
+--> FROM docker.io/library/python:3.13-trixie@sha256:f971a51b2c61cf67a0947aab0c89a66d11e2dfcd774471aa30e7a1e8c7b2ed5a
+DONE 5.0s
+
+DONE 6.4s
+
+DONE 10.5s
+
+DONE 10.6s
+
+DONE 11.1s
+
+DONE 11.3s
+
+--> RUN apt-get update && apt-get install -y     bash coreutils ca-certificates cron curl wget git less procps sudo vim tar zip unzip tmux openssh-client rsync     build-essential gcc gnupg cmake pkg-config     libpq-dev libjson-c-dev libssl-dev libwebsockets-dev     libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz0b libffi-dev libjpeg-dev libopenjp2-7-dev     postgresql postgresql-contrib redis-server     && apt-get clean && rm -rf /var/lib/apt/lists/*     && if [ ! -d "/usr/lib/postgresql/17" ]; then echo "ERROR: PostgreSQL 17 not installed" && exit 1; fi     && echo "✓ PostgreSQL 17 verified at build time"
+Hit:1 http://deb.debian.org/debian trixie InRelease
+Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+Get:4 http://deb.debian.org/debian trixie/main amd64 Packages [9670 kB]
+Get:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages [5412 B]
+Get:6 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [113 kB]
+Fetched 9879 kB in 1s (13.5 MB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+bash is already the newest version (5.2.37-2+b7).
+bash set to manually installed.
+coreutils is already the newest version (9.7-3).
+coreutils set to manually installed.
+ca-certificates is already the newest version (20250419).
+curl is already the newest version (8.14.1-2+deb13u2).
+wget is already the newest version (1.25.0-2).
+git is already the newest version (1:2.47.3-0+deb13u1).
+procps is already the newest version (2:4.0.4-9).
+tar is already the newest version (1.35+dfsg-3.1).
+tar set to manually installed.
+unzip is already the newest version (6.0-29).
+openssh-client is already the newest version (1:10.0p1-7).
+gcc is already the newest version (4:14.2.0-1).
+gnupg is already the newest version (2.4.7-21+deb13u1).
+libpq-dev is already the newest version (17.8-0+deb13u1).
+libssl-dev is already the newest version (3.5.4-1~deb13u2).
+libpango-1.0-0 is already the newest version (1.56.3-1).
+libpango-1.0-0 set to manually installed.
+libpangoft2-1.0-0 is already the newest version (1.56.3-1).
+libpangoft2-1.0-0 set to manually installed.
+libharfbuzz0b is already the newest version (10.2.0-1+b1).
+libharfbuzz0b set to manually installed.
+libffi-dev is already the newest version (3.4.8-2).
+libjpeg-dev is already the newest version (1:2.1.5-4).
+libopenjp2-7-dev is already the newest version (2.5.3-2.1~deb13u1).
+libopenjp2-7-dev set to manually installed.
+The following additional packages will be installed:
+  bsd-mailx cmake-data cron-daemon-common dbus dbus-bin dbus-daemon
+  dbus-session-bus-common dbus-system-bus-common dmsetup e2fsprogs
+  e2fsprogs-l10n exim4-base exim4-config exim4-daemon-light libapparmor1
+  libarchive13t64 libc-l10n libcap-dev libcommon-sense-perl libcryptsetup12
+  libdbus-1-3 libdevmapper1.02.1 libev-dev libev4t64 libext2fs2t64
+  libfile-fcntllock-perl libgpm2 libidn12 libio-pty-perl libipc-run-perl
+  libjemalloc2 libjson-c5 libjson-perl libjson-xs-perl libjsoncpp26 libkmod2
+  libllvm19 liblockfile-bin liblockfile1 liblzf1 libnsl2 libpopt0 librhash1
+  libsensors-config libsensors5 libsodium23 libss2 libsystemd-shared
+  libtirpc-common libtirpc3t64 libtypes-serialiser-perl libuv1-dev libuv1t64
+  libwebsockets-evlib-ev libwebsockets-evlib-glib libwebsockets-evlib-uv
+  libwebsockets19t64 libz3-4 linux-sysctl-defaults locales logrotate logsave
+  postgresql-17 postgresql-client-17 postgresql-client-common
+  postgresql-common postgresql-common-dev psmisc redis-tools ssl-cert sysstat
+  systemd systemd-cryptsetup systemd-timesyncd vim-common vim-runtime xxd
+Suggested packages:
+  cmake-doc cmake-format elpa-cmake-mode ninja-build anacron checksecurity
+  supercat bat default-dbus-session-bus | dbus-session-bus gpart parted
+  fuse2fs e2fsck-static exim4-doc-html | exim4-doc-info eximon4 spf-tools-perl
+  swaks lrzip manpages-dev gpm lm-sensors libbpf1 libdw1t64 libip4tc2
+  libpwquality1 libqrencode4 libtss2-rc0t64 libuv1-doc postgresql-doc
+  postgresql-doc-17 ruby-redis openssh-server python3-braceexpand isag
+  systemd-container systemd-homed systemd-userdbd systemd-boot
+  systemd-resolved systemd-repart libtss2-tcti-device0 polkitd ctags vim-doc
+  vim-scripts
+The following NEW packages will be installed:
+  bsd-mailx build-essential cmake cmake-data cron cron-daemon-common dbus
+  dbus-bin dbus-daemon dbus-session-bus-common dbus-system-bus-common dmsetup
+  e2fsprogs e2fsprogs-l10n exim4-base exim4-config exim4-daemon-light less
+  libapparmor1 libarchive13t64 libc-l10n libcap-dev libcommon-sense-perl
+  libcryptsetup12 libdbus-1-3 libdevmapper1.02.1 libev-dev libev4t64
+  libext2fs2t64 libfile-fcntllock-perl libgpm2 libidn12 libio-pty-perl
+  libipc-run-perl libjemalloc2 libjson-c-dev libjson-c5 libjson-perl
+  libjson-xs-perl libjsoncpp26 libkmod2 libllvm19 liblockfile-bin liblockfile1
+  liblzf1 libnsl2 libpopt0 librhash1 libsensors-config libsensors5 libsodium23
+  libss2 libsystemd-shared libtirpc-common libtirpc3t64
+  libtypes-serialiser-perl libuv1-dev libuv1t64 libwebsockets-dev
+  libwebsockets-evlib-ev libwebsockets-evlib-glib libwebsockets-evlib-uv
+  libwebsockets19t64 libz3-4 linux-sysctl-defaults locales logrotate logsave
+  pkg-config postgresql postgresql-17 postgresql-client-17
+  postgresql-client-common postgresql-common postgresql-common-dev psmisc
+  redis-server redis-tools rsync ssl-cert sudo sysstat systemd
+  systemd-cryptsetup systemd-timesyncd tmux vim vim-common vim-runtime xxd zip
+0 upgraded, 91 newly installed, 0 to remove and 0 not upgraded.
+Need to get 101 MB of archives.
+After this operation, 413 MB of additional disk space will be used.
+Get:1 http://deb.debian.org/debian trixie/main amd64 libsystemd-shared amd64 257.9-1~deb13u1 [2151 kB]
+Get:2 http://deb.debian.org/debian trixie/main amd64 libapparmor1 amd64 4.1.0-1 [43.7 kB]
+Get:3 http://deb.debian.org/debian trixie/main amd64 systemd amd64 257.9-1~deb13u1 [3096 kB]
+Get:4 http://deb.debian.org/debian trixie/main amd64 cron-daemon-common all 3.0pl1-197 [17.8 kB]
+Get:5 http://deb.debian.org/debian trixie/main amd64 cron amd64 3.0pl1-197 [87.4 kB]
+Get:6 http://deb.debian.org/debian trixie/main amd64 libext2fs2t64 amd64 1.47.2-3+b7 [213 kB]
+Get:7 http://deb.debian.org/debian trixie/main amd64 libss2 amd64 1.47.2-3+b7 [29.7 kB]
+Get:8 http://deb.debian.org/debian trixie/main amd64 logsave amd64 1.47.2-3+b7 [24.9 kB]
+Get:9 http://deb.debian.org/debian trixie/main amd64 e2fsprogs amd64 1.47.2-3+b7 [591 kB]
+Get:10 http://deb.debian.org/debian trixie/main amd64 libdbus-1-3 amd64 1.16.2-2 [178 kB]
+Get:11 http://deb.debian.org/debian trixie/main amd64 dbus-bin amd64 1.16.2-2 [80.0 kB]
+Get:12 http://deb.debian.org/debian trixie/main amd64 dbus-session-bus-common all 1.16.2-2 [52.3 kB]
+Get:13 http://deb.debian.org/debian trixie/main amd64 dbus-daemon amd64 1.16.2-2 [159 kB]
+Get:14 http://deb.debian.org/debian trixie/main amd64 dbus-system-bus-common all 1.16.2-2 [53.5 kB]
+Get:15 http://deb.debian.org/debian trixie/main amd64 dbus amd64 1.16.2-2 [71.6 kB]
+Get:16 http://deb.debian.org/debian trixie/main amd64 libjson-perl all 4.10000-1 [87.5 kB]
+Get:17 http://deb.debian.org/debian trixie/main amd64 postgresql-client-common all 278 [47.1 kB]
+Get:18 http://deb.debian.org/debian trixie/main amd64 libio-pty-perl amd64 1:1.20-1+b3 [34.3 kB]
+Get:19 http://deb.debian.org/debian trixie/main amd64 libipc-run-perl all 20231003.0-2 [101 kB]
+Get:20 http://deb.debian.org/debian trixie/main amd64 postgresql-common-dev all 278 [72.4 kB]
+Get:21 http://deb.debian.org/debian trixie/main amd64 ssl-cert all 1.1.3 [16.8 kB]
+Get:22 http://deb.debian.org/debian trixie/main amd64 postgresql-common all 278 [112 kB]
+Get:23 http://deb.debian.org/debian trixie/main amd64 libjemalloc2 amd64 5.3.0-3 [274 kB]
+Get:24 http://deb.debian.org/debian trixie/main amd64 liblzf1 amd64 3.6-4+b3 [10.1 kB]
+Get:25 http://deb.debian.org/debian trixie/main amd64 redis-tools amd64 5:8.0.2-3+deb13u1 [1245 kB]
+Get:26 http://deb.debian.org/debian trixie/main amd64 redis-server amd64 5:8.0.2-3+deb13u1 [66.4 kB]
+Get:27 http://deb.debian.org/debian trixie/main amd64 libpopt0 amd64 1.19+dfsg-2 [43.8 kB]
+Get:28 http://deb.debian.org/debian trixie/main amd64 rsync amd64 3.4.1+ds1-5+deb13u1 [429 kB]
+Get:29 http://deb.debian.org/debian trixie/main amd64 sudo amd64 1.9.16p2-3 [2087 kB]
+Get:30 http://deb.debian.org/debian trixie/main amd64 less amd64 668-1 [161 kB]
+Get:31 http://deb.debian.org/debian trixie/main amd64 linux-sysctl-defaults all 4.12 [5624 B]
+Get:32 http://deb.debian.org/debian trixie/main amd64 logrotate amd64 3.22.0-1 [62.0 kB]
+Get:33 http://deb.debian.org/debian trixie/main amd64 vim-common all 2:9.1.1230-2 [421 kB]
+Get:34 http://deb.debian.org/debian trixie/main amd64 libc-l10n all 2.41-12+deb13u1 [738 kB]
+Get:35 http://deb.debian.org/debian trixie/main amd64 liblockfile-bin amd64 1.17-2 [15.8 kB]
+Get:36 http://deb.debian.org/debian trixie/main amd64 locales all 2.41-12+deb13u1 [3925 kB]
+Get:37 http://deb.debian.org/debian trixie/main amd64 systemd-timesyncd amd64 257.9-1~deb13u1 [93.0 kB]
+Get:38 http://deb.debian.org/debian trixie/main amd64 exim4-config all 4.98.2-1 [249 kB]
+Get:39 http://deb.debian.org/debian trixie/main amd64 libfile-fcntllock-perl amd64 0.22-4+b4 [34.6 kB]
+Get:40 http://deb.debian.org/debian trixie/main amd64 exim4-base amd64 4.98.2-1 [1141 kB]
+Get:41 http://deb.debian.org/debian trixie/main amd64 libidn12 amd64 1.43-1 [47.7 kB]
+Get:42 http://deb.debian.org/debian trixie/main amd64 libtirpc-common all 1.3.6+ds-1 [11.0 kB]
+Get:43 http://deb.debian.org/debian trixie/main amd64 libtirpc3t64 amd64 1.3.6+ds-1 [83.3 kB]
+Get:44 http://deb.debian.org/debian trixie/main amd64 libnsl2 amd64 1.3.0-3+b3 [40.6 kB]
+Get:45 http://deb.debian.org/debian trixie/main amd64 exim4-daemon-light amd64 4.98.2-1 [629 kB]
+Get:46 http://deb.debian.org/debian trixie/main amd64 liblockfile1 amd64 1.17-2 [11.9 kB]
+Get:47 http://deb.debian.org/debian trixie/main amd64 bsd-mailx amd64 8.1.2-0.20220412cvs-1.1 [82.2 kB]
+Get:48 http://deb.debian.org/debian trixie/main amd64 build-essential amd64 12.12 [4624 B]
+Get:49 http://deb.debian.org/debian trixie/main amd64 cmake-data all 3.31.6-2 [2268 kB]
+Get:50 http://deb.debian.org/debian trixie/main amd64 libarchive13t64 amd64 3.7.4-4 [349 kB]
+Get:51 http://deb.debian.org/debian trixie/main amd64 libjsoncpp26 amd64 1.9.6-3 [81.7 kB]
+Get:52 http://deb.debian.org/debian trixie/main amd64 librhash1 amd64 1.4.5-1 [132 kB]
+Get:53 http://deb.debian.org/debian trixie/main amd64 libuv1t64 amd64 1.50.0-2 [154 kB]
+Get:54 http://deb.debian.org/debian trixie/main amd64 cmake amd64 3.31.6-2 [12.0 MB]
+Get:55 http://deb.debian.org/debian trixie/main amd64 libdevmapper1.02.1 amd64 2:1.02.205-2 [135 kB]
+Get:56 http://deb.debian.org/debian trixie/main amd64 dmsetup amd64 2:1.02.205-2 [82.3 kB]
+Get:57 http://deb.debian.org/debian trixie/main amd64 e2fsprogs-l10n all 1.47.2-3 [551 kB]
+Get:58 http://deb.debian.org/debian trixie/main amd64 libcap-dev amd64 1:2.75-10+b3 [546 kB]
+Get:59 http://deb.debian.org/debian trixie/main amd64 libcommon-sense-perl amd64 3.75-3+b5 [22.9 kB]
+Get:60 http://deb.debian.org/debian trixie/main amd64 libjson-c5 amd64 0.18+ds-1 [46.0 kB]
+Get:61 http://deb.debian.org/debian trixie/main amd64 libcryptsetup12 amd64 2:2.7.5-2 [254 kB]
+Get:62 http://deb.debian.org/debian trixie/main amd64 libev4t64 amd64 1:4.33-2.1+b1 [42.4 kB]
+Get:63 http://deb.debian.org/debian trixie/main amd64 libev-dev amd64 1:4.33-2.1+b1 [135 kB]
+Get:64 http://deb.debian.org/debian trixie/main amd64 libgpm2 amd64 1.20.7-11+b2 [14.4 kB]
+Get:65 http://deb.debian.org/debian trixie/main amd64 libjson-c-dev amd64 0.18+ds-1 [74.8 kB]
+Get:66 http://deb.debian.org/debian trixie/main amd64 libtypes-serialiser-perl all 1.01-1 [12.2 kB]
+Get:67 http://deb.debian.org/debian trixie/main amd64 libjson-xs-perl amd64 4.040-1~deb13u1 [91.0 kB]
+Get:68 http://deb.debian.org/debian trixie/main amd64 libkmod2 amd64 34.2-2 [63.2 kB]
+Get:69 http://deb.debian.org/debian trixie/main amd64 libz3-4 amd64 4.13.3-1 [8560 kB]
+Get:70 http://deb.debian.org/debian trixie/main amd64 libllvm19 amd64 1:19.1.7-3+b1 [26.0 MB]
+Get:71 http://deb.debian.org/debian trixie/main amd64 libsensors-config all 1:3.6.2-2 [16.2 kB]
+Get:72 http://deb.debian.org/debian trixie/main amd64 libsensors5 amd64 1:3.6.2-2 [37.5 kB]
+Get:73 http://deb.debian.org/debian-security trixie-security/main amd64 libsodium23 amd64 1.0.18-1+deb13u1 [165 kB]
+Get:74 http://deb.debian.org/debian trixie/main amd64 libuv1-dev amd64 1.50.0-2 [189 kB]
+Get:75 http://deb.debian.org/debian trixie/main amd64 libwebsockets19t64 amd64 4.3.5-1+deb13u1 [231 kB]
+Get:76 http://deb.debian.org/debian trixie/main amd64 libwebsockets-evlib-ev amd64 4.3.5-1+deb13u1 [23.9 kB]
+Get:77 http://deb.debian.org/debian trixie/main amd64 libwebsockets-evlib-uv amd64 4.3.5-1+deb13u1 [26.7 kB]
+Get:78 http://deb.debian.org/debian trixie/main amd64 libwebsockets-evlib-glib amd64 4.3.5-1+deb13u1 [23.9 kB]
+Get:79 http://deb.debian.org/debian trixie/main amd64 libwebsockets-dev amd64 4.3.5-1+deb13u1 [582 kB]
+Get:80 http://deb.debian.org/debian trixie/main amd64 pkg-config amd64 1.8.1-4 [14.0 kB]
+Get:81 http://deb.debian.org/debian-security trixie-security/main amd64 postgresql-client-17 amd64 17.8-0+deb13u1 [2046 kB]
+Get:82 http://deb.debian.org/debian-security trixie-security/main amd64 postgresql-17 amd64 17.8-0+deb13u1 [16.5 MB]
+Get:83 http://deb.debian.org/debian trixie/main amd64 postgresql all 17+278 [16.7 kB]
+Get:84 http://deb.debian.org/debian trixie/main amd64 psmisc amd64 23.7-2 [267 kB]
+Get:85 http://deb.debian.org/debian trixie/main amd64 sysstat amd64 12.7.5-2 [623 kB]
+Get:86 http://deb.debian.org/debian trixie/main amd64 systemd-cryptsetup amd64 257.9-1~deb13u1 [173 kB]
+Get:87 http://deb.debian.org/debian trixie/main amd64 tmux amd64 3.5a-3 [490 kB]
+Get:88 http://deb.debian.org/debian trixie/main amd64 vim-runtime all 2:9.1.1230-2 [7127 kB]
+Get:89 http://deb.debian.org/debian trixie/main amd64 vim amd64 2:9.1.1230-2 [1670 kB]
+Get:90 http://deb.debian.org/debian trixie/main amd64 xxd amd64 2:9.1.1230-2 [98.8 kB]
+Get:91 http://deb.debian.org/debian trixie/main amd64 zip amd64 3.0-15 [235 kB]
+Preconfiguring packages ...
+/var/cache/debconf/tmp.ci/postgresql.config.ayxD4t: 12: pg_lsclusters: not found
+Fetched 101 MB in 31s (3309 kB/s)
+Selecting previously unselected package libsystemd-shared:amd64.
+(Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 26762 files and directories currently installed.)
+Preparing to unpack .../libsystemd-shared_257.9-1~deb13u1_amd64.deb ...
+Unpacking libsystemd-shared:amd64 (257.9-1~deb13u1) ...
+Selecting previously unselected package libapparmor1:amd64.
+Preparing to unpack .../libapparmor1_4.1.0-1_amd64.deb ...
+Unpacking libapparmor1:amd64 (4.1.0-1) ...
+Setting up libsystemd-shared:amd64 (257.9-1~deb13u1) ...
+Selecting previously unselected package systemd.
+(Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 26775 files and directories currently installed.)
+Preparing to unpack .../systemd_257.9-1~deb13u1_amd64.deb ...
+Unpacking systemd (257.9-1~deb13u1) ...
+Selecting previously unselected package cron-daemon-common.
+Preparing to unpack .../cron-daemon-common_3.0pl1-197_all.deb ...
+Unpacking cron-daemon-common (3.0pl1-197) ...
+Setting up libapparmor1:amd64 (4.1.0-1) ...
+Setting up systemd (257.9-1~deb13u1) ...
+Created symlink '/etc/systemd/system/getty.target.wants/getty@tty1.service' → '/usr/lib/systemd/system/getty@.service'.
+Created symlink '/etc/systemd/system/multi-user.target.wants/remote-fs.target' → '/usr/lib/systemd/system/remote-fs.target'.
+Created symlink '/etc/systemd/system/sysinit.target.wants/systemd-pstore.service' → '/usr/lib/systemd/system/systemd-pstore.service'.
+Initializing machine ID from random generator.
+Creating group 'systemd-journal' with GID 999.
+Creating group 'systemd-network' with GID 998.
+Creating user 'systemd-network' (systemd Network Management) with UID 998 and GID 998.
+/usr/lib/tmpfiles.d/legacy.conf:14: Duplicate line for path "/run/lock", ignoring.
+Setting up cron-daemon-common (3.0pl1-197) ...
+Creating group 'crontab' with GID 997.
+Selecting previously unselected package cron.
+(Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 27722 files and directories currently installed.)
+Preparing to unpack .../cron_3.0pl1-197_amd64.deb ...
+Unpacking cron (3.0pl1-197) ...
+Selecting previously unselected package libext2fs2t64:amd64.
+Preparing to unpack .../libext2fs2t64_1.47.2-3+b7_amd64.deb ...
+Adding 'diversion of /lib/x86_64-linux-gnu/libe2p.so.2 to /lib/x86_64-linux-gnu/libe2p.so.2.usr-is-merged by libext2fs2t64'
+Adding 'diversion of /lib/x86_64-linux-gnu/libe2p.so.2.3 to /lib/x86_64-linux-gnu/libe2p.so.2.3.usr-is-merged by libext2fs2t64'
+Adding 'diversion of /lib/x86_64-linux-gnu/libext2fs.so.2 to /lib/x86_64-linux-gnu/libext2fs.so.2.usr-is-merged by libext2fs2t64'
+Adding 'diversion of /lib/x86_64-linux-gnu/libext2fs.so.2.4 to /lib/x86_64-linux-gnu/libext2fs.so.2.4.usr-is-merged by libext2fs2t64'
+Unpacking libext2fs2t64:amd64 (1.47.2-3+b7) ...
+Selecting previously unselected package libss2:amd64.
+Preparing to unpack .../libss2_1.47.2-3+b7_amd64.deb ...
+Unpacking libss2:amd64 (1.47.2-3+b7) ...
+Selecting previously unselected package logsave.
+Preparing to unpack .../logsave_1.47.2-3+b7_amd64.deb ...
+Unpacking logsave (1.47.2-3+b7) ...
+Setting up libext2fs2t64:amd64 (1.47.2-3+b7) ...
+Setting up libss2:amd64 (1.47.2-3+b7) ...
+Selecting previously unselected package e2fsprogs.
+(Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 27781 files and directories currently installed.)
+Preparing to unpack .../00-e2fsprogs_1.47.2-3+b7_amd64.deb ...
+Unpacking e2fsprogs (1.47.2-3+b7) ...
+Selecting previously unselected package libdbus-1-3:amd64.
+Preparing to unpack .../01-libdbus-1-3_1.16.2-2_amd64.deb ...
+Unpacking libdbus-1-3:amd64 (1.16.2-2) ...
+Selecting previously unselected package dbus-bin.
+Preparing to unpack .../02-dbus-bin_1.16.2-2_amd64.deb ...
+Unpacking dbus-bin (1.16.2-2) ...
+Selecting previously unselected package dbus-session-bus-common.
+Preparing to unpack .../03-dbus-session-bus-common_1.16.2-2_all.deb ...
+Unpacking dbus-session-bus-common (1.16.2-2) ...
+Selecting previously unselected package dbus-daemon.
+Preparing to unpack .../04-dbus-daemon_1.16.2-2_amd64.deb ...
+Unpacking dbus-daemon (1.16.2-2) ...
+Selecting previously unselected package dbus-system-bus-common.
+Preparing to unpack .../05-dbus-system-bus-common_1.16.2-2_all.deb ...
+Unpacking dbus-system-bus-common (1.16.2-2) ...
+Selecting previously unselected package dbus.
+Preparing to unpack .../06-dbus_1.16.2-2_amd64.deb ...
+Unpacking dbus (1.16.2-2) ...
+Selecting previously unselected package libjson-perl.
+Preparing to unpack .../07-libjson-perl_4.10000-1_all.deb ...
+Unpacking libjson-perl (4.10000-1) ...
+Selecting previously unselected package postgresql-client-common.
+Preparing to unpack .../08-postgresql-client-common_278_all.deb ...
+Unpacking postgresql-client-common (278) ...
+Selecting previously unselected package libio-pty-perl.
+Preparing to unpack .../09-libio-pty-perl_1%3a1.20-1+b3_amd64.deb ...
+Unpacking libio-pty-perl (1:1.20-1+b3) ...
+Selecting previously unselected package libipc-run-perl.
+Preparing to unpack .../10-libipc-run-perl_20231003.0-2_all.deb ...
+Unpacking libipc-run-perl (20231003.0-2) ...
+Selecting previously unselected package postgresql-common-dev.
+Preparing to unpack .../11-postgresql-common-dev_278_all.deb ...
+Unpacking postgresql-common-dev (278) ...
+Selecting previously unselected package ssl-cert.
+Preparing to unpack .../12-ssl-cert_1.1.3_all.deb ...
+Unpacking ssl-cert (1.1.3) ...
+Selecting previously unselected package postgresql-common.
+Preparing to unpack .../13-postgresql-common_278_all.deb ...
+Adding 'diversion of /usr/bin/pg_config to /usr/bin/pg_config.libpq-dev by postgresql-common'
+Unpacking postgresql-common (278) ...
+Selecting previously unselected package libjemalloc2:amd64.
+Preparing to unpack .../14-libjemalloc2_5.3.0-3_amd64.deb ...
+Unpacking libjemalloc2:amd64 (5.3.0-3) ...
+Selecting previously unselected package liblzf1:amd64.
+Preparing to unpack .../15-liblzf1_3.6-4+b3_amd64.deb ...
+Unpacking liblzf1:amd64 (3.6-4+b3) ...
+Selecting previously unselected package redis-tools.
+Preparing to unpack .../16-redis-tools_5%3a8.0.2-3+deb13u1_amd64.deb ...
+Unpacking redis-tools (5:8.0.2-3+deb13u1) ...
+Selecting previously unselected package redis-server.
+Preparing to unpack .../17-redis-server_5%3a8.0.2-3+deb13u1_amd64.deb ...
+Unpacking redis-server (5:8.0.2-3+deb13u1) ...
+Selecting previously unselected package libpopt0:amd64.
+Preparing to unpack .../18-libpopt0_1.19+dfsg-2_amd64.deb ...
+Unpacking libpopt0:amd64 (1.19+dfsg-2) ...
+Selecting previously unselected package rsync.
+Preparing to unpack .../19-rsync_3.4.1+ds1-5+deb13u1_amd64.deb ...
+Unpacking rsync (3.4.1+ds1-5+deb13u1) ...
+Selecting previously unselected package sudo.
+Preparing to unpack .../20-sudo_1.9.16p2-3_amd64.deb ...
+Unpacking sudo (1.9.16p2-3) ...
+Selecting previously unselected package less.
+Preparing to unpack .../21-less_668-1_amd64.deb ...
+Unpacking less (668-1) ...
+Selecting previously unselected package linux-sysctl-defaults.
+Preparing to unpack .../22-linux-sysctl-defaults_4.12_all.deb ...
+Unpacking linux-sysctl-defaults (4.12) ...
+Selecting previously unselected package logrotate.
+Preparing to unpack .../23-logrotate_3.22.0-1_amd64.deb ...
+Unpacking logrotate (3.22.0-1) ...
+Selecting previously unselected package vim-common.
+Preparing to unpack .../24-vim-common_2%3a9.1.1230-2_all.deb ...
+Unpacking vim-common (2:9.1.1230-2) ...
+Selecting previously unselected package libc-l10n.
+Preparing to unpack .../25-libc-l10n_2.41-12+deb13u1_all.deb ...
+Unpacking libc-l10n (2.41-12+deb13u1) ...
+Selecting previously unselected package liblockfile-bin.
+Preparing to unpack .../26-liblockfile-bin_1.17-2_amd64.deb ...
+Unpacking liblockfile-bin (1.17-2) ...
+Selecting previously unselected package locales.
+Preparing to unpack .../27-locales_2.41-12+deb13u1_all.deb ...
+Unpacking locales (2.41-12+deb13u1) ...
+Selecting previously unselected package systemd-timesyncd.
+Preparing to unpack .../28-systemd-timesyncd_257.9-1~deb13u1_amd64.deb ...
+Unpacking systemd-timesyncd (257.9-1~deb13u1) ...
+Selecting previously unselected package exim4-config.
+Preparing to unpack .../29-exim4-config_4.98.2-1_all.deb ...
+Unpacking exim4-config (4.98.2-1) ...
+Selecting previously unselected package libfile-fcntllock-perl.
+Preparing to unpack .../30-libfile-fcntllock-perl_0.22-4+b4_amd64.deb ...
+Unpacking libfile-fcntllock-perl (0.22-4+b4) ...
+Selecting previously unselected package exim4-base.
+Preparing to unpack .../31-exim4-base_4.98.2-1_amd64.deb ...
+Unpacking exim4-base (4.98.2-1) ...
+Selecting previously unselected package libidn12:amd64.
+Preparing to unpack .../32-libidn12_1.43-1_amd64.deb ...
+Unpacking libidn12:amd64 (1.43-1) ...
+Selecting previously unselected package libtirpc-common.
+Preparing to unpack .../33-libtirpc-common_1.3.6+ds-1_all.deb ...
+Unpacking libtirpc-common (1.3.6+ds-1) ...
+Selecting previously unselected package libtirpc3t64:amd64.
+Preparing to unpack .../34-libtirpc3t64_1.3.6+ds-1_amd64.deb ...
+Adding 'diversion of /lib/x86_64-linux-gnu/libtirpc.so.3 to /lib/x86_64-linux-gnu/libtirpc.so.3.usr-is-merged by libtirpc3t64'
+Adding 'diversion of /lib/x86_64-linux-gnu/libtirpc.so.3.0.0 to /lib/x86_64-linux-gnu/libtirpc.so.3.0.0.usr-is-merged by libtirpc3t64'
+Unpacking libtirpc3t64:amd64 (1.3.6+ds-1) ...
+Selecting previously unselected package libnsl2:amd64.
+Preparing to unpack .../35-libnsl2_1.3.0-3+b3_amd64.deb ...
+Unpacking libnsl2:amd64 (1.3.0-3+b3) ...
+Selecting previously unselected package exim4-daemon-light.
+Preparing to unpack .../36-exim4-daemon-light_4.98.2-1_amd64.deb ...
+Unpacking exim4-daemon-light (4.98.2-1) ...
+Selecting previously unselected package liblockfile1:amd64.
+Preparing to unpack .../37-liblockfile1_1.17-2_amd64.deb ...
+Unpacking liblockfile1:amd64 (1.17-2) ...
+Selecting previously unselected package bsd-mailx.
+Preparing to unpack .../38-bsd-mailx_8.1.2-0.20220412cvs-1.1_amd64.deb ...
+Unpacking bsd-mailx (8.1.2-0.20220412cvs-1.1) ...
+Selecting previously unselected package build-essential.
+Preparing to unpack .../39-build-essential_12.12_amd64.deb ...
+Unpacking build-essential (12.12) ...
+Selecting previously unselected package cmake-data.
+Preparing to unpack .../40-cmake-data_3.31.6-2_all.deb ...
+Unpacking cmake-data (3.31.6-2) ...
+Selecting previously unselected package libarchive13t64:amd64.
+Preparing to unpack .../41-libarchive13t64_3.7.4-4_amd64.deb ...
+Unpacking libarchive13t64:amd64 (3.7.4-4) ...
+Selecting previously unselected package libjsoncpp26:amd64.
+Preparing to unpack .../42-libjsoncpp26_1.9.6-3_amd64.deb ...
+Unpacking libjsoncpp26:amd64 (1.9.6-3) ...
+Selecting previously unselected package librhash1:amd64.
+Preparing to unpack .../43-librhash1_1.4.5-1_amd64.deb ...
+Unpacking librhash1:amd64 (1.4.5-1) ...
+Selecting previously unselected package libuv1t64:amd64.
+Preparing to unpack .../44-libuv1t64_1.50.0-2_amd64.deb ...
+Unpacking libuv1t64:amd64 (1.50.0-2) ...
+Selecting previously unselected package cmake.
+Preparing to unpack .../45-cmake_3.31.6-2_amd64.deb ...
+Unpacking cmake (3.31.6-2) ...
+Selecting previously unselected package libdevmapper1.02.1:amd64.
+Preparing to unpack .../46-libdevmapper1.02.1_2%3a1.02.205-2_amd64.deb ...
+Unpacking libdevmapper1.02.1:amd64 (2:1.02.205-2) ...
+Selecting previously unselected package dmsetup.
+Preparing to unpack .../47-dmsetup_2%3a1.02.205-2_amd64.deb ...
+Unpacking dmsetup (2:1.02.205-2) ...
+Selecting previously unselected package e2fsprogs-l10n.
+Preparing to unpack .../48-e2fsprogs-l10n_1.47.2-3_all.deb ...
+Unpacking e2fsprogs-l10n (1.47.2-3) ...
+Selecting previously unselected package libcap-dev:amd64.
+Preparing to unpack .../49-libcap-dev_1%3a2.75-10+b3_amd64.deb ...
+Unpacking libcap-dev:amd64 (1:2.75-10+b3) ...
+Selecting previously unselected package libcommon-sense-perl:amd64.
+Preparing to unpack .../50-libcommon-sense-perl_3.75-3+b5_amd64.deb ...
+Unpacking libcommon-sense-perl:amd64 (3.75-3+b5) ...
+Selecting previously unselected package libjson-c5:amd64.
+Preparing to unpack .../51-libjson-c5_0.18+ds-1_amd64.deb ...
+Unpacking libjson-c5:amd64 (0.18+ds-1) ...
+Selecting previously unselected package libcryptsetup12:amd64.
+Preparing to unpack .../52-libcryptsetup12_2%3a2.7.5-2_amd64.deb ...
+Unpacking libcryptsetup12:amd64 (2:2.7.5-2) ...
+Selecting previously unselected package libev4t64:amd64.
+Preparing to unpack .../53-libev4t64_1%3a4.33-2.1+b1_amd64.deb ...
+Unpacking libev4t64:amd64 (1:4.33-2.1+b1) ...
+Selecting previously unselected package libev-dev:amd64.
+Preparing to unpack .../54-libev-dev_1%3a4.33-2.1+b1_amd64.deb ...
+Unpacking libev-dev:amd64 (1:4.33-2.1+b1) ...
+Selecting previously unselected package libgpm2:amd64.
+Preparing to unpack .../55-libgpm2_1.20.7-11+b2_amd64.deb ...
+Unpacking libgpm2:amd64 (1.20.7-11+b2) ...
+Selecting previously unselected package libjson-c-dev:amd64.
+Preparing to unpack .../56-libjson-c-dev_0.18+ds-1_amd64.deb ...
+Unpacking libjson-c-dev:amd64 (0.18+ds-1) ...
+Selecting previously unselected package libtypes-serialiser-perl.
+Preparing to unpack .../57-libtypes-serialiser-perl_1.01-1_all.deb ...
+Unpacking libtypes-serialiser-perl (1.01-1) ...
+Selecting previously unselected package libjson-xs-perl.
+Preparing to unpack .../58-libjson-xs-perl_4.040-1~deb13u1_amd64.deb ...
+Unpacking libjson-xs-perl (4.040-1~deb13u1) ...
+Selecting previously unselected package libkmod2:amd64.
+Preparing to unpack .../59-libkmod2_34.2-2_amd64.deb ...
+Unpacking libkmod2:amd64 (34.2-2) ...
+Selecting previously unselected package libz3-4:amd64.
+Preparing to unpack .../60-libz3-4_4.13.3-1_amd64.deb ...
+Unpacking libz3-4:amd64 (4.13.3-1) ...
+Selecting previously unselected package libllvm19:amd64.
+Preparing to unpack .../61-libllvm19_1%3a19.1.7-3+b1_amd64.deb ...
+Unpacking libllvm19:amd64 (1:19.1.7-3+b1) ...
+Selecting previously unselected package libsensors-config.
+Preparing to unpack .../62-libsensors-config_1%3a3.6.2-2_all.deb ...
+Unpacking libsensors-config (1:3.6.2-2) ...
+Selecting previously unselected package libsensors5:amd64.
+Preparing to unpack .../63-libsensors5_1%3a3.6.2-2_amd64.deb ...
+Unpacking libsensors5:amd64 (1:3.6.2-2) ...
+Selecting previously unselected package libsodium23:amd64.
+Preparing to unpack .../64-libsodium23_1.0.18-1+deb13u1_amd64.deb ...
+Unpacking libsodium23:amd64 (1.0.18-1+deb13u1) ...
+Selecting previously unselected package libuv1-dev:amd64.
+Preparing to unpack .../65-libuv1-dev_1.50.0-2_amd64.deb ...
+Unpacking libuv1-dev:amd64 (1.50.0-2) ...
+Selecting previously unselected package libwebsockets19t64:amd64.
+Preparing to unpack .../66-libwebsockets19t64_4.3.5-1+deb13u1_amd64.deb ...
+Unpacking libwebsockets19t64:amd64 (4.3.5-1+deb13u1) ...
+Selecting previously unselected package libwebsockets-evlib-ev:amd64.
+Preparing to unpack .../67-libwebsockets-evlib-ev_4.3.5-1+deb13u1_amd64.deb ...
+Unpacking libwebsockets-evlib-ev:amd64 (4.3.5-1+deb13u1) ...
+Selecting previously unselected package libwebsockets-evlib-uv:amd64.
+Preparing to unpack .../68-libwebsockets-evlib-uv_4.3.5-1+deb13u1_amd64.deb ...
+Unpacking libwebsockets-evlib-uv:amd64 (4.3.5-1+deb13u1) ...
+Selecting previously unselected package libwebsockets-evlib-glib:amd64.
+Preparing to unpack .../69-libwebsockets-evlib-glib_4.3.5-1+deb13u1_amd64.deb ...
+Unpacking libwebsockets-evlib-glib:amd64 (4.3.5-1+deb13u1) ...
+Selecting previously unselected package libwebsockets-dev:amd64.
+Preparing to unpack .../70-libwebsockets-dev_4.3.5-1+deb13u1_amd64.deb ...
+Unpacking libwebsockets-dev:amd64 (4.3.5-1+deb13u1) ...
+Selecting previously unselected package pkg-config:amd64.
+Preparing to unpack .../71-pkg-config_1.8.1-4_amd64.deb ...
+Unpacking pkg-config:amd64 (1.8.1-4) ...
+Selecting previously unselected package postgresql-client-17.
+Preparing to unpack .../72-postgresql-client-17_17.8-0+deb13u1_amd64.deb ...
+Unpacking postgresql-client-17 (17.8-0+deb13u1) ...
+Selecting previously unselected package postgresql-17.
+Preparing to unpack .../73-postgresql-17_17.8-0+deb13u1_amd64.deb ...
+Unpacking postgresql-17 (17.8-0+deb13u1) ...
+Selecting previously unselected package postgresql.
+Preparing to unpack .../74-postgresql_17+278_all.deb ...
+Unpacking postgresql (17+278) ...
+Selecting previously unselected package psmisc.
+Preparing to unpack .../75-psmisc_23.7-2_amd64.deb ...
+Unpacking psmisc (23.7-2) ...
+Selecting previously unselected package sysstat.
+Preparing to unpack .../76-sysstat_12.7.5-2_amd64.deb ...
+Unpacking sysstat (12.7.5-2) ...
+Selecting previously unselected package systemd-cryptsetup.
+Preparing to unpack .../77-systemd-cryptsetup_257.9-1~deb13u1_amd64.deb ...
+Unpacking systemd-cryptsetup (257.9-1~deb13u1) ...
+Selecting previously unselected package tmux.
+Preparing to unpack .../78-tmux_3.5a-3_amd64.deb ...
+Unpacking tmux (3.5a-3) ...
+Selecting previously unselected package vim-runtime.
+Preparing to unpack .../79-vim-runtime_2%3a9.1.1230-2_all.deb ...
+Adding 'diversion of /usr/share/vim/vim91/doc/help.txt to /usr/share/vim/vim91/doc/help.txt.vim-tiny by vim-runtime'
+Adding 'diversion of /usr/share/vim/vim91/doc/tags to /usr/share/vim/vim91/doc/tags.vim-tiny by vim-runtime'
+Unpacking vim-runtime (2:9.1.1230-2) ...
+Selecting previously unselected package vim.
+Preparing to unpack .../80-vim_2%3a9.1.1230-2_amd64.deb ...
+Unpacking vim (2:9.1.1230-2) ...
+Selecting previously unselected package xxd.
+Preparing to unpack .../81-xxd_2%3a9.1.1230-2_amd64.deb ...
+Unpacking xxd (2:9.1.1230-2) ...
+Selecting previously unselected package zip.
+Preparing to unpack .../82-zip_3.0-15_amd64.deb ...
+Unpacking zip (3.0-15) ...
+Setting up postgresql-client-common (278) ...
+Setting up libev4t64:amd64 (1:4.33-2.1+b1) ...
+Setting up libc-l10n (2.41-12+deb13u1) ...
+Setting up libsodium23:amd64 (1.0.18-1+deb13u1) ...
+Setting up libgpm2:amd64 (1.20.7-11+b2) ...
+Setting up liblockfile-bin (1.17-2) ...
+Setting up libio-pty-perl (1:1.20-1+b3) ...
+Setting up libfile-fcntllock-perl (0.22-4+b4) ...
+Setting up postgresql-client-17 (17.8-0+deb13u1) ...
+update-alternatives: using /usr/share/postgresql/17/man/man1/psql.1.gz to provide /usr/share/man/man1/psql.1.gz (psql.1.gz) in auto mode
+Setting up psmisc (23.7-2) ...
+Setting up libtirpc-common (1.3.6+ds-1) ...
+Setting up cron (3.0pl1-197) ...
+invoke-rc.d: could not determine current runlevel
+invoke-rc.d: policy-rc.d denied execution of start.
+Created symlink '/etc/systemd/system/multi-user.target.wants/cron.service' → '/usr/lib/systemd/system/cron.service'.
+Setting up libuv1t64:amd64 (1.50.0-2) ...
+Setting up libsensors-config (1:3.6.2-2) ...
+Setting up less (668-1) ...
+Setting up libcommon-sense-perl:amd64 (3.75-3+b5) ...
+Setting up libjemalloc2:amd64 (5.3.0-3) ...
+Setting up locales (2.41-12+deb13u1) ...
+Generating locales (this might take a while)...
+Generation complete.
+Setting up libwebsockets19t64:amd64 (4.3.5-1+deb13u1) ...
+Setting up xxd (2:9.1.1230-2) ...
+Setting up zip (3.0-15) ...
+Setting up libz3-4:amd64 (4.13.3-1) ...
+Setting up linux-sysctl-defaults (4.12) ...
+Setting up vim-common (2:9.1.1230-2) ...
+Setting up ssl-cert (1.1.3) ...
+Setting up libjsoncpp26:amd64 (1.9.6-3) ...
+Setting up libdbus-1-3:amd64 (1.16.2-2) ...
+Setting up liblzf1:amd64 (3.6-4+b3) ...
+Setting up systemd-timesyncd (257.9-1~deb13u1) ...
+Creating group 'systemd-timesync' with GID 996.
+Creating user 'systemd-timesync' (systemd Time Synchronization) with UID 996 and GID 996.
+Created symlink '/etc/systemd/system/dbus-org.freedesktop.timesync1.service' → '/usr/lib/systemd/system/systemd-timesyncd.service'.
+Created symlink '/etc/systemd/system/sysinit.target.wants/systemd-timesyncd.service' → '/usr/lib/systemd/system/systemd-timesyncd.service'.
+Setting up libidn12:amd64 (1.43-1) ...
+Setting up sudo (1.9.16p2-3) ...
+invoke-rc.d: could not determine current runlevel
+invoke-rc.d: policy-rc.d denied execution of start.
+Setting up pkg-config:amd64 (1.8.1-4) ...
+Setting up libipc-run-perl (20231003.0-2) ...
+Setting up libsensors5:amd64 (1:3.6.2-2) ...
+Setting up logsave (1.47.2-3+b7) ...
+Setting up libtypes-serialiser-perl (1.01-1) ...
+Setting up exim4-config (4.98.2-1) ...
+Adding system-user for exim (v4)
+Setting up dbus-session-bus-common (1.16.2-2) ...
+Setting up libjson-perl (4.10000-1) ...
+Setting up build-essential (12.12) ...
+Setting up cmake-data (3.31.6-2) ...
+Setting up librhash1:amd64 (1.4.5-1) ...
+Setting up liblockfile1:amd64 (1.17-2) ...
+Setting up libev-dev:amd64 (1:4.33-2.1+b1) ...
+Setting up vim-runtime (2:9.1.1230-2) ...
+Setting up dbus-system-bus-common (1.16.2-2) ...
+Creating group 'messagebus' with GID 995.
+Creating user 'messagebus' (System Message Bus) with UID 995 and GID 995.
+Setting up libcap-dev:amd64 (1:2.75-10+b3) ...
+Setting up libarchive13t64:amd64 (3.7.4-4) ...
+Setting up libwebsockets-evlib-glib:amd64 (4.3.5-1+deb13u1) ...
+Setting up libjson-c5:amd64 (0.18+ds-1) ...
+Setting up sysstat (12.7.5-2) ...
+Creating config file /etc/default/sysstat with new version
+update-alternatives: using /usr/bin/sar.sysstat to provide /usr/bin/sar (sar) in auto mode
+Created symlink '/etc/systemd/system/sysstat.service.wants/sysstat-collect.timer' → '/usr/lib/systemd/system/sysstat-collect.timer'.
+Created symlink '/etc/systemd/system/sysstat.service.wants/sysstat-rotate.timer' → '/usr/lib/systemd/system/sysstat-rotate.timer'.
+Created symlink '/etc/systemd/system/sysstat.service.wants/sysstat-summary.timer' → '/usr/lib/systemd/system/sysstat-summary.timer'.
+Created symlink '/etc/systemd/system/multi-user.target.wants/sysstat.service' → '/usr/lib/systemd/system/sysstat.service'.
+Setting up tmux (3.5a-3) ...
+Setting up dbus-bin (1.16.2-2) ...
+Setting up libkmod2:amd64 (34.2-2) ...
+Setting up libpopt0:amd64 (1.19+dfsg-2) ...
+Setting up postgresql-common-dev (278) ...
+Setting up logrotate (3.22.0-1) ...
+Created symlink '/etc/systemd/system/timers.target.wants/logrotate.timer' → '/usr/lib/systemd/system/logrotate.timer'.
+Setting up libjson-xs-perl (4.040-1~deb13u1) ...
+Setting up libuv1-dev:amd64 (1.50.0-2) ...
+Setting up libllvm19:amd64 (1:19.1.7-3+b1) ...
+Setting up exim4-base (4.98.2-1) ...
+exim: DB upgrade, deleting hints-db
+Created symlink '/etc/systemd/system/timers.target.wants/exim4-base.timer' → '/usr/lib/systemd/system/exim4-base.timer'.
+Setting up vim (2:9.1.1230-2) ...
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/editor (editor) in auto mode
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/ex (ex) in auto mode
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/rview (rview) in auto mode
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/rvim (rvim) in auto mode
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/vi (vi) in auto mode
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/view (view) in auto mode
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/vim (vim) in auto mode
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/vimdiff (vimdiff) in auto mode
+Setting up libtirpc3t64:amd64 (1.3.6+ds-1) ...
+Setting up libwebsockets-evlib-ev:amd64 (4.3.5-1+deb13u1) ...
+Setting up libjson-c-dev:amd64 (0.18+ds-1) ...
+Setting up libwebsockets-evlib-uv:amd64 (4.3.5-1+deb13u1) ...
+Setting up e2fsprogs (1.47.2-3+b7) ...
+Created symlink '/etc/systemd/system/timers.target.wants/e2scrub_all.timer' → '/usr/lib/systemd/system/e2scrub_all.timer'.
+Created symlink '/etc/systemd/system/multi-user.target.wants/e2scrub_reap.service' → '/usr/lib/systemd/system/e2scrub_reap.service'.
+Setting up dbus-daemon (1.16.2-2) ...
+Setting up redis-tools (5:8.0.2-3+deb13u1) ...
+Setting up dbus (1.16.2-2) ...
+invoke-rc.d: could not determine current runlevel
+invoke-rc.d: policy-rc.d denied execution of start.
+Setting up postgresql-common (278) ...
+Creating config file /etc/postgresql-common/createcluster.conf with new version
+Building PostgreSQL dictionaries from installed myspell/hunspell packages...
+Removing obsolete dictionary files:
+invoke-rc.d: could not determine current runlevel
+invoke-rc.d: policy-rc.d denied execution of start.
+Created symlink '/etc/systemd/system/multi-user.target.wants/postgresql.service' → '/usr/lib/systemd/system/postgresql.service'.
+Setting up libnsl2:amd64 (1.3.0-3+b3) ...
+Setting up cmake (3.31.6-2) ...
+Setting up exim4-daemon-light (4.98.2-1) ...
+invoke-rc.d: could not determine current runlevel
+invoke-rc.d: policy-rc.d denied execution of start.
+Created symlink '/etc/systemd/system/multi-user.target.wants/exim4.service' → '/usr/lib/systemd/system/exim4.service'.
+Setting up libwebsockets-dev:amd64 (4.3.5-1+deb13u1) ...
+Setting up rsync (3.4.1+ds1-5+deb13u1) ...
+invoke-rc.d: could not determine current runlevel
+invoke-rc.d: policy-rc.d denied execution of start.
+Setting up postgresql-17 (17.8-0+deb13u1) ...
+Creating new PostgreSQL cluster 17/main ...
+/usr/lib/postgresql/17/bin/initdb -D /var/lib/postgresql/17/main --auth-local peer --auth-host scram-sha-256 --no-instructions
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "C.UTF-8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/17/main ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default "max_connections" ... 100
+selecting default "shared_buffers" ... 128MB
+selecting default time zone ... Etc/UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+invoke-rc.d: could not determine current runlevel
+invoke-rc.d: policy-rc.d denied execution of start.
+Setting up e2fsprogs-l10n (1.47.2-3) ...
+Setting up redis-server (5:8.0.2-3+deb13u1) ...
+invoke-rc.d: could not determine current runlevel
+invoke-rc.d: policy-rc.d denied execution of start.
+Created symlink '/etc/systemd/system/redis.service' → '/usr/lib/systemd/system/redis-server.service'.
+Created symlink '/etc/systemd/system/multi-user.target.wants/redis-server.service' → '/usr/lib/systemd/system/redis-server.service'.
+Setting up bsd-mailx (8.1.2-0.20220412cvs-1.1) ...
+update-alternatives: using /usr/bin/bsd-mailx to provide /usr/bin/mailx (mailx) in auto mode
+Setting up postgresql (17+278) ...
+Setting up dmsetup (2:1.02.205-2) ...
+Setting up libdevmapper1.02.1:amd64 (2:1.02.205-2) ...
+Setting up libcryptsetup12:amd64 (2:2.7.5-2) ...
+Setting up systemd-cryptsetup (257.9-1~deb13u1) ...
+Processing triggers for shared-mime-info (2.4-5+b2) ...
+Processing triggers for procps (2:4.0.4-9) ...
+Processing triggers for debianutils (5.23.2) ...
+Processing triggers for hicolor-icon-theme (0.18-2) ...
+Processing triggers for libc-bin (2.41-12+deb13u1) ...
+Processing triggers for systemd (257.9-1~deb13u1) ...
+✓ PostgreSQL 17 verified at build time
+DONE 46.9s
+
+--> RUN cd /usr/bin &&     wget -q https://github.com/nordeim/HF-Space/raw/refs/heads/main/bun &&     wget -q https://github.com/nordeim/HF-Space/raw/refs/heads/main/uv &&     wget -q https://github.com/nordeim/HF-Space/raw/refs/heads/main/uvx &&     chmod a+x /usr/bin/bun /usr/bin/uv*
+DONE 2.6s
+
+--> RUN pip install --upgrade pip &&     pip install django-celery-beat &&     pip install -U django djangorestframework djangorestframework-simplejwt django-cors-headers django-filter &&     pip install psycopg[binary] celery[redis] redis py-moneyed pydantic weasyprint lxml python-decouple whitenoise gunicorn structlog sentry-sdk[django] pytest pytest-django pytest-cov pytest-xdist model-bakery factory-boy faker httpx ruff mypy django-stubs djangorestframework-stubs pre-commit ipython django-debug-toolbar django-extensions &&     pip install fastapi uvicorn httpx pydantic python-multipart sqlalchemy alembic aiofiles jinja2
+Requirement already satisfied: pip in /usr/local/lib/python3.13/site-packages (25.3)
+Collecting pip
+  Downloading pip-26.0.1-py3-none-any.whl.metadata (4.7 kB)
+Downloading pip-26.0.1-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 72.0 MB/s  0:00:00
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 25.3
+    Uninstalling pip-25.3:
+      Successfully uninstalled pip-25.3
+Successfully installed pip-26.0.1
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+Collecting django-celery-beat
+  Downloading django_celery_beat-2.8.1-py3-none-any.whl.metadata (13 kB)
+Collecting celery<6.0,>=5.2.3 (from django-celery-beat)
+  Downloading celery-5.6.2-py3-none-any.whl.metadata (23 kB)
+Collecting django-timezone-field>=5.0 (from django-celery-beat)
+  Downloading django_timezone_field-7.2.1-py3-none-any.whl.metadata (13 kB)
+Collecting tzdata (from django-celery-beat)
+  Downloading tzdata-2025.3-py2.py3-none-any.whl.metadata (1.4 kB)
+Collecting python-crontab>=2.3.4 (from django-celery-beat)
+  Downloading python_crontab-3.3.0-py3-none-any.whl.metadata (17 kB)
+Collecting cron-descriptor>=1.2.32 (from django-celery-beat)
+  Downloading cron_descriptor-2.0.6-py3-none-any.whl.metadata (8.1 kB)
+Collecting Django<6.0,>=2.2 (from django-celery-beat)
+  Downloading django-5.2.11-py3-none-any.whl.metadata (4.1 kB)
+Collecting billiard<5.0,>=4.2.1 (from celery<6.0,>=5.2.3->django-celery-beat)
+  Downloading billiard-4.2.4-py3-none-any.whl.metadata (4.8 kB)
+Collecting kombu>=5.6.0 (from celery<6.0,>=5.2.3->django-celery-beat)
+  Downloading kombu-5.6.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting vine<6.0,>=5.1.0 (from celery<6.0,>=5.2.3->django-celery-beat)
+  Downloading vine-5.1.0-py3-none-any.whl.metadata (2.7 kB)
+Collecting click<9.0,>=8.1.2 (from celery<6.0,>=5.2.3->django-celery-beat)
+  Downloading click-8.3.1-py3-none-any.whl.metadata (2.6 kB)
+Collecting click-didyoumean>=0.3.0 (from celery<6.0,>=5.2.3->django-celery-beat)
+  Downloading click_didyoumean-0.3.1-py3-none-any.whl.metadata (3.9 kB)
+Collecting click-repl>=0.2.0 (from celery<6.0,>=5.2.3->django-celery-beat)
+  Downloading click_repl-0.3.0-py3-none-any.whl.metadata (3.6 kB)
+Collecting click-plugins>=1.1.1 (from celery<6.0,>=5.2.3->django-celery-beat)
+  Downloading click_plugins-1.1.1.2-py2.py3-none-any.whl.metadata (6.5 kB)
+Collecting python-dateutil>=2.8.2 (from celery<6.0,>=5.2.3->django-celery-beat)
+  Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Collecting tzlocal (from celery<6.0,>=5.2.3->django-celery-beat)
+  Downloading tzlocal-5.3.1-py3-none-any.whl.metadata (7.6 kB)
+Collecting asgiref>=3.8.1 (from Django<6.0,>=2.2->django-celery-beat)
+  Downloading asgiref-3.11.1-py3-none-any.whl.metadata (9.3 kB)
+Collecting sqlparse>=0.3.1 (from Django<6.0,>=2.2->django-celery-beat)
+  Downloading sqlparse-0.5.5-py3-none-any.whl.metadata (4.7 kB)
+Collecting prompt-toolkit>=3.0.36 (from click-repl>=0.2.0->celery<6.0,>=5.2.3->django-celery-beat)
+  Downloading prompt_toolkit-3.0.52-py3-none-any.whl.metadata (6.4 kB)
+Collecting typing_extensions (from cron-descriptor>=1.2.32->django-celery-beat)
+  Downloading typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting amqp<6.0.0,>=5.1.1 (from kombu>=5.6.0->celery<6.0,>=5.2.3->django-celery-beat)
+  Downloading amqp-5.3.1-py3-none-any.whl.metadata (8.9 kB)
+Collecting packaging (from kombu>=5.6.0->celery<6.0,>=5.2.3->django-celery-beat)
+  Downloading packaging-26.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting wcwidth (from prompt-toolkit>=3.0.36->click-repl>=0.2.0->celery<6.0,>=5.2.3->django-celery-beat)
+  Downloading wcwidth-0.6.0-py3-none-any.whl.metadata (30 kB)
+Collecting six>=1.5 (from python-dateutil>=2.8.2->celery<6.0,>=5.2.3->django-celery-beat)
+  Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Downloading django_celery_beat-2.8.1-py3-none-any.whl (104 kB)
+Downloading celery-5.6.2-py3-none-any.whl (445 kB)
+Downloading billiard-4.2.4-py3-none-any.whl (87 kB)
+Downloading click-8.3.1-py3-none-any.whl (108 kB)
+Downloading django-5.2.11-py3-none-any.whl (8.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.3/8.3 MB 191.4 MB/s  0:00:00
+Downloading vine-5.1.0-py3-none-any.whl (9.6 kB)
+Downloading asgiref-3.11.1-py3-none-any.whl (24 kB)
+Downloading click_didyoumean-0.3.1-py3-none-any.whl (3.6 kB)
+Downloading click_plugins-1.1.1.2-py2.py3-none-any.whl (11 kB)
+Downloading click_repl-0.3.0-py3-none-any.whl (10 kB)
+Downloading cron_descriptor-2.0.6-py3-none-any.whl (74 kB)
+Downloading django_timezone_field-7.2.1-py3-none-any.whl (13 kB)
+Downloading kombu-5.6.2-py3-none-any.whl (214 kB)
+Downloading amqp-5.3.1-py3-none-any.whl (50 kB)
+Downloading prompt_toolkit-3.0.52-py3-none-any.whl (391 kB)
+Downloading python_crontab-3.3.0-py3-none-any.whl (27 kB)
+Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Downloading sqlparse-0.5.5-py3-none-any.whl (46 kB)
+Downloading tzdata-2025.3-py2.py3-none-any.whl (348 kB)
+Downloading packaging-26.0-py3-none-any.whl (74 kB)
+Downloading typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+Downloading tzlocal-5.3.1-py3-none-any.whl (18 kB)
+Downloading wcwidth-0.6.0-py3-none-any.whl (94 kB)
+Installing collected packages: python-crontab, wcwidth, vine, tzlocal, tzdata, typing_extensions, sqlparse, six, packaging, click, billiard, asgiref, python-dateutil, prompt-toolkit, Django, cron-descriptor, click-plugins, click-didyoumean, amqp, kombu, django-timezone-field, click-repl, celery, django-celery-beat
+
+Successfully installed Django-5.2.11 amqp-5.3.1 asgiref-3.11.1 billiard-4.2.4 celery-5.6.2 click-8.3.1 click-didyoumean-0.3.1 click-plugins-1.1.1.2 click-repl-0.3.0 cron-descriptor-2.0.6 django-celery-beat-2.8.1 django-timezone-field-7.2.1 kombu-5.6.2 packaging-26.0 prompt-toolkit-3.0.52 python-crontab-3.3.0 python-dateutil-2.9.0.post0 six-1.17.0 sqlparse-0.5.5 typing_extensions-4.15.0 tzdata-2025.3 tzlocal-5.3.1 vine-5.1.0 wcwidth-0.6.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+Requirement already satisfied: django in ./usr/local/lib/python3.13/site-packages (5.2.11)
+Collecting django
+  Downloading django-6.0.2-py3-none-any.whl.metadata (3.9 kB)
+Collecting djangorestframework
+  Downloading djangorestframework-3.16.1-py3-none-any.whl.metadata (11 kB)
+Collecting djangorestframework-simplejwt
+  Downloading djangorestframework_simplejwt-5.5.1-py3-none-any.whl.metadata (4.6 kB)
+Collecting django-cors-headers
+  Downloading django_cors_headers-4.9.0-py3-none-any.whl.metadata (16 kB)
+Collecting django-filter
+  Downloading django_filter-25.2-py3-none-any.whl.metadata (5.1 kB)
+Requirement already satisfied: asgiref>=3.9.1 in ./usr/local/lib/python3.13/site-packages (from django) (3.11.1)
+Requirement already satisfied: sqlparse>=0.5.0 in ./usr/local/lib/python3.13/site-packages (from django) (0.5.5)
+Collecting pyjwt>=1.7.1 (from djangorestframework-simplejwt)
+  Downloading pyjwt-2.11.0-py3-none-any.whl.metadata (4.0 kB)
+Downloading django-6.0.2-py3-none-any.whl (8.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.3/8.3 MB 288.5 MB/s  0:00:00
+Downloading djangorestframework-3.16.1-py3-none-any.whl (1.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 677.5 MB/s  0:00:00
+Downloading djangorestframework_simplejwt-5.5.1-py3-none-any.whl (107 kB)
+Downloading django_cors_headers-4.9.0-py3-none-any.whl (12 kB)
+Downloading django_filter-25.2-py3-none-any.whl (94 kB)
+Downloading pyjwt-2.11.0-py3-none-any.whl (28 kB)
+Installing collected packages: pyjwt, django, djangorestframework, django-filter, django-cors-headers, djangorestframework-simplejwt
+  Attempting uninstall: django
+    Found existing installation: Django 5.2.11
+    Uninstalling Django-5.2.11:
+      Successfully uninstalled Django-5.2.11
+
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+django-celery-beat 2.8.1 requires Django<6.0,>=2.2, but you have django 6.0.2 which is incompatible.
+Successfully installed django-6.0.2 django-cors-headers-4.9.0 django-filter-25.2 djangorestframework-3.16.1 djangorestframework-simplejwt-5.5.1 pyjwt-2.11.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+Collecting redis
+  Downloading redis-7.2.1-py3-none-any.whl.metadata (12 kB)
+Collecting py-moneyed
+  Downloading py_moneyed-3.0-py3-none-any.whl.metadata (3.2 kB)
+Collecting pydantic
+  Downloading pydantic-2.12.5-py3-none-any.whl.metadata (90 kB)
+Collecting weasyprint
+  Downloading weasyprint-68.1-py3-none-any.whl.metadata (3.7 kB)
+Collecting lxml
+  Downloading lxml-6.0.2-cp313-cp313-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl.metadata (3.6 kB)
+Collecting python-decouple
+  Downloading python_decouple-3.8-py3-none-any.whl.metadata (14 kB)
+Collecting whitenoise
+  Downloading whitenoise-6.12.0-py3-none-any.whl.metadata (3.7 kB)
+Collecting gunicorn
+  Downloading gunicorn-25.1.0-py3-none-any.whl.metadata (5.5 kB)
+Collecting structlog
+  Downloading structlog-25.5.0-py3-none-any.whl.metadata (9.5 kB)
+Collecting pytest
+  Downloading pytest-9.0.2-py3-none-any.whl.metadata (7.6 kB)
+Collecting pytest-django
+  Downloading pytest_django-4.12.0-py3-none-any.whl.metadata (8.0 kB)
+Collecting pytest-cov
+  Downloading pytest_cov-7.0.0-py3-none-any.whl.metadata (31 kB)
+Collecting pytest-xdist
+  Downloading pytest_xdist-3.8.0-py3-none-any.whl.metadata (3.0 kB)
+Collecting model-bakery
+  Downloading model_bakery-1.23.3-py3-none-any.whl.metadata (4.5 kB)
+Collecting factory-boy
+  Downloading factory_boy-3.3.3-py2.py3-none-any.whl.metadata (15 kB)
+Collecting faker
+  Downloading faker-40.5.1-py3-none-any.whl.metadata (16 kB)
+Collecting httpx
+  Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+Collecting ruff
+  Downloading ruff-0.15.4-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (26 kB)
+Collecting mypy
+  Downloading mypy-1.19.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.2 kB)
+Collecting django-stubs
+  Downloading django_stubs-5.2.9-py3-none-any.whl.metadata (21 kB)
+Collecting djangorestframework-stubs
+  Downloading djangorestframework_stubs-3.16.8-py3-none-any.whl.metadata (3.9 kB)
+Collecting pre-commit
+  Downloading pre_commit-4.5.1-py2.py3-none-any.whl.metadata (1.2 kB)
+Collecting ipython
+  Downloading ipython-9.10.0-py3-none-any.whl.metadata (4.6 kB)
+Collecting django-debug-toolbar
+  Downloading django_debug_toolbar-6.2.0-py3-none-any.whl.metadata (4.5 kB)
+Collecting django-extensions
+  Downloading django_extensions-4.1-py3-none-any.whl.metadata (6.1 kB)
+Collecting psycopg[binary]
+  Downloading psycopg-3.3.3-py3-none-any.whl.metadata (4.3 kB)
+Requirement already satisfied: celery[redis] in ./usr/local/lib/python3.13/site-packages (5.6.2)
+Collecting sentry-sdk[django]
+  Downloading sentry_sdk-2.53.0-py2.py3-none-any.whl.metadata (10 kB)
+Collecting psycopg-binary==3.3.3 (from psycopg[binary])
+  Downloading psycopg_binary-3.3.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.7 kB)
+Requirement already satisfied: billiard<5.0,>=4.2.1 in ./usr/local/lib/python3.13/site-packages (from celery[redis]) (4.2.4)
+Requirement already satisfied: kombu>=5.6.0 in ./usr/local/lib/python3.13/site-packages (from celery[redis]) (5.6.2)
+Requirement already satisfied: vine<6.0,>=5.1.0 in ./usr/local/lib/python3.13/site-packages (from celery[redis]) (5.1.0)
+Requirement already satisfied: click<9.0,>=8.1.2 in ./usr/local/lib/python3.13/site-packages (from celery[redis]) (8.3.1)
+Requirement already satisfied: click-didyoumean>=0.3.0 in ./usr/local/lib/python3.13/site-packages (from celery[redis]) (0.3.1)
+Requirement already satisfied: click-repl>=0.2.0 in ./usr/local/lib/python3.13/site-packages (from celery[redis]) (0.3.0)
+Requirement already satisfied: click-plugins>=1.1.1 in ./usr/local/lib/python3.13/site-packages (from celery[redis]) (1.1.1.2)
+Requirement already satisfied: python-dateutil>=2.8.2 in ./usr/local/lib/python3.13/site-packages (from celery[redis]) (2.9.0.post0)
+Requirement already satisfied: tzlocal in ./usr/local/lib/python3.13/site-packages (from celery[redis]) (5.3.1)
+Collecting babel>=2.8.0 (from py-moneyed)
+  Downloading babel-2.18.0-py3-none-any.whl.metadata (2.2 kB)
+Requirement already satisfied: typing-extensions>=3.7.4.3 in ./usr/local/lib/python3.13/site-packages (from py-moneyed) (4.15.0)
+Collecting annotated-types>=0.6.0 (from pydantic)
+  Downloading annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+Collecting pydantic-core==2.41.5 (from pydantic)
+  Downloading pydantic_core-2.41.5-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.3 kB)
+Collecting typing-inspection>=0.4.2 (from pydantic)
+  Downloading typing_inspection-0.4.2-py3-none-any.whl.metadata (2.6 kB)
+Collecting pydyf>=0.11.0 (from weasyprint)
+  Downloading pydyf-0.12.1-py3-none-any.whl.metadata (2.5 kB)
+Collecting cffi>=0.6 (from weasyprint)
+  Downloading cffi-2.0.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.6 kB)
+Collecting tinyhtml5>=2.0.0b1 (from weasyprint)
+  Downloading tinyhtml5-2.0.0-py3-none-any.whl.metadata (2.9 kB)
+Collecting tinycss2>=1.5.0 (from weasyprint)
+  Downloading tinycss2-1.5.1-py3-none-any.whl.metadata (3.0 kB)
+Collecting cssselect2>=0.8.0 (from weasyprint)
+  Downloading cssselect2-0.9.0-py3-none-any.whl.metadata (2.9 kB)
+Collecting Pyphen>=0.9.1 (from weasyprint)
+  Downloading pyphen-0.17.2-py3-none-any.whl.metadata (3.2 kB)
+Collecting Pillow>=9.1.0 (from weasyprint)
+  Downloading pillow-12.1.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (8.8 kB)
+Collecting fonttools>=4.59.2 (from fonttools[woff]>=4.59.2->weasyprint)
+  Downloading fonttools-4.61.1-cp313-cp313-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.whl.metadata (114 kB)
+Requirement already satisfied: packaging in ./usr/local/lib/python3.13/site-packages (from gunicorn) (26.0)
+Collecting urllib3>=1.26.11 (from sentry-sdk[django])
+  Downloading urllib3-2.6.3-py3-none-any.whl.metadata (6.9 kB)
+Collecting certifi (from sentry-sdk[django])
+  Downloading certifi-2026.2.25-py3-none-any.whl.metadata (2.5 kB)
+Requirement already satisfied: django>=1.8 in ./usr/local/lib/python3.13/site-packages (from sentry-sdk[django]) (6.0.2)
+Collecting iniconfig>=1.0.1 (from pytest)
+  Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting pluggy<2,>=1.5 (from pytest)
+  Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting pygments>=2.7.2 (from pytest)
+  Downloading pygments-2.19.2-py3-none-any.whl.metadata (2.5 kB)
+Collecting coverage>=7.10.6 (from coverage[toml]>=7.10.6->pytest-cov)
+  Downloading coverage-7.13.4-cp313-cp313-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (8.5 kB)
+Collecting execnet>=2.1 (from pytest-xdist)
+  Downloading execnet-2.1.2-py3-none-any.whl.metadata (2.9 kB)
+Collecting anyio (from httpx)
+  Downloading anyio-4.12.1-py3-none-any.whl.metadata (4.3 kB)
+Collecting httpcore==1.* (from httpx)
+  Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+Collecting idna (from httpx)
+  Downloading idna-3.11-py3-none-any.whl.metadata (8.4 kB)
+Collecting h11>=0.16 (from httpcore==1.*->httpx)
+  Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Collecting mypy_extensions>=1.0.0 (from mypy)
+  Downloading mypy_extensions-1.1.0-py3-none-any.whl.metadata (1.1 kB)
+Collecting pathspec>=0.9.0 (from mypy)
+  Downloading pathspec-1.0.4-py3-none-any.whl.metadata (13 kB)
+Collecting librt>=0.6.2 (from mypy)
+  Downloading librt-0.8.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (1.3 kB)
+Collecting django-stubs-ext>=5.2.9 (from django-stubs)
+  Downloading django_stubs_ext-5.2.9-py3-none-any.whl.metadata (3.6 kB)
+Collecting types-pyyaml (from django-stubs)
+  Downloading types_pyyaml-6.0.12.20250915-py3-none-any.whl.metadata (1.7 kB)
+Collecting cfgv>=2.0.0 (from pre-commit)
+  Downloading cfgv-3.5.0-py2.py3-none-any.whl.metadata (8.9 kB)
+Collecting identify>=1.0.0 (from pre-commit)
+  Downloading identify-2.6.16-py2.py3-none-any.whl.metadata (4.4 kB)
+Collecting nodeenv>=0.11.1 (from pre-commit)
+  Downloading nodeenv-1.10.0-py2.py3-none-any.whl.metadata (24 kB)
+Collecting pyyaml>=5.1 (from pre-commit)
+  Downloading pyyaml-6.0.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Collecting virtualenv>=20.10.0 (from pre-commit)
+  Downloading virtualenv-21.1.0-py3-none-any.whl.metadata (3.5 kB)
+Collecting decorator>=4.3.2 (from ipython)
+  Downloading decorator-5.2.1-py3-none-any.whl.metadata (3.9 kB)
+Collecting ipython-pygments-lexers>=1.0.0 (from ipython)
+  Downloading ipython_pygments_lexers-1.1.1-py3-none-any.whl.metadata (1.1 kB)
+Collecting jedi>=0.18.1 (from ipython)
+  Downloading jedi-0.19.2-py2.py3-none-any.whl.metadata (22 kB)
+Collecting matplotlib-inline>=0.1.5 (from ipython)
+  Downloading matplotlib_inline-0.2.1-py3-none-any.whl.metadata (2.3 kB)
+Collecting pexpect>4.3 (from ipython)
+  Downloading pexpect-4.9.0-py2.py3-none-any.whl.metadata (2.5 kB)
+Requirement already satisfied: prompt_toolkit<3.1.0,>=3.0.41 in ./usr/local/lib/python3.13/site-packages (from ipython) (3.0.52)
+Collecting stack_data>=0.6.0 (from ipython)
+  Downloading stack_data-0.6.3-py3-none-any.whl.metadata (18 kB)
+Collecting traitlets>=5.13.0 (from ipython)
+  Downloading traitlets-5.14.3-py3-none-any.whl.metadata (10 kB)
+Requirement already satisfied: wcwidth in ./usr/local/lib/python3.13/site-packages (from prompt_toolkit<3.1.0,>=3.0.41->ipython) (0.6.0)
+Requirement already satisfied: sqlparse>=0.2 in ./usr/local/lib/python3.13/site-packages (from django-debug-toolbar) (0.5.5)
+Collecting pycparser (from cffi>=0.6->weasyprint)
+  Downloading pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+Collecting webencodings (from cssselect2>=0.8.0->weasyprint)
+  Downloading webencodings-0.5.1-py2.py3-none-any.whl.metadata (2.1 kB)
+Requirement already satisfied: asgiref>=3.9.1 in ./usr/local/lib/python3.13/site-packages (from django>=1.8->sentry-sdk[django]) (3.11.1)
+Collecting brotli>=1.0.1 (from fonttools[woff]>=4.59.2->weasyprint)
+  Downloading brotli-1.2.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (6.1 kB)
+Collecting zopfli>=0.1.4 (from fonttools[woff]>=4.59.2->weasyprint)
+  Downloading zopfli-0.4.1-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.5 kB)
+Collecting parso<0.9.0,>=0.8.4 (from jedi>=0.18.1->ipython)
+  Downloading parso-0.8.6-py2.py3-none-any.whl.metadata (8.4 kB)
+Requirement already satisfied: amqp<6.0.0,>=5.1.1 in ./usr/local/lib/python3.13/site-packages (from kombu>=5.6.0->celery[redis]) (5.3.1)
+Requirement already satisfied: tzdata>=2025.2 in ./usr/local/lib/python3.13/site-packages (from kombu>=5.6.0->celery[redis]) (2025.3)
+Collecting ptyprocess>=0.5 (from pexpect>4.3->ipython)
+  Downloading ptyprocess-0.7.0-py2.py3-none-any.whl.metadata (1.3 kB)
+Requirement already satisfied: six>=1.5 in ./usr/local/lib/python3.13/site-packages (from python-dateutil>=2.8.2->celery[redis]) (1.17.0)
+Collecting executing>=1.2.0 (from stack_data>=0.6.0->ipython)
+  Downloading executing-2.2.1-py2.py3-none-any.whl.metadata (8.9 kB)
+Collecting asttokens>=2.1.0 (from stack_data>=0.6.0->ipython)
+  Downloading asttokens-3.0.1-py3-none-any.whl.metadata (4.9 kB)
+Collecting pure-eval (from stack_data>=0.6.0->ipython)
+  Downloading pure_eval-0.2.3-py3-none-any.whl.metadata (6.3 kB)
+Collecting distlib<1,>=0.3.7 (from virtualenv>=20.10.0->pre-commit)
+  Downloading distlib-0.4.0-py2.py3-none-any.whl.metadata (5.2 kB)
+Collecting filelock<4,>=3.24.2 (from virtualenv>=20.10.0->pre-commit)
+  Downloading filelock-3.24.3-py3-none-any.whl.metadata (2.0 kB)
+Collecting platformdirs<5,>=3.9.1 (from virtualenv>=20.10.0->pre-commit)
+  Downloading platformdirs-4.9.2-py3-none-any.whl.metadata (4.7 kB)
+Collecting python-discovery>=1 (from virtualenv>=20.10.0->pre-commit)
+  Downloading python_discovery-1.1.0-py3-none-any.whl.metadata (4.0 kB)
+Collecting redis
+  Downloading redis-6.4.0-py3-none-any.whl.metadata (10 kB)
+Downloading psycopg-3.3.3-py3-none-any.whl (212 kB)
+Downloading psycopg_binary-3.3.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.2/5.2 MB 407.9 MB/s  0:00:00
+Downloading py_moneyed-3.0-py3-none-any.whl (11 kB)
+Downloading pydantic-2.12.5-py3-none-any.whl (463 kB)
+Downloading pydantic_core-2.41.5-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 569.1 MB/s  0:00:00
+Downloading weasyprint-68.1-py3-none-any.whl (319 kB)
+Downloading lxml-6.0.2-cp313-cp313-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl (5.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.2/5.2 MB 258.9 MB/s  0:00:00
+Downloading python_decouple-3.8-py3-none-any.whl (9.9 kB)
+Downloading whitenoise-6.12.0-py3-none-any.whl (20 kB)
+Downloading gunicorn-25.1.0-py3-none-any.whl (197 kB)
+Downloading structlog-25.5.0-py3-none-any.whl (72 kB)
+Downloading sentry_sdk-2.53.0-py2.py3-none-any.whl (437 kB)
+Downloading pytest-9.0.2-py3-none-any.whl (374 kB)
+Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+Downloading pytest_django-4.12.0-py3-none-any.whl (26 kB)
+Downloading pytest_cov-7.0.0-py3-none-any.whl (22 kB)
+Downloading pytest_xdist-3.8.0-py3-none-any.whl (46 kB)
+Downloading model_bakery-1.23.3-py3-none-any.whl (25 kB)
+Downloading factory_boy-3.3.3-py2.py3-none-any.whl (37 kB)
+Downloading faker-40.5.1-py3-none-any.whl (2.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.0/2.0 MB 846.4 MB/s  0:00:00
+Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+Downloading ruff-0.15.4-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (11.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.2/11.2 MB 649.3 MB/s  0:00:00
+Downloading mypy-1.19.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (13.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.6/13.6 MB 170.5 MB/s  0:00:00
+Downloading django_stubs-5.2.9-py3-none-any.whl (508 kB)
+Downloading djangorestframework_stubs-3.16.8-py3-none-any.whl (56 kB)
+Downloading pre_commit-4.5.1-py2.py3-none-any.whl (226 kB)
+Downloading ipython-9.10.0-py3-none-any.whl (622 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 622.8/622.8 kB 977.7 MB/s  0:00:00
+Downloading django_debug_toolbar-6.2.0-py3-none-any.whl (271 kB)
+Downloading django_extensions-4.1-py3-none-any.whl (232 kB)
+Downloading annotated_types-0.7.0-py3-none-any.whl (13 kB)
+Downloading babel-2.18.0-py3-none-any.whl (10.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.2/10.2 MB 652.9 MB/s  0:00:00
+Downloading cffi-2.0.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (219 kB)
+Downloading cfgv-3.5.0-py2.py3-none-any.whl (7.4 kB)
+Downloading coverage-7.13.4-cp313-cp313-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (253 kB)
+Downloading cssselect2-0.9.0-py3-none-any.whl (15 kB)
+Downloading decorator-5.2.1-py3-none-any.whl (9.2 kB)
+Downloading django_stubs_ext-5.2.9-py3-none-any.whl (10.0 kB)
+Downloading execnet-2.1.2-py3-none-any.whl (40 kB)
+Downloading fonttools-4.61.1-cp313-cp313-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.whl (4.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.9/4.9 MB 254.9 MB/s  0:00:00
+Downloading brotli-1.2.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (1.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.4/1.4 MB 180.1 MB/s  0:00:00
+Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+Downloading identify-2.6.16-py2.py3-none-any.whl (99 kB)
+Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Downloading ipython_pygments_lexers-1.1.1-py3-none-any.whl (8.1 kB)
+Downloading jedi-0.19.2-py2.py3-none-any.whl (1.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.6/1.6 MB 849.2 MB/s  0:00:00
+Downloading parso-0.8.6-py2.py3-none-any.whl (106 kB)
+Downloading librt-0.8.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (224 kB)
+Downloading matplotlib_inline-0.2.1-py3-none-any.whl (9.5 kB)
+Downloading mypy_extensions-1.1.0-py3-none-any.whl (5.0 kB)
+Downloading nodeenv-1.10.0-py2.py3-none-any.whl (23 kB)
+Downloading pathspec-1.0.4-py3-none-any.whl (55 kB)
+Downloading pexpect-4.9.0-py2.py3-none-any.whl (63 kB)
+Downloading pillow-12.1.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (7.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7.0/7.0 MB 216.5 MB/s  0:00:00
+Downloading ptyprocess-0.7.0-py2.py3-none-any.whl (13 kB)
+Downloading pydyf-0.12.1-py3-none-any.whl (8.0 kB)
+Downloading pygments-2.19.2-py3-none-any.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 828.2 MB/s  0:00:00
+Downloading pyphen-0.17.2-py3-none-any.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 787.7 MB/s  0:00:00
+Downloading pyyaml-6.0.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (801 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 801.6/801.6 kB 766.6 MB/s  0:00:00
+Downloading stack_data-0.6.3-py3-none-any.whl (24 kB)
+Downloading asttokens-3.0.1-py3-none-any.whl (27 kB)
+Downloading executing-2.2.1-py2.py3-none-any.whl (28 kB)
+Downloading tinycss2-1.5.1-py3-none-any.whl (28 kB)
+Downloading tinyhtml5-2.0.0-py3-none-any.whl (39 kB)
+Downloading traitlets-5.14.3-py3-none-any.whl (85 kB)
+Downloading typing_inspection-0.4.2-py3-none-any.whl (14 kB)
+Downloading urllib3-2.6.3-py3-none-any.whl (131 kB)
+Downloading virtualenv-21.1.0-py3-none-any.whl (5.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.8/5.8 MB 709.0 MB/s  0:00:00
+Downloading distlib-0.4.0-py2.py3-none-any.whl (469 kB)
+Downloading filelock-3.24.3-py3-none-any.whl (24 kB)
+Downloading platformdirs-4.9.2-py3-none-any.whl (21 kB)
+Downloading python_discovery-1.1.0-py3-none-any.whl (30 kB)
+Downloading webencodings-0.5.1-py2.py3-none-any.whl (11 kB)
+Downloading zopfli-0.4.1-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (829 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 829.4/829.4 kB 875.6 MB/s  0:00:00
+Downloading anyio-4.12.1-py3-none-any.whl (113 kB)
+Downloading idna-3.11-py3-none-any.whl (71 kB)
+Downloading certifi-2026.2.25-py3-none-any.whl (153 kB)
+Downloading redis-6.4.0-py3-none-any.whl (279 kB)
+Downloading pure_eval-0.2.3-py3-none-any.whl (11 kB)
+Downloading pycparser-3.0-py3-none-any.whl (48 kB)
+Downloading types_pyyaml-6.0.12.20250915-py3-none-any.whl (20 kB)
+Installing collected packages: webencodings, python-decouple, pure-eval, ptyprocess, distlib, brotli, zopfli, whitenoise, urllib3, typing-inspection, types-pyyaml, traitlets, tinyhtml5, tinycss2, structlog, ruff, redis, pyyaml, Pyphen, pygments, pydyf, pydantic-core, pycparser, psycopg-binary, psycopg, pluggy, platformdirs, Pillow, pexpect, pathspec, parso, nodeenv, mypy_extensions, lxml, librt, iniconfig, idna, identify, h11, gunicorn, fonttools, filelock, faker, executing, execnet, decorator, coverage, cfgv, certifi, babel, asttokens, annotated-types, stack_data, sentry-sdk, python-discovery, pytest, pydantic, py-moneyed, mypy, model-bakery, matplotlib-inline, jedi, ipython-pygments-lexers, httpcore, factory-boy, django-stubs-ext, django-extensions, django-debug-toolbar, cssselect2, cffi, anyio, weasyprint, virtualenv, pytest-xdist, pytest-django, pytest-cov, ipython, httpx, django-stubs, pre-commit, djangorestframework-stubs
+
+Successfully installed Pillow-12.1.1 Pyphen-0.17.2 annotated-types-0.7.0 anyio-4.12.1 asttokens-3.0.1 babel-2.18.0 brotli-1.2.0 certifi-2026.2.25 cffi-2.0.0 cfgv-3.5.0 coverage-7.13.4 cssselect2-0.9.0 decorator-5.2.1 distlib-0.4.0 django-debug-toolbar-6.2.0 django-extensions-4.1 django-stubs-5.2.9 django-stubs-ext-5.2.9 djangorestframework-stubs-3.16.8 execnet-2.1.2 executing-2.2.1 factory-boy-3.3.3 faker-40.5.1 filelock-3.24.3 fonttools-4.61.1 gunicorn-25.1.0 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 identify-2.6.16 idna-3.11 iniconfig-2.3.0 ipython-9.10.0 ipython-pygments-lexers-1.1.1 jedi-0.19.2 librt-0.8.1 lxml-6.0.2 matplotlib-inline-0.2.1 model-bakery-1.23.3 mypy-1.19.1 mypy_extensions-1.1.0 nodeenv-1.10.0 parso-0.8.6 pathspec-1.0.4 pexpect-4.9.0 platformdirs-4.9.2 pluggy-1.6.0 pre-commit-4.5.1 psycopg-3.3.3 psycopg-binary-3.3.3 ptyprocess-0.7.0 pure-eval-0.2.3 py-moneyed-3.0 pycparser-3.0 pydantic-2.12.5 pydantic-core-2.41.5 pydyf-0.12.1 pygments-2.19.2 pytest-9.0.2 pytest-cov-7.0.0 pytest-django-4.12.0 pytest-xdist-3.8.0 python-decouple-3.8 python-discovery-1.1.0 pyyaml-6.0.3 redis-6.4.0 ruff-0.15.4 sentry-sdk-2.53.0 stack_data-0.6.3 structlog-25.5.0 tinycss2-1.5.1 tinyhtml5-2.0.0 traitlets-5.14.3 types-pyyaml-6.0.12.20250915 typing-inspection-0.4.2 urllib3-2.6.3 virtualenv-21.1.0 weasyprint-68.1 webencodings-0.5.1 whitenoise-6.12.0 zopfli-0.4.1
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+Collecting fastapi
+  Downloading fastapi-0.133.1-py3-none-any.whl.metadata (30 kB)
+Collecting uvicorn
+  Downloading uvicorn-0.41.0-py3-none-any.whl.metadata (6.7 kB)
+Requirement already satisfied: httpx in ./usr/local/lib/python3.13/site-packages (0.28.1)
+Requirement already satisfied: pydantic in ./usr/local/lib/python3.13/site-packages (2.12.5)
+Collecting python-multipart
+  Downloading python_multipart-0.0.22-py3-none-any.whl.metadata (1.8 kB)
+Collecting sqlalchemy
+  Downloading sqlalchemy-2.0.47-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (9.5 kB)
+Collecting alembic
+  Downloading alembic-1.18.4-py3-none-any.whl.metadata (7.2 kB)
+Collecting aiofiles
+  Downloading aiofiles-25.1.0-py3-none-any.whl.metadata (6.3 kB)
+Collecting jinja2
+  Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting starlette>=0.40.0 (from fastapi)
+  Downloading starlette-0.52.1-py3-none-any.whl.metadata (6.3 kB)
+Requirement already satisfied: typing-extensions>=4.8.0 in ./usr/local/lib/python3.13/site-packages (from fastapi) (4.15.0)
+Requirement already satisfied: typing-inspection>=0.4.2 in ./usr/local/lib/python3.13/site-packages (from fastapi) (0.4.2)
+Collecting annotated-doc>=0.0.2 (from fastapi)
+  Downloading annotated_doc-0.0.4-py3-none-any.whl.metadata (6.6 kB)
+Requirement already satisfied: click>=7.0 in ./usr/local/lib/python3.13/site-packages (from uvicorn) (8.3.1)
+Requirement already satisfied: h11>=0.8 in ./usr/local/lib/python3.13/site-packages (from uvicorn) (0.16.0)
+Requirement already satisfied: anyio in ./usr/local/lib/python3.13/site-packages (from httpx) (4.12.1)
+Requirement already satisfied: certifi in ./usr/local/lib/python3.13/site-packages (from httpx) (2026.2.25)
+Requirement already satisfied: httpcore==1.* in ./usr/local/lib/python3.13/site-packages (from httpx) (1.0.9)
+Requirement already satisfied: idna in ./usr/local/lib/python3.13/site-packages (from httpx) (3.11)
+Requirement already satisfied: annotated-types>=0.6.0 in ./usr/local/lib/python3.13/site-packages (from pydantic) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.5 in ./usr/local/lib/python3.13/site-packages (from pydantic) (2.41.5)
+Collecting greenlet>=1 (from sqlalchemy)
+  Downloading greenlet-3.3.2-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (3.7 kB)
+Collecting Mako (from alembic)
+  Downloading mako-1.3.10-py3-none-any.whl.metadata (2.9 kB)
+Collecting MarkupSafe>=2.0 (from jinja2)
+  Downloading markupsafe-3.0.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Downloading fastapi-0.133.1-py3-none-any.whl (109 kB)
+Downloading uvicorn-0.41.0-py3-none-any.whl (68 kB)
+Downloading python_multipart-0.0.22-py3-none-any.whl (24 kB)
+Downloading sqlalchemy-2.0.47-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (3.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.3/3.3 MB 195.7 MB/s  0:00:00
+Downloading alembic-1.18.4-py3-none-any.whl (263 kB)
+Downloading aiofiles-25.1.0-py3-none-any.whl (14 kB)
+Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+Downloading annotated_doc-0.0.4-py3-none-any.whl (5.3 kB)
+Downloading greenlet-3.3.2-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (616 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 616.8/616.8 kB 528.2 MB/s  0:00:00
+Downloading markupsafe-3.0.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Downloading starlette-0.52.1-py3-none-any.whl (74 kB)
+Downloading mako-1.3.10-py3-none-any.whl (78 kB)
+Installing collected packages: uvicorn, python-multipart, MarkupSafe, greenlet, annotated-doc, aiofiles, starlette, sqlalchemy, Mako, jinja2, fastapi, alembic
+
+Successfully installed Mako-1.3.10 MarkupSafe-3.0.3 aiofiles-25.1.0 alembic-1.18.4 annotated-doc-0.0.4 fastapi-0.133.1 greenlet-3.3.2 jinja2-3.1.6 python-multipart-0.0.22 sqlalchemy-2.0.47 starlette-0.52.1 uvicorn-0.41.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+DONE 26.2s
+
+--> RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - &&     apt-get install -y nodejs &&     rm -rf /var/lib/apt/lists/* &&     node --version &&     npm --version
+2026-02-27 08:51:58 - Installing pre-requisites
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Get:1 http://deb.debian.org/debian trixie InRelease [140 kB]
+Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+Get:4 http://deb.debian.org/debian trixie/main amd64 Packages [9670 kB]
+Get:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages [5412 B]
+Get:6 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [113 kB]
+Fetched 10.0 MB in 1s (13.9 MB/s)
+Reading package lists...
+Building dependency tree...
+Reading state information...
+All packages are up to date.
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Reading package lists...
+Building dependency tree...
+Reading state information...
+ca-certificates is already the newest version (20250419).
+curl is already the newest version (8.14.1-2+deb13u2).
+gnupg is already the newest version (2.4.7-21+deb13u1).
+Installing:
+  apt-transport-https
+
+Summary:
+  Upgrading: 0, Installing: 1, Removing: 0, Not Upgrading: 0
+  Download size: 38.6 kB
+  Space needed: 49.2 kB / 927 GB available
+
+Get:1 http://deb.debian.org/debian trixie/main amd64 apt-transport-https all 3.0.3 [38.6 kB]
+Fetched 38.6 kB in 0s (2706 kB/s)
+Selecting previously unselected package apt-transport-https.
+(Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 38755 files and directories currently installed.)
+Preparing to unpack .../apt-transport-https_3.0.3_all.deb ...
+Unpacking apt-transport-https (3.0.3) ...
+Setting up apt-transport-https (3.0.3) ...
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Hit:1 http://deb.debian.org/debian trixie InRelease
+Hit:2 http://deb.debian.org/debian trixie-updates InRelease
+Hit:3 http://deb.debian.org/debian-security trixie-security InRelease
+Get:4 https://deb.nodesource.com/node_24.x nodistro InRelease [12.1 kB]
+Get:5 https://deb.nodesource.com/node_24.x nodistro/main amd64 Packages [5680 B]
+Fetched 17.8 kB in 0s (186 kB/s)
+Reading package lists...
+Building dependency tree...
+Reading state information...
+All packages are up to date.
+2026-02-27 08:52:01 - Repository configured successfully.
+2026-02-27 08:52:01 - To install Node.js, run: apt install nodejs -y
+2026-02-27 08:52:01 - You can use N|solid Runtime as a node.js alternative
+2026-02-27 08:52:01 - To install N|solid Runtime, run: apt install nsolid -y 
+
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following NEW packages will be installed:
+  nodejs
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Need to get 38.2 MB of archives.
+After this operation, 234 MB of additional disk space will be used.
+Get:1 https://deb.nodesource.com/node_24.x nodistro/main amd64 nodejs amd64 24.14.0-1nodesource1 [38.2 MB]
+Fetched 38.2 MB in 0s (120 MB/s)
+Selecting previously unselected package nodejs.
+(Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 38759 files and directories currently installed.)
+Preparing to unpack .../nodejs_24.14.0-1nodesource1_amd64.deb ...
+Unpacking nodejs (24.14.0-1nodesource1) ...
+Setting up nodejs (24.14.0-1nodesource1) ...
+v24.14.0
+11.9.0
+DONE 7.4s
+
+--> RUN groupadd -g 1000 user &&     useradd -m -u 1000 -g user -d /home/user user &&     echo "user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/user &&     chmod 0440 /etc/sudoers.d/user &&     mkdir -p /tmp/runtime-user /data /app /var/run/postgresql /data/postgresql &&     chown -R user:user /tmp/runtime-user /data /app /var/run/postgresql /var/lib/postgresql &&     chmod 700 /data/postgresql
+DONE 0.4s
+
+--> RUN npm install -g --omit=dev pnpm@latest vite@latest vitest@latest &&     npx playwright install chromium &&     npx playwright install-deps chromium
+
+added 45 packages in 3s
+
+15 packages are looking for funding
+  run `npm fund` for details
+npm notice
+npm notice New minor version of npm available! 11.9.0 -> 11.11.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.11.0
+npm notice To update run: npm install -g npm@11.11.0
+npm notice
+npm warn exec The following package was not found and will be installed: playwright@1.58.2
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║ WARNING: It looks like you are running 'npx playwright install' without first ║
+║ installing your project's dependencies.                                       ║
+║                                                                               ║
+║ To avoid unexpected behavior, please install your dependencies first, and     ║
+║ then run Playwright's install command:                                        ║
+║                                                                               ║
+║     npm install                                                               ║
+║     npx playwright install                                                    ║
+║                                                                               ║
+║ If your project does not yet depend on Playwright, first install the          ║
+║ applicable npm package (most commonly @playwright/test), and                  ║
+║ then run Playwright's install command to download the browsers:               ║
+║                                                                               ║
+║     npm install @playwright/test                                              ║
+║     npx playwright install                                                    ║
+║                                                                               ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+Downloading Chrome for Testing 145.0.7632.6 (playwright chromium v1208) from https://cdn.playwright.dev/builds/cft/145.0.7632.6/linux64/chrome-linux64.zip
+|                                                                                |   0% of 167.3 MiB
+|■■■■■■■■                                                                        |  10% of 167.3 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 167.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 167.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 167.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 167.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 167.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 167.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 167.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 167.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 167.3 MiB
+Chrome for Testing 145.0.7632.6 (playwright chromium v1208) downloaded to /root/.cache/ms-playwright/chromium-1208
+Downloading FFmpeg (playwright ffmpeg v1011) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+|                                                                                |   0% of 2.3 MiB
+|■■■■■■■■                                                                        |  10% of 2.3 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+FFmpeg (playwright ffmpeg v1011) downloaded to /root/.cache/ms-playwright/ffmpeg-1011
+Downloading Chrome Headless Shell 145.0.7632.6 (playwright chromium-headless-shell v1208) from https://cdn.playwright.dev/builds/cft/145.0.7632.6/linux64/chrome-headless-shell-linux64.zip
+|                                                                                |   0% of 110.9 MiB
+|■■■■■■■■                                                                        |  10% of 110.9 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 110.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 110.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 110.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 110.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 110.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 110.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 110.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 110.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 110.9 MiB
+Chrome Headless Shell 145.0.7632.6 (playwright chromium-headless-shell v1208) downloaded to /root/.cache/ms-playwright/chromium_headless_shell-1208
+Installing dependencies...
+Get:1 http://deb.debian.org/debian trixie InRelease [140 kB]
+Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+Get:4 http://deb.debian.org/debian trixie/main amd64 Packages [9670 kB]
+Get:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages [5412 B]
+Get:6 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [113 kB]
+Get:7 https://deb.nodesource.com/node_24.x nodistro InRelease [12.1 kB]
+Get:8 https://deb.nodesource.com/node_24.x nodistro/main amd64 Packages [5680 B]
+Fetched 10.0 MB in 1s (13.3 MB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+libcairo2 is already the newest version (1.18.4-1+b1).
+libcairo2 set to manually installed.
+libdbus-1-3 is already the newest version (1.16.2-2).
+libdbus-1-3 set to manually installed.
+libglib2.0-0t64 is already the newest version (2.84.4-3~deb13u2).
+libglib2.0-0t64 set to manually installed.
+libpango-1.0-0 is already the newest version (1.56.3-1).
+libx11-6 is already the newest version (2:1.8.12-1).
+libx11-6 set to manually installed.
+libxcb1 is already the newest version (1.17.0-2+b1).
+libxcb1 set to manually installed.
+libxext6 is already the newest version (2:1.3.4-1+b3).
+libxext6 set to manually installed.
+libfontconfig1 is already the newest version (2.15.0-2.3).
+libfontconfig1 set to manually installed.
+libfreetype6 is already the newest version (2.13.3+dfsg-1).
+libfreetype6 set to manually installed.
+The following additional packages will be installed:
+  at-spi2-common libasound2-data libavahi-client3 libavahi-common-data
+  libavahi-common3 libdrm-amdgpu1 libdrm-common libdrm-intel1 libfontenc1
+  libgl1 libgl1-mesa-dri libglvnd0 libglx-mesa0 libglx0 libpciaccess0
+  libunwind8 libvulkan1 libwayland-server0 libx11-xcb1 libxaw7 libxcb-dri3-0
+  libxcb-glx0 libxcb-present0 libxcb-randr0 libxcb-sync1 libxcb-xfixes0
+  libxfont2 libxi6 libxkbfile1 libxmu6 libxpm4 libxshmfence1 libxxf86vm1
+  mesa-libgallium x11-xkb-utils xfonts-encodings xfonts-utils xkb-data
+  xserver-common
+Suggested packages:
+  alsa-utils libasound2-plugins cups-common pciutils
+Recommended packages:
+  fonts-ipafont-mincho fonts-liberation-sans-narrow fonts-tlwg-loma
+  alsa-ucm-conf alsa-topology-conf at-spi2-core mesa-vulkan-drivers
+  | vulkan-icd xfonts-base xauth
+The following NEW packages will be installed:
+  at-spi2-common fonts-freefont-ttf fonts-ipafont-gothic fonts-liberation
+  fonts-noto-color-emoji fonts-tlwg-loma-otf fonts-unifont fonts-wqy-zenhei
+  libasound2-data libasound2t64 libatk-bridge2.0-0t64 libatk1.0-0t64
+  libatspi2.0-0t64 libavahi-client3 libavahi-common-data libavahi-common3
+  libcups2t64 libdrm-amdgpu1 libdrm-common libdrm-intel1 libdrm2 libfontenc1
+  libgbm1 libgl1 libgl1-mesa-dri libglvnd0 libglx-mesa0 libglx0 libnspr4
+  libnss3 libpciaccess0 libunwind8 libvulkan1 libwayland-server0 libx11-xcb1
+  libxaw7 libxcb-dri3-0 libxcb-glx0 libxcb-present0 libxcb-randr0 libxcb-sync1
+  libxcb-xfixes0 libxcomposite1 libxdamage1 libxfixes3 libxfont2 libxi6
+  libxkbcommon0 libxkbfile1 libxmu6 libxpm4 libxrandr2 libxshmfence1
+  libxxf86vm1 mesa-libgallium x11-xkb-utils xfonts-encodings xfonts-scalable
+  xfonts-utils xkb-data xserver-common xvfb
+0 upgraded, 62 newly installed, 0 to remove and 0 not upgraded.
+Need to get 52.8 MB of archives.
+After this operation, 170 MB of additional disk space will be used.
+Get:1 http://deb.debian.org/debian trixie/main amd64 fonts-ipafont-gothic all 00303-23 [3515 kB]
+Get:2 http://deb.debian.org/debian trixie/main amd64 at-spi2-common all 2.56.2-1+deb13u1 [171 kB]
+Get:3 http://deb.debian.org/debian trixie/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5318 kB]
+Get:4 http://deb.debian.org/debian trixie/main amd64 fonts-liberation all 1:2.1.5-3 [1475 kB]
+Get:5 http://deb.debian.org/debian trixie/main amd64 fonts-noto-color-emoji all 2.051-0+deb13u1 [10.1 MB]
+Get:6 http://deb.debian.org/debian trixie/main amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [147 kB]
+Get:7 http://deb.debian.org/debian trixie/main amd64 fonts-unifont all 1:15.1.01-1 [2211 kB]
+Get:8 http://deb.debian.org/debian trixie/main amd64 fonts-wqy-zenhei all 0.9.45-8 [7479 kB]
+Get:9 http://deb.debian.org/debian trixie/main amd64 libasound2-data all 1.2.14-1 [21.1 kB]
+Get:10 http://deb.debian.org/debian trixie/main amd64 libasound2t64 amd64 1.2.14-1 [381 kB]
+Get:11 http://deb.debian.org/debian trixie/main amd64 libatk1.0-0t64 amd64 2.56.2-1+deb13u1 [52.0 kB]
+Get:12 http://deb.debian.org/debian trixie/main amd64 libxi6 amd64 2:1.8.2-1 [78.9 kB]
+Get:13 http://deb.debian.org/debian trixie/main amd64 libatspi2.0-0t64 amd64 2.56.2-1+deb13u1 [80.7 kB]
+Get:14 http://deb.debian.org/debian trixie/main amd64 libatk-bridge2.0-0t64 amd64 2.56.2-1+deb13u1 [68.4 kB]
+Get:15 http://deb.debian.org/debian trixie/main amd64 libavahi-common-data amd64 0.8-16 [112 kB]
+Get:16 http://deb.debian.org/debian trixie/main amd64 libavahi-common3 amd64 0.8-16 [44.2 kB]
+Get:17 http://deb.debian.org/debian trixie/main amd64 libavahi-client3 amd64 0.8-16 [48.4 kB]
+Get:18 http://deb.debian.org/debian trixie/main amd64 libcups2t64 amd64 2.4.10-3+deb13u2 [252 kB]
+Get:19 http://deb.debian.org/debian trixie/main amd64 libdrm-common all 2.4.124-2 [8288 B]
+Get:20 http://deb.debian.org/debian trixie/main amd64 libdrm2 amd64 2.4.124-2 [39.0 kB]
+Get:21 http://deb.debian.org/debian trixie/main amd64 libdrm-amdgpu1 amd64 2.4.124-2 [22.6 kB]
+Get:22 http://deb.debian.org/debian trixie/main amd64 libpciaccess0 amd64 0.17-3+b3 [51.9 kB]
+Get:23 http://deb.debian.org/debian trixie/main amd64 libdrm-intel1 amd64 2.4.124-2 [64.1 kB]
+Get:24 http://deb.debian.org/debian trixie/main amd64 libfontenc1 amd64 1:1.1.8-1+b2 [23.3 kB]
+Get:25 http://deb.debian.org/debian trixie/main amd64 libwayland-server0 amd64 1.23.1-3 [34.4 kB]
+Get:26 http://deb.debian.org/debian trixie/main amd64 libx11-xcb1 amd64 2:1.8.12-1 [247 kB]
+Get:27 http://deb.debian.org/debian trixie/main amd64 libxcb-dri3-0 amd64 1.17.0-2+b1 [107 kB]
+Get:28 http://deb.debian.org/debian trixie/main amd64 libxcb-present0 amd64 1.17.0-2+b1 [106 kB]
+Get:29 http://deb.debian.org/debian trixie/main amd64 libxcb-randr0 amd64 1.17.0-2+b1 [117 kB]
+Get:30 http://deb.debian.org/debian trixie/main amd64 libxcb-sync1 amd64 1.17.0-2+b1 [109 kB]
+Get:31 http://deb.debian.org/debian trixie/main amd64 libxcb-xfixes0 amd64 1.17.0-2+b1 [109 kB]
+Get:32 http://deb.debian.org/debian trixie/main amd64 libxshmfence1 amd64 1.3.3-1 [10.9 kB]
+Get:33 http://deb.debian.org/debian trixie/main amd64 mesa-libgallium amd64 25.0.7-2 [9629 kB]
+Get:34 http://deb.debian.org/debian trixie/main amd64 libgbm1 amd64 25.0.7-2 [44.4 kB]
+Get:35 http://deb.debian.org/debian trixie/main amd64 libglvnd0 amd64 1.7.0-1+b2 [52.0 kB]
+Get:36 http://deb.debian.org/debian trixie/main amd64 libxcb-glx0 amd64 1.17.0-2+b1 [122 kB]
+Get:37 http://deb.debian.org/debian trixie/main amd64 libxxf86vm1 amd64 1:1.1.4-1+b4 [19.3 kB]
+Get:38 http://deb.debian.org/debian trixie/main amd64 libvulkan1 amd64 1.4.309.0-1 [130 kB]
+Get:39 http://deb.debian.org/debian trixie/main amd64 libgl1-mesa-dri amd64 25.0.7-2 [46.1 kB]
+Get:40 http://deb.debian.org/debian trixie/main amd64 libglx-mesa0 amd64 25.0.7-2 [143 kB]
+Get:41 http://deb.debian.org/debian trixie/main amd64 libglx0 amd64 1.7.0-1+b2 [34.9 kB]
+Get:42 http://deb.debian.org/debian trixie/main amd64 libgl1 amd64 1.7.0-1+b2 [89.5 kB]
+Get:43 http://deb.debian.org/debian trixie/main amd64 libnspr4 amd64 2:4.36-1 [110 kB]
+Get:44 http://deb.debian.org/debian-security trixie-security/main amd64 libnss3 amd64 2:3.110-1+deb13u1 [1395 kB]
+Get:45 http://deb.debian.org/debian trixie/main amd64 libunwind8 amd64 1.8.1-0.1 [56.3 kB]
+Get:46 http://deb.debian.org/debian trixie/main amd64 libxmu6 amd64 2:1.1.3-3+b4 [59.0 kB]
+Get:47 http://deb.debian.org/debian trixie/main amd64 libxpm4 amd64 1:3.5.17-1+b3 [56.2 kB]
+Get:48 http://deb.debian.org/debian trixie/main amd64 libxaw7 amd64 2:1.0.16-1 [212 kB]
+Get:49 http://deb.debian.org/debian trixie/main amd64 libxcomposite1 amd64 1:0.4.6-1 [16.3 kB]
+Get:50 http://deb.debian.org/debian trixie/main amd64 libxdamage1 amd64 1:1.1.6-1+b2 [15.5 kB]
+Get:51 http://deb.debian.org/debian trixie/main amd64 libxfixes3 amd64 1:6.0.0-2+b4 [20.2 kB]
+Get:52 http://deb.debian.org/debian trixie/main amd64 libxfont2 amd64 1:2.0.6-1+b3 [132 kB]
+Get:53 http://deb.debian.org/debian trixie/main amd64 xkb-data all 2.42-1 [790 kB]
+Get:54 http://deb.debian.org/debian trixie/main amd64 libxkbcommon0 amd64 1.7.0-2 [113 kB]
+Get:55 http://deb.debian.org/debian trixie/main amd64 libxkbfile1 amd64 1:1.1.0-1+b4 [76.5 kB]
+Get:56 http://deb.debian.org/debian trixie/main amd64 libxrandr2 amd64 2:1.5.4-1+b3 [36.3 kB]
+Get:57 http://deb.debian.org/debian trixie/main amd64 x11-xkb-utils amd64 7.7+9 [159 kB]
+Get:58 http://deb.debian.org/debian trixie/main amd64 xfonts-encodings all 1:1.0.4-2.2 [577 kB]
+Get:59 http://deb.debian.org/debian trixie/main amd64 xfonts-utils amd64 1:7.7+7 [93.3 kB]
+Get:60 http://deb.debian.org/debian trixie/main amd64 xfonts-scalable all 1:1.0.3-1.3 [306 kB]
+Get:61 http://deb.debian.org/debian trixie/main amd64 xserver-common all 2:21.1.16-1.3+deb13u1 [2410 kB]
+Get:62 http://deb.debian.org/debian trixie/main amd64 xvfb amd64 2:21.1.16-1.3+deb13u1 [3197 kB]
+Fetched 52.8 MB in 0s (291 MB/s)
+Selecting previously unselected package fonts-ipafont-gothic.
+(Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 44409 files and directories currently installed.)
+Preparing to unpack .../00-fonts-ipafont-gothic_00303-23_all.deb ...
+Unpacking fonts-ipafont-gothic (00303-23) ...
+Selecting previously unselected package at-spi2-common.
+Preparing to unpack .../01-at-spi2-common_2.56.2-1+deb13u1_all.deb ...
+Unpacking at-spi2-common (2.56.2-1+deb13u1) ...
+Selecting previously unselected package fonts-freefont-ttf.
+Preparing to unpack .../02-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+Selecting previously unselected package fonts-liberation.
+Preparing to unpack .../03-fonts-liberation_1%3a2.1.5-3_all.deb ...
+Unpacking fonts-liberation (1:2.1.5-3) ...
+Selecting previously unselected package fonts-noto-color-emoji.
+Preparing to unpack .../04-fonts-noto-color-emoji_2.051-0+deb13u1_all.deb ...
+Unpacking fonts-noto-color-emoji (2.051-0+deb13u1) ...
+Selecting previously unselected package fonts-tlwg-loma-otf.
+Preparing to unpack .../05-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+Selecting previously unselected package fonts-unifont.
+Preparing to unpack .../06-fonts-unifont_1%3a15.1.01-1_all.deb ...
+Unpacking fonts-unifont (1:15.1.01-1) ...
+Selecting previously unselected package fonts-wqy-zenhei.
+Preparing to unpack .../07-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+Selecting previously unselected package libasound2-data.
+Preparing to unpack .../08-libasound2-data_1.2.14-1_all.deb ...
+Unpacking libasound2-data (1.2.14-1) ...
+Selecting previously unselected package libasound2t64:amd64.
+Preparing to unpack .../09-libasound2t64_1.2.14-1_amd64.deb ...
+Unpacking libasound2t64:amd64 (1.2.14-1) ...
+Selecting previously unselected package libatk1.0-0t64:amd64.
+Preparing to unpack .../10-libatk1.0-0t64_2.56.2-1+deb13u1_amd64.deb ...
+Unpacking libatk1.0-0t64:amd64 (2.56.2-1+deb13u1) ...
+Selecting previously unselected package libxi6:amd64.
+Preparing to unpack .../11-libxi6_2%3a1.8.2-1_amd64.deb ...
+Unpacking libxi6:amd64 (2:1.8.2-1) ...
+Selecting previously unselected package libatspi2.0-0t64:amd64.
+Preparing to unpack .../12-libatspi2.0-0t64_2.56.2-1+deb13u1_amd64.deb ...
+Unpacking libatspi2.0-0t64:amd64 (2.56.2-1+deb13u1) ...
+Selecting previously unselected package libatk-bridge2.0-0t64:amd64.
+Preparing to unpack .../13-libatk-bridge2.0-0t64_2.56.2-1+deb13u1_amd64.deb ...
+Unpacking libatk-bridge2.0-0t64:amd64 (2.56.2-1+deb13u1) ...
+Selecting previously unselected package libavahi-common-data:amd64.
+Preparing to unpack .../14-libavahi-common-data_0.8-16_amd64.deb ...
+Unpacking libavahi-common-data:amd64 (0.8-16) ...
+Selecting previously unselected package libavahi-common3:amd64.
+Preparing to unpack .../15-libavahi-common3_0.8-16_amd64.deb ...
+Unpacking libavahi-common3:amd64 (0.8-16) ...
+Selecting previously unselected package libavahi-client3:amd64.
+Preparing to unpack .../16-libavahi-client3_0.8-16_amd64.deb ...
+Unpacking libavahi-client3:amd64 (0.8-16) ...
+Selecting previously unselected package libcups2t64:amd64.
+Preparing to unpack .../17-libcups2t64_2.4.10-3+deb13u2_amd64.deb ...
+Unpacking libcups2t64:amd64 (2.4.10-3+deb13u2) ...
+Selecting previously unselected package libdrm-common.
+Preparing to unpack .../18-libdrm-common_2.4.124-2_all.deb ...
+Unpacking libdrm-common (2.4.124-2) ...
+Selecting previously unselected package libdrm2:amd64.
+Preparing to unpack .../19-libdrm2_2.4.124-2_amd64.deb ...
+Unpacking libdrm2:amd64 (2.4.124-2) ...
+Selecting previously unselected package libdrm-amdgpu1:amd64.
+Preparing to unpack .../20-libdrm-amdgpu1_2.4.124-2_amd64.deb ...
+Unpacking libdrm-amdgpu1:amd64 (2.4.124-2) ...
+Selecting previously unselected package libpciaccess0:amd64.
+Preparing to unpack .../21-libpciaccess0_0.17-3+b3_amd64.deb ...
+Unpacking libpciaccess0:amd64 (0.17-3+b3) ...
+Selecting previously unselected package libdrm-intel1:amd64.
+Preparing to unpack .../22-libdrm-intel1_2.4.124-2_amd64.deb ...
+Unpacking libdrm-intel1:amd64 (2.4.124-2) ...
+Selecting previously unselected package libfontenc1:amd64.
+Preparing to unpack .../23-libfontenc1_1%3a1.1.8-1+b2_amd64.deb ...
+Unpacking libfontenc1:amd64 (1:1.1.8-1+b2) ...
+Selecting previously unselected package libwayland-server0:amd64.
+Preparing to unpack .../24-libwayland-server0_1.23.1-3_amd64.deb ...
+Unpacking libwayland-server0:amd64 (1.23.1-3) ...
+Selecting previously unselected package libx11-xcb1:amd64.
+Preparing to unpack .../25-libx11-xcb1_2%3a1.8.12-1_amd64.deb ...
+Unpacking libx11-xcb1:amd64 (2:1.8.12-1) ...
+Selecting previously unselected package libxcb-dri3-0:amd64.
+Preparing to unpack .../26-libxcb-dri3-0_1.17.0-2+b1_amd64.deb ...
+Unpacking libxcb-dri3-0:amd64 (1.17.0-2+b1) ...
+Selecting previously unselected package libxcb-present0:amd64.
+Preparing to unpack .../27-libxcb-present0_1.17.0-2+b1_amd64.deb ...
+Unpacking libxcb-present0:amd64 (1.17.0-2+b1) ...
+Selecting previously unselected package libxcb-randr0:amd64.
+Preparing to unpack .../28-libxcb-randr0_1.17.0-2+b1_amd64.deb ...
+Unpacking libxcb-randr0:amd64 (1.17.0-2+b1) ...
+Selecting previously unselected package libxcb-sync1:amd64.
+Preparing to unpack .../29-libxcb-sync1_1.17.0-2+b1_amd64.deb ...
+Unpacking libxcb-sync1:amd64 (1.17.0-2+b1) ...
+Selecting previously unselected package libxcb-xfixes0:amd64.
+Preparing to unpack .../30-libxcb-xfixes0_1.17.0-2+b1_amd64.deb ...
+Unpacking libxcb-xfixes0:amd64 (1.17.0-2+b1) ...
+Selecting previously unselected package libxshmfence1:amd64.
+Preparing to unpack .../31-libxshmfence1_1.3.3-1_amd64.deb ...
+Unpacking libxshmfence1:amd64 (1.3.3-1) ...
+Selecting previously unselected package mesa-libgallium:amd64.
+Preparing to unpack .../32-mesa-libgallium_25.0.7-2_amd64.deb ...
+Unpacking mesa-libgallium:amd64 (25.0.7-2) ...
+Selecting previously unselected package libgbm1:amd64.
+Preparing to unpack .../33-libgbm1_25.0.7-2_amd64.deb ...
+Unpacking libgbm1:amd64 (25.0.7-2) ...
+Selecting previously unselected package libglvnd0:amd64.
+Preparing to unpack .../34-libglvnd0_1.7.0-1+b2_amd64.deb ...
+Unpacking libglvnd0:amd64 (1.7.0-1+b2) ...
+Selecting previously unselected package libxcb-glx0:amd64.
+Preparing to unpack .../35-libxcb-glx0_1.17.0-2+b1_amd64.deb ...
+Unpacking libxcb-glx0:amd64 (1.17.0-2+b1) ...
+Selecting previously unselected package libxxf86vm1:amd64.
+Preparing to unpack .../36-libxxf86vm1_1%3a1.1.4-1+b4_amd64.deb ...
+Unpacking libxxf86vm1:amd64 (1:1.1.4-1+b4) ...
+Selecting previously unselected package libvulkan1:amd64.
+Preparing to unpack .../37-libvulkan1_1.4.309.0-1_amd64.deb ...
+Unpacking libvulkan1:amd64 (1.4.309.0-1) ...
+Selecting previously unselected package libgl1-mesa-dri:amd64.
+Preparing to unpack .../38-libgl1-mesa-dri_25.0.7-2_amd64.deb ...
+Unpacking libgl1-mesa-dri:amd64 (25.0.7-2) ...
+Selecting previously unselected package libglx-mesa0:amd64.
+Preparing to unpack .../39-libglx-mesa0_25.0.7-2_amd64.deb ...
+Unpacking libglx-mesa0:amd64 (25.0.7-2) ...
+Selecting previously unselected package libglx0:amd64.
+Preparing to unpack .../40-libglx0_1.7.0-1+b2_amd64.deb ...
+Unpacking libglx0:amd64 (1.7.0-1+b2) ...
+Selecting previously unselected package libgl1:amd64.
+Preparing to unpack .../41-libgl1_1.7.0-1+b2_amd64.deb ...
+Unpacking libgl1:amd64 (1.7.0-1+b2) ...
+Selecting previously unselected package libnspr4:amd64.
+Preparing to unpack .../42-libnspr4_2%3a4.36-1_amd64.deb ...
+Unpacking libnspr4:amd64 (2:4.36-1) ...
+Selecting previously unselected package libnss3:amd64.
+Preparing to unpack .../43-libnss3_2%3a3.110-1+deb13u1_amd64.deb ...
+Unpacking libnss3:amd64 (2:3.110-1+deb13u1) ...
+Selecting previously unselected package libunwind8:amd64.
+Preparing to unpack .../44-libunwind8_1.8.1-0.1_amd64.deb ...
+Unpacking libunwind8:amd64 (1.8.1-0.1) ...
+Selecting previously unselected package libxmu6:amd64.
+Preparing to unpack .../45-libxmu6_2%3a1.1.3-3+b4_amd64.deb ...
+Unpacking libxmu6:amd64 (2:1.1.3-3+b4) ...
+Selecting previously unselected package libxpm4:amd64.
+Preparing to unpack .../46-libxpm4_1%3a3.5.17-1+b3_amd64.deb ...
+Unpacking libxpm4:amd64 (1:3.5.17-1+b3) ...
+Selecting previously unselected package libxaw7:amd64.
+Preparing to unpack .../47-libxaw7_2%3a1.0.16-1_amd64.deb ...
+Unpacking libxaw7:amd64 (2:1.0.16-1) ...
+Selecting previously unselected package libxcomposite1:amd64.
+Preparing to unpack .../48-libxcomposite1_1%3a0.4.6-1_amd64.deb ...
+Unpacking libxcomposite1:amd64 (1:0.4.6-1) ...
+Selecting previously unselected package libxdamage1:amd64.
+Preparing to unpack .../49-libxdamage1_1%3a1.1.6-1+b2_amd64.deb ...
+Unpacking libxdamage1:amd64 (1:1.1.6-1+b2) ...
+Selecting previously unselected package libxfixes3:amd64.
+Preparing to unpack .../50-libxfixes3_1%3a6.0.0-2+b4_amd64.deb ...
+Unpacking libxfixes3:amd64 (1:6.0.0-2+b4) ...
+Selecting previously unselected package libxfont2:amd64.
+Preparing to unpack .../51-libxfont2_1%3a2.0.6-1+b3_amd64.deb ...
+Unpacking libxfont2:amd64 (1:2.0.6-1+b3) ...
+Selecting previously unselected package xkb-data.
+Preparing to unpack .../52-xkb-data_2.42-1_all.deb ...
+Unpacking xkb-data (2.42-1) ...
+Selecting previously unselected package libxkbcommon0:amd64.
+Preparing to unpack .../53-libxkbcommon0_1.7.0-2_amd64.deb ...
+Unpacking libxkbcommon0:amd64 (1.7.0-2) ...
+Selecting previously unselected package libxkbfile1:amd64.
+Preparing to unpack .../54-libxkbfile1_1%3a1.1.0-1+b4_amd64.deb ...
+Unpacking libxkbfile1:amd64 (1:1.1.0-1+b4) ...
+Selecting previously unselected package libxrandr2:amd64.
+Preparing to unpack .../55-libxrandr2_2%3a1.5.4-1+b3_amd64.deb ...
+Unpacking libxrandr2:amd64 (2:1.5.4-1+b3) ...
+Selecting previously unselected package x11-xkb-utils.
+Preparing to unpack .../56-x11-xkb-utils_7.7+9_amd64.deb ...
+Unpacking x11-xkb-utils (7.7+9) ...
+Selecting previously unselected package xfonts-encodings.
+Preparing to unpack .../57-xfonts-encodings_1%3a1.0.4-2.2_all.deb ...
+Unpacking xfonts-encodings (1:1.0.4-2.2) ...
+Selecting previously unselected package xfonts-utils.
+Preparing to unpack .../58-xfonts-utils_1%3a7.7+7_amd64.deb ...
+Unpacking xfonts-utils (1:7.7+7) ...
+Selecting previously unselected package xfonts-scalable.
+Preparing to unpack .../59-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+Selecting previously unselected package xserver-common.
+Preparing to unpack .../60-xserver-common_2%3a21.1.16-1.3+deb13u1_all.deb ...
+Unpacking xserver-common (2:21.1.16-1.3+deb13u1) ...
+Selecting previously unselected package xvfb.
+Preparing to unpack .../61-xvfb_2%3a21.1.16-1.3+deb13u1_amd64.deb ...
+Unpacking xvfb (2:21.1.16-1.3+deb13u1) ...
+Setting up libxcb-dri3-0:amd64 (1.17.0-2+b1) ...
+Setting up libwayland-server0:amd64 (1.23.1-3) ...
+Setting up libx11-xcb1:amd64 (2:1.8.12-1) ...
+Setting up libpciaccess0:amd64 (0.17-3+b3) ...
+Setting up libxmu6:amd64 (2:1.1.3-3+b4) ...
+Setting up libxdamage1:amd64 (1:1.1.6-1+b2) ...
+Setting up libxcb-xfixes0:amd64 (1.17.0-2+b1) ...
+Setting up libxpm4:amd64 (1:3.5.17-1+b3) ...
+Setting up libxi6:amd64 (2:1.8.2-1) ...
+Setting up fonts-noto-color-emoji (2.051-0+deb13u1) ...
+Setting up libglvnd0:amd64 (1.7.0-1+b2) ...
+Setting up libxcb-glx0:amd64 (1.17.0-2+b1) ...
+Setting up fonts-wqy-zenhei (0.9.45-8) ...
+Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+Setting up xkb-data (2.42-1) ...
+Setting up libxaw7:amd64 (2:1.0.16-1) ...
+Setting up libunwind8:amd64 (1.8.1-0.1) ...
+Setting up libxxf86vm1:amd64 (1:1.1.4-1+b4) ...
+Setting up libxcb-present0:amd64 (1.17.0-2+b1) ...
+Setting up libasound2-data (1.2.14-1) ...
+Setting up libfontenc1:amd64 (1:1.1.8-1+b2) ...
+Setting up libasound2t64:amd64 (1.2.14-1) ...
+Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+Setting up libnspr4:amd64 (2:4.36-1) ...
+Setting up libxfixes3:amd64 (1:6.0.0-2+b4) ...
+Setting up libxcb-sync1:amd64 (1.17.0-2+b1) ...
+Setting up libavahi-common-data:amd64 (0.8-16) ...
+Setting up libatspi2.0-0t64:amd64 (2.56.2-1+deb13u1) ...
+Setting up xfonts-encodings (1:1.0.4-2.2) ...
+Setting up libxrandr2:amd64 (2:1.5.4-1+b3) ...
+Setting up libvulkan1:amd64 (1.4.309.0-1) ...
+Setting up fonts-ipafont-gothic (00303-23) ...
+update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+Setting up libxshmfence1:amd64 (1.3.3-1) ...
+Setting up at-spi2-common (2.56.2-1+deb13u1) ...
+Setting up libxcb-randr0:amd64 (1.17.0-2+b1) ...
+Setting up fonts-liberation (1:2.1.5-3) ...
+Setting up libxkbfile1:amd64 (1:1.1.0-1+b4) ...
+Setting up libdrm-common (2.4.124-2) ...
+Setting up libxcomposite1:amd64 (1:0.4.6-1) ...
+Setting up libxfont2:amd64 (1:2.0.6-1+b3) ...
+Setting up fonts-unifont (1:15.1.01-1) ...
+Setting up libxkbcommon0:amd64 (1.7.0-2) ...
+Setting up libatk1.0-0t64:amd64 (2.56.2-1+deb13u1) ...
+Setting up x11-xkb-utils (7.7+9) ...
+Setting up libavahi-common3:amd64 (0.8-16) ...
+Setting up libnss3:amd64 (2:3.110-1+deb13u1) ...
+Setting up xfonts-utils (1:7.7+7) ...
+Setting up libdrm2:amd64 (2.4.124-2) ...
+Setting up xserver-common (2:21.1.16-1.3+deb13u1) ...
+Setting up libavahi-client3:amd64 (0.8-16) ...
+Setting up xfonts-scalable (1:1.0.3-1.3) ...
+Setting up libdrm-amdgpu1:amd64 (2.4.124-2) ...
+Setting up libatk-bridge2.0-0t64:amd64 (2.56.2-1+deb13u1) ...
+Setting up libdrm-intel1:amd64 (2.4.124-2) ...
+Setting up libcups2t64:amd64 (2.4.10-3+deb13u2) ...
+Setting up mesa-libgallium:amd64 (25.0.7-2) ...
+Setting up libgbm1:amd64 (25.0.7-2) ...
+Setting up libgl1-mesa-dri:amd64 (25.0.7-2) ...
+Setting up libglx-mesa0:amd64 (25.0.7-2) ...
+Setting up libglx0:amd64 (1.7.0-1+b2) ...
+Setting up libgl1:amd64 (1.7.0-1+b2) ...
+Setting up xvfb (2:21.1.16-1.3+deb13u1) ...
+Processing triggers for fontconfig (2.15.0-2.3) ...
+Processing triggers for libc-bin (2.41-12+deb13u1) ...
+DONE 19.1s
+
+--> RUN mkdir -p /app/core &&     chown -R user:user /app
+DONE 0.1s
+
+--> COPY <<EOF /app/core/boot.py
+DONE 0.0s
+
+--> COPY <<EOF /usr/local/bin/entrypoint.sh
+DONE 0.0s
+
+--> RUN chmod +x /usr/local/bin/entrypoint.sh &&     chown -R user:user /app/core
+DONE 0.1s
+
+--> WORKDIR /app
+DONE 0.0s
+
+--> COPY --chown=user:user . /app
+DONE 0.0s
+
+--> RUN touch /app/.env && chown user:user /app/.env
+DONE 0.1s
+
+--> Pushing image
+DONE 8.9s
+
+--> Exporting cache
+DONE 0.2s
