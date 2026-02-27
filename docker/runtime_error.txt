@@ -1,7 +1,7 @@
-===== Application Startup =====
+===== Application Startup at 2026-02-27 13:15:23 =====
 
 === LedgerSG Development Space Starting ===
-🕐 Startup time: 2026-02-27T11:50:37+00:00
+🕐 Startup time: 2026-02-27T13:15:47+00:00
 🔍 Detecting PostgreSQL installation...
 ✓ PostgreSQL version: 17
 ✓ Binary path: /usr/lib/postgresql/17/bin
@@ -60,18 +60,18 @@ CREATE EXTENSION
 DO
 psql:/app/apps/backend/database_schema.sql:78: NOTICE:  schema "audit" does not exist, skipping
 DROP SCHEMA
+DROP SCHEMA
 psql:/app/apps/backend/database_schema.sql:79: NOTICE:  schema "banking" does not exist, skipping
 psql:/app/apps/backend/database_schema.sql:80: NOTICE:  schema "invoicing" does not exist, skipping
-DROP SCHEMA
 DROP SCHEMA
 psql:/app/apps/backend/database_schema.sql:81: NOTICE:  schema "journal" does not exist, skipping
 DROP SCHEMA
 psql:/app/apps/backend/database_schema.sql:82: NOTICE:  schema "gst" does not exist, skipping
 DROP SCHEMA
+DROP SCHEMA
 psql:/app/apps/backend/database_schema.sql:83: NOTICE:  schema "coa" does not exist, skipping
 DROP SCHEMA
 psql:/app/apps/backend/database_schema.sql:84: NOTICE:  schema "core" does not exist, skipping
-DROP SCHEMA
 CREATE SCHEMA
 CREATE SCHEMA
 CREATE SCHEMA
@@ -245,8 +245,8 @@ psql:/app/apps/backend/database_schema.sql:2300: NOTICE:  policy "rls_select_org
 DROP POLICY
 psql:/app/apps/backend/database_schema.sql:2301: NOTICE:  policy "rls_insert_organisation" for relation "core.organisation" does not exist, skipping
 DROP POLICY
-psql:/app/apps/backend/database_schema.sql:2302: NOTICE:  policy "rls_update_organisation" for relation "core.organisation" does not exist, skipping
 DROP POLICY
+psql:/app/apps/backend/database_schema.sql:2302: NOTICE:  policy "rls_update_organisation" for relation "core.organisation" does not exist, skipping
 psql:/app/apps/backend/database_schema.sql:2303: NOTICE:  policy "rls_delete_organisation" for relation "core.organisation" does not exist, skipping
 DROP POLICY
 CREATE POLICY
@@ -320,19 +320,44 @@ psql:/app/apps/backend/database_schema.sql:3049: NOTICE:    Functions created:  
 psql:/app/apps/backend/database_schema.sql:3049: NOTICE:    GST tax codes seeded:    16 (incl. historical rates)
 psql:/app/apps/backend/database_schema.sql:3049: NOTICE:    Currencies seeded:       20
 psql:/app/apps/backend/database_schema.sql:3049: NOTICE:    System roles seeded:     5
+DO
 psql:/app/apps/backend/database_schema.sql:3049: NOTICE:  ══════════════════════════════════════════════════════════════
 psql:/app/apps/backend/database_schema.sql:3049: NOTICE:    Next steps:
 psql:/app/apps/backend/database_schema.sql:3049: NOTICE:      1. Change ledgersg_owner and ledgersg_app passwords
 psql:/app/apps/backend/database_schema.sql:3049: NOTICE:      2. Create your first organisation via Django admin
 psql:/app/apps/backend/database_schema.sql:3049: NOTICE:      3. The system will auto-seed CoA via
 psql:/app/apps/backend/database_schema.sql:3049: NOTICE:         core.seed_default_chart_of_accounts(org_id, gst_registered)
-DO
 psql:/app/apps/backend/database_schema.sql:3049: NOTICE:  ══════════════════════════════════════════════════════════════
 psql:/app/apps/backend/database_schema.sql:3049: NOTICE:  
 🔍 Verifying Redis connection...
 ✓ Redis is ready on localhost:6379
+DB_NAME=ledgersg_dev
+DB_USER=ledgersg
+DB_PASSWORD=ledgersg_secret_to_change
+DB_HOST=localhost
+DB_PORT=5432
+============================================
+STARTING LEDGERSG API SERVICE
+============================================
+[INFO] Checking database connection...
+Database connection: OK
+[SUCCESS] Database connection is OK
+[INFO] Starting Django development server...
+[INFO] Host: 0.0.0.0
+[INFO] Port: 8000
+[INFO] Workers: 2
+[INFO] Log Level: info
+[INFO] Using gunicorn with 2 workers
+[INFO] Service started with PID: 
+[INFO] Waiting for service to start on 0.0.0.0:8000...
+[SUCCESS] Service is ready!
+[SUCCESS] LedgerSG API service is running!
+[INFO] API URL: http://0.0.0.0:8000/api/v1/
+[INFO] Health Check: http://0.0.0.0:8000/api/v1/health/
+[INFO] Admin Panel: http://0.0.0.0:8000/admin/
+[INFO] Logs: /root/.ledgersg/logs/api_service.log
 🚀 Starting Frontend on port 3000...
-✓ Frontend PID: 81
+✓ Frontend PID: 160
 ✓ Frontend is ready (attempt 2)
 === Starting Web Server on port 7860 ===
 ✅ All services initialized successfully
@@ -343,7 +368,7 @@ psql:/app/apps/backend/database_schema.sql:3049: NOTICE:
   • Frontend:   http://localhost:3000
   • Backend:    http://localhost:7860
 
-INFO:     Started server process [112]
+INFO:     Started server process [191]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:7860 (Press CTRL+C to quit)
