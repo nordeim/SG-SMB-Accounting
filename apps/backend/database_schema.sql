@@ -173,17 +173,17 @@ CREATE TABLE core.organisation (
     name                VARCHAR(255) NOT NULL,
     legal_name          VARCHAR(255),                -- Official registered name (may differ from trading name)
     uen                 VARCHAR(20) UNIQUE,           -- ACRA Unique Entity Number (e.g., 202301234A)
-    entity_type         VARCHAR(20) NOT NULL
-        CHECK (entity_type IN ('sole_prop', 'partnership', 'llp', 'pte_ltd')),
+    entity_type         VARCHAR(50) NOT NULL
+        CHECK (entity_type IN ('SOLE_PROPRIETORSHIP', 'PARTNERSHIP', 'PRIVATE_LIMITED', 'LIMITED_LIABILITY_PARTNERSHIP', 'PUBLIC_LIMITED', 'NON_PROFIT', 'OTHER')),
 
     -- GST Configuration
     gst_registered      BOOLEAN NOT NULL DEFAULT FALSE,
     gst_reg_number      VARCHAR(20),                  -- Format: M90312345A (only if gst_registered = TRUE)
     gst_reg_date        DATE,                         -- Effective date of GST registration
-    gst_scheme          VARCHAR(30) DEFAULT 'standard'
-        CHECK (gst_scheme IN ('standard', 'cash', 'margin')),  -- Accounting basis for GST
-    gst_filing_frequency VARCHAR(15) NOT NULL DEFAULT 'quarterly'
-        CHECK (gst_filing_frequency IN ('monthly', 'quarterly', 'semi_annual')),
+    gst_scheme          VARCHAR(30) DEFAULT 'STANDARD'
+        CHECK (gst_scheme IN ('standard', 'cash', 'margin', 'STANDARD', 'CASH', 'MARGIN')),  -- Accounting basis for GST
+    gst_filing_frequency VARCHAR(15) NOT NULL DEFAULT 'QUARTERLY'
+        CHECK (gst_filing_frequency IN ('monthly', 'quarterly', 'semi_annual', 'MONTHLY', 'QUARTERLY', 'SEMI_ANNUAL')),
 
     -- InvoiceNow / Peppol Configuration
     peppol_participant_id VARCHAR(64),                -- Peppol network identifier (e.g., 0195:202301234A)
@@ -203,12 +203,16 @@ CREATE TABLE core.organisation (
     -- Business Address
     address_line_1      VARCHAR(255),
     address_line_2      VARCHAR(255),
+    city                VARCHAR(100),
+    state               VARCHAR(100),
     postal_code         VARCHAR(10),
     country             CHAR(2) NOT NULL DEFAULT 'SG',
 
     -- Contact
     phone               VARCHAR(30),
     email               VARCHAR(255),
+    contact_email       VARCHAR(255),
+    contact_phone       VARCHAR(50),
     website             VARCHAR(255),
 
     -- Logo / Branding (path to S3/MinIO object)
@@ -218,6 +222,8 @@ CREATE TABLE core.organisation (
     is_active           BOOLEAN NOT NULL DEFAULT TRUE,
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    deleted_at          TIMESTAMPTZ,
+    deleted_by          UUID,
 
     -- Constraint: GST fields must be populated if GST-registered
     CONSTRAINT chk_gst_consistency CHECK (
@@ -250,14 +256,18 @@ CREATE TRIGGER trg_organisation_updated_at
 CREATE TABLE core.app_user (
     id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email               VARCHAR(255) NOT NULL UNIQUE,
+    password            VARCHAR(128) NOT NULL,            -- Django hashed password
     full_name           VARCHAR(150) NOT NULL,
     phone               VARCHAR(30),
     is_active           BOOLEAN NOT NULL DEFAULT TRUE,
-    is_superadmin       BOOLEAN NOT NULL DEFAULT FALSE,  -- Platform-level admin (not org-level)
-    last_login_at       TIMESTAMPTZ,
+    is_staff            BOOLEAN NOT NULL DEFAULT FALSE,   -- For admin access
+    is_superuser        BOOLEAN NOT NULL DEFAULT FALSE,   -- For platform-level admin
+    last_login          TIMESTAMPTZ,                      -- Standard Django field
+    date_joined         TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     password_changed_at TIMESTAMPTZ,
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    deleted_at          TIMESTAMPTZ
 );
 
 COMMENT ON TABLE core.app_user
@@ -274,7 +284,8 @@ CREATE TRIGGER trg_app_user_updated_at
 
 CREATE TABLE core.role (
     id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name                VARCHAR(50) NOT NULL UNIQUE,
+    org_id              UUID REFERENCES core.organisation(id) ON DELETE CASCADE,  -- NULL for system roles
+    name                VARCHAR(50) NOT NULL,
     description         TEXT,
     -- Granular permission flags
     can_manage_org      BOOLEAN NOT NULL DEFAULT FALSE,  -- Edit org settings, invite users
@@ -289,7 +300,10 @@ CREATE TABLE core.role (
     can_view_reports    BOOLEAN NOT NULL DEFAULT FALSE,  -- Financial reports
     can_export_data     BOOLEAN NOT NULL DEFAULT FALSE,  -- Data export/download
     is_system           BOOLEAN NOT NULL DEFAULT FALSE,  -- System-defined (cannot be deleted)
-    created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    deleted_at          TIMESTAMPTZ,
+    UNIQUE(org_id, name)
 );
 
 COMMENT ON TABLE core.role
@@ -309,8 +323,14 @@ CREATE TABLE core.user_organisation (
     role_id             UUID NOT NULL REFERENCES core.role(id) ON DELETE RESTRICT,
     is_default          BOOLEAN NOT NULL DEFAULT FALSE,  -- Default org for this user on login
     invited_at          TIMESTAMPTZ,
+    invited_by          UUID REFERENCES core.app_user(id),
     accepted_at         TIMESTAMPTZ,
+    accepted_by         UUID REFERENCES core.app_user(id),
+    revoked_at          TIMESTAMPTZ,
+    revoked_by          UUID REFERENCES core.app_user(id),
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    deleted_at          TIMESTAMPTZ,
     UNIQUE(user_id, org_id)
 );
 
@@ -335,6 +355,8 @@ CREATE TABLE core.fiscal_year (
     closed_at           TIMESTAMPTZ,
     closed_by           UUID REFERENCES core.app_user(id),
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    deleted_at          TIMESTAMPTZ,
 
     CONSTRAINT chk_fy_dates CHECK (end_date > start_date),
     CONSTRAINT chk_fy_max_duration CHECK (end_date <= start_date + INTERVAL '18 months'),
@@ -355,6 +377,7 @@ CREATE TABLE core.fiscal_period (
     fiscal_year_id      UUID NOT NULL REFERENCES core.fiscal_year(id) ON DELETE CASCADE,
     org_id              UUID NOT NULL REFERENCES core.organisation(id) ON DELETE CASCADE,
     period_number       SMALLINT NOT NULL,                -- 1-12 (or 13 for adjustment period)
+    label               VARCHAR(50),                       -- e.g., 'Jan 2024'
     start_date          DATE NOT NULL,
     end_date            DATE NOT NULL,
     is_open             BOOLEAN NOT NULL DEFAULT TRUE,    -- Only open periods accept entries
@@ -367,6 +390,8 @@ CREATE TABLE core.fiscal_period (
     closed_by           UUID REFERENCES core.app_user(id),
 
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    deleted_at          TIMESTAMPTZ,
 
     CONSTRAINT chk_period_number CHECK (period_number BETWEEN 1 AND 13),
     CONSTRAINT chk_period_dates CHECK (end_date >= start_date),
@@ -482,6 +507,15 @@ CREATE TRIGGER trg_org_setting_updated_at
     FOR EACH ROW EXECUTE FUNCTION core.set_updated_at();
 
 
+-- ──────────────────────────────────────────────
+-- 3k. Post-Creation Constraints (Circular Refs)
+-- ──────────────────────────────────────────────
+
+ALTER TABLE core.organisation
+    ADD CONSTRAINT fk_organisation_deleted_by
+    FOREIGN KEY (deleted_by) REFERENCES core.app_user(id);
+
+
 -- ============================================================================
 -- §4  COA SCHEMA — Chart of Accounts
 -- ============================================================================
@@ -534,8 +568,9 @@ CREATE TABLE coa.account (
     org_id              UUID NOT NULL REFERENCES core.organisation(id) ON DELETE CASCADE,
     code                VARCHAR(10) NOT NULL,              -- Hierarchical code: '1000', '1100', '4000'
     name                VARCHAR(150) NOT NULL,
+    account_type        VARCHAR(50),                       -- Added for model alignment
     description         TEXT,
-    account_type_id     SMALLINT NOT NULL REFERENCES coa.account_type(id),
+    account_type_id     SMALLINT REFERENCES coa.account_type(id),
     account_sub_type_id SMALLINT REFERENCES coa.account_sub_type(id),
     parent_id           UUID REFERENCES coa.account(id),  -- Self-reference for hierarchy
     currency            CHAR(3) NOT NULL DEFAULT 'SGD' REFERENCES core.currency(code),
@@ -551,6 +586,7 @@ CREATE TABLE coa.account (
     -- Tracking
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    deleted_at          TIMESTAMPTZ,
 
     -- Constraints
     CONSTRAINT uq_account_org_code UNIQUE(org_id, code),
@@ -587,9 +623,12 @@ CREATE TRIGGER trg_account_updated_at
 
 CREATE TABLE gst.tax_code (
     id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    org_id              UUID REFERENCES core.organisation(id) ON DELETE CASCADE, -- NULL for global system codes
     code                VARCHAR(10) NOT NULL,
+    name                VARCHAR(150),                      -- Added for model alignment
     description         VARCHAR(150) NOT NULL,
     rate                NUMERIC(5,4) NOT NULL,             -- 0.0900 for 9%, 0.0000 for 0%
+    is_gst_charged      BOOLEAN NOT NULL DEFAULT TRUE,     -- Added for model alignment
     is_input            BOOLEAN NOT NULL DEFAULT FALSE,    -- TRUE = purchase tax code
     is_output           BOOLEAN NOT NULL DEFAULT FALSE,    -- TRUE = sales tax code
     is_claimable        BOOLEAN NOT NULL DEFAULT TRUE,     -- FALSE for blocked input tax (BL)
@@ -606,6 +645,8 @@ CREATE TABLE gst.tax_code (
 
     display_order       SMALLINT NOT NULL DEFAULT 0,
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    deleted_at          TIMESTAMPTZ,
 
     CONSTRAINT chk_rate_range CHECK (rate >= 0 AND rate <= 1),
     CONSTRAINT chk_io_flag CHECK (
@@ -613,7 +654,7 @@ CREATE TABLE gst.tax_code (
         is_input = TRUE OR is_output = TRUE OR code = 'NA'
     ),
     -- Unique code per effective period (allows historical rates)
-    UNIQUE(code, effective_from)
+    UNIQUE(org_id, code, effective_from)
 );
 
 COMMENT ON TABLE gst.tax_code
@@ -851,13 +892,16 @@ COMMENT ON COLUMN journal.line.base_debit
 CREATE TABLE invoicing.contact (
     id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     org_id              UUID NOT NULL REFERENCES core.organisation(id) ON DELETE CASCADE,
-    contact_type        VARCHAR(10) NOT NULL
+    contact_type        VARCHAR(10)
         CHECK (contact_type IN ('CUSTOMER', 'SUPPLIER', 'BOTH')),
     name                VARCHAR(255) NOT NULL,
+    company_name        VARCHAR(255),                      -- Added for model alignment
     legal_name          VARCHAR(255),
     uen                 VARCHAR(20),                       -- Singapore UEN (if applicable)
     gst_reg_number      VARCHAR(20),
     is_gst_registered   BOOLEAN NOT NULL DEFAULT FALSE,
+    is_customer         BOOLEAN NOT NULL DEFAULT TRUE,     -- Added for model alignment
+    is_supplier         BOOLEAN NOT NULL DEFAULT FALSE,    -- Added for model alignment
     tax_code_default    VARCHAR(10),                       -- Default tax code for this contact
 
     -- Communication
@@ -1989,13 +2033,26 @@ BEGIN
     IF TG_OP = 'INSERT' THEN
         v_action    := 'CREATE';
         v_new_data  := to_jsonb(NEW);
-        v_org_id    := NEW.org_id;
+        
+        -- Special case: tables without org_id (like core.organisation)
+        BEGIN
+            v_org_id := NEW.org_id;
+        EXCEPTION WHEN undefined_column THEN
+            v_org_id := NEW.id;
+        END;
+        
         v_entity_id := NEW.id;
     ELSIF TG_OP = 'UPDATE' THEN
         v_action    := 'UPDATE';
         v_old_data  := to_jsonb(OLD);
         v_new_data  := to_jsonb(NEW);
-        v_org_id    := NEW.org_id;
+        
+        BEGIN
+            v_org_id := NEW.org_id;
+        EXCEPTION WHEN undefined_column THEN
+            v_org_id := NEW.id;
+        END;
+        
         v_entity_id := NEW.id;
 
         -- Detect changed fields
@@ -2007,7 +2064,13 @@ BEGIN
     ELSIF TG_OP = 'DELETE' THEN
         v_action    := 'DELETE';
         v_old_data  := to_jsonb(OLD);
-        v_org_id    := OLD.org_id;
+        
+        BEGIN
+            v_org_id := OLD.org_id;
+        EXCEPTION WHEN undefined_column THEN
+            v_org_id := OLD.id;
+        END;
+        
         v_entity_id := OLD.id;
     END IF;
 

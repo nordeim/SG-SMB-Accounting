@@ -256,17 +256,9 @@ def pytest_configure(config):
 
 
 @pytest.fixture(scope="session")
-def django_db_setup(django_db_setup, django_db_blocker):
-    """Set up test database with schemas."""
-    with django_db_blocker.unblock():
-        from django.db import connection
-        with connection.cursor() as cursor:
-            # Create schemas
-            schemas = ['core', 'coa', 'gst', 'journal', 'invoicing', 'banking', 'audit']
-            for schema in schemas:
-                cursor.execute(f'CREATE SCHEMA IF NOT EXISTS {schema}')
-            # Grant usage
-            cursor.execute("GRANT USAGE ON SCHEMA core, coa, gst, journal, invoicing, banking, audit TO PUBLIC")
+def django_db_setup():
+    """Use existing test database."""
+    pass
 
 
 # Markers

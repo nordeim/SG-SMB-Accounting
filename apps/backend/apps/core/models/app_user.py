@@ -25,7 +25,8 @@ class AppUserManager(BaseUserManager):
         return user
     
     def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault("is_superadmin", True)
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
         return self.create_user(email, password, **extra_fields)
 
 
@@ -40,6 +41,10 @@ class AppUser(AbstractBaseUser, BaseModel):
         unique=True,
         db_column="email",
         verbose_name="email address",
+    )
+    password = models.CharField(
+        max_length=128,
+        db_column="password",
     )
     full_name = models.CharField(
         max_length=255,
@@ -56,16 +61,29 @@ class AppUser(AbstractBaseUser, BaseModel):
         default=True,
         db_column="is_active",
     )
-    is_superadmin = models.BooleanField(
+    is_staff = models.BooleanField(
         default=False,
-        db_column="is_superadmin",
+        db_column="is_staff",
+    )
+    is_superuser = models.BooleanField(
+        default=False,
+        db_column="is_superuser",
     )
     
-    # Timestamps (override BaseModel to match schema)
+    # Timestamps (standard Django fields)
     last_login = models.DateTimeField(
         null=True,
         blank=True,
         db_column="last_login",
+    )
+    date_joined = models.DateTimeField(
+        auto_now_add=True,
+        db_column="date_joined",
+    )
+    password_changed_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        db_column="password_changed_at",
     )
     
     objects = AppUserManager()
@@ -81,16 +99,6 @@ class AppUser(AbstractBaseUser, BaseModel):
     
     def __str__(self) -> str:
         return self.email
-    
-    @property
-    def is_staff(self) -> bool:
-        """Required for Django admin access."""
-        return self.is_superadmin
-    
-    @property
-    def is_superuser(self) -> bool:
-        """Required for Django permissions."""
-        return self.is_superadmin
     
     def get_organisations(self):
         """Get all organisations the user belongs to."""

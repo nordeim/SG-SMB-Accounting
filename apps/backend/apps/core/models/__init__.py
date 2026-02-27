@@ -12,6 +12,9 @@ from .tax_code import TaxCode
 from .account import Account
 from .contact import Contact
 from .invoice_document import InvoiceDocument
+from .invoice_line import InvoiceLine
+from .journal_entry import JournalEntry
+from .journal_line import JournalLine
 
 __all__ = [
     "AppUser",
@@ -24,4 +27,7 @@ __all__ = [
     "Account",
     "Contact",
     "InvoiceDocument",
+    "InvoiceLine",
+    "JournalEntry",
+    "JournalLine",
 ]

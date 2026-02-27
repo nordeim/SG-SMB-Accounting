@@ -22,12 +22,16 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "testserver"]
 # DATABASE (Testing)
 # =============================================================================
 
-# Use the development database for tests (DDL-managed schema)
-# Tests run in transactions that are rolled back
-DATABASES["default"]["NAME"] = "ledgersg_dev"
+# Use the manually initialized test database
+DATABASES["default"]["NAME"] = "test_ledgersg_dev"
+DATABASES["default"]["USER"] = "ledgersg"
+DATABASES["default"]["PASSWORD"] = "ledgersg_secret_to_change"
+DATABASES["default"]["HOST"] = "localhost"
+DATABASES["default"]["PORT"] = "5432"
+
 # Disable test database creation - use existing database
 DATABASES["default"]["TEST"] = {
-    "NAME": "ledgersg_dev",  # Same as default to avoid DB creation
+    "NAME": "test_ledgersg_dev",
 }
 # Prevent Django from running migrations
 MIGRATE = False

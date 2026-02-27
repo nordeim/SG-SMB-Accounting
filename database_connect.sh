@@ -7,6 +7,9 @@ PGPASSWORD=ledgersg_secret_to_change psql -h localhost -U ledgersg -d ledgersg_d
 . /opt/venv/bin/activate && cd /home/project/Ledger-SG/apps/backend && python -m pytest tests/test_api_endpoints.py --reuse-db -v --tb=short --no-migrations
 
 . /opt/venv/bin/activate && cd /home/project/Ledger-SG/apps/backend && python -c "
+
+source /opt/venv/bin/activate && cd apps/backend && export PGPASSWORD=ledgersg_secret_to_change && dropdb -h localhost -U ledgersg test_ledgersg_dev || true && createdb -h localhost -U ledgersg test_ledgersg_dev && psql -h localhost -U ledgersg -d test_ledgersg_dev -f database_schema.sql
+
 import psycopg
 conn = psycopg.connect('host=localhost dbname=ledgersg_dev user=ledgersg password=ledgersg_secret_to_change')
 cur = conn.cursor()

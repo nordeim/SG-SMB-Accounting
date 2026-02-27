@@ -46,6 +46,14 @@ Awesome job on your meticulous analysis, planning and execution. Please keep up 
 
 ---
 
+please meticulously review @README.md , @CLAUDE.md , @ACCOMPLISHMENTS.md , @AGENT_BRIEF.md , @Project_Architecture_Document.md , @API_CLI_Usage_Guide.md and @remediation_plan_backend.md to have a deep understanding of the project and its codebase design and architecture, then meticulously validate your deep understanding against the codebase.
+
+---
+
+please meticulously review @Project_Architecture_Document.md and validate it carefully and systematically against the actual codebase to ensure its correctness and accuracy.
+
+---
+
 Awesome job on your meticulous analysis, planning and execution. Please keep up the good work in your rigorous and meticulous approach to planning and execution. Now, please meticulously review and update @README.md , @CLAUDE.md, AGENT_BRIEF.md and @ACCOMPLISHMENTS.md with your major milestone achievements, include things like code changes (updates and additions), enhancements and fixes, lessons learned, troubleshooting guide, any blockers encountered (solved or still persist), any recommended next steps, etc.
 
 # Update the project documents with:

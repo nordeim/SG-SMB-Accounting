@@ -53,6 +53,7 @@ dependencies = [
     "gunicorn==25.1.0",
     "structlog==25.5.0",                      # Structured logging
     "sentry-sdk[django]==2.53.0",
+    "argon2-cffi==25.1.0",
 ]
 
 [project.optional-dependencies]

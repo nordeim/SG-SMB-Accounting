@@ -1462,7 +1462,7 @@ apps/web/src/
 
 | Layer | Technology | Purpose |
 |-------|------------|---------|
-| **Framework** | Django 5.2 LTS | Web framework |
+| **Framework** | Django 6.0.2 | Web framework |
 | **API** | Django REST Framework 3.15+ | REST API endpoints |
 | **Auth** | djangorestframework-simplejwt | JWT authentication |
 | **Database** | PostgreSQL 16+ | Primary data store |

@@ -27,7 +27,7 @@
 
 ## Executive Summary
 
-**LedgerSG** is a production-grade, double-entry accounting platform purpose-built for Singapore SMBs. Built with Next.js 16 and Django 5.2, it provides comprehensive IRAS 2026 compliance including GST F5 returns, InvoiceNow (Peppol) support, and BCRS deposit handling.
+**LedgerSG** is a production-grade, double-entry accounting platform purpose-built for Singapore SMBs. Built with Next.js 16 and Django 6.0.2, it provides comprehensive IRAS 2026 compliance including GST F5 returns, InvoiceNow (Peppol) support, and BCRS deposit handling.
 
 ### Current Status
 
@@ -173,7 +173,7 @@ ledgersg/
 │   │   ├── package.json
 │   │   └── next.config.ts
 │   │
-│   ├── backend/                # Django 5.2 Backend
+│   ├── backend/                # Django 6.0.2 Backend
 │   │   ├── apps/
 │   │   │   ├── core/          # Auth, Organisation, Users
 │   │   │   ├── coa/           # Chart of Accounts
@@ -213,7 +213,7 @@ ledgersg/
 | **Styling** | Tailwind CSS | 4.0 | CSS-first theming |
 | **State** | TanStack Query | v5 | Server state |
 | **State** | Zustand | v5 | UI state |
-| **Backend** | Django | 5.2 LTS | Web framework |
+| **Backend** | Django | 6.0.2 | Web framework |
 | **API** | DRF | 3.15+ | REST endpoints |
 | **Auth** | SimpleJWT | Latest | JWT tokens |
 | **Database** | PostgreSQL | 16+ | Primary store |

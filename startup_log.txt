@@ -1,5 +1,17 @@
-$ rm -rf .next/
-pete@pop-os:/home/project/Ledger-SG/apps/web
+$ npm install
+
+up to date, audited 653 packages in 4s
+
+201 packages are looking for funding
+  run `npm fund` for details
+
+4 vulnerabilities (1 moderate, 3 high)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+(venv) pete@pop-os:/home/project/Ledger-SG/apps/web
 $ npm run build
 
 > web@0.1.0 build
@@ -11,16 +23,16 @@ $ npm run build
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
   Creating an optimized production build ...
 ⚠ Specified "headers" will not automatically work with "output: export". See more info here: https://nextjs.org/docs/messages/export-no-custom-routes
-✓ Compiled successfully in 8.6s
-✓ Finished TypeScript in 7.2s    
-✓ Collecting page data using 3 workers in 575.1ms    
-✓ Generating static pages using 3 workers (18/18) in 679.0ms
+✓ Compiled successfully in 9.0s
+✓ Finished TypeScript in 8.4s    
+✓ Collecting page data using 3 workers in 554.2ms    
+✓ Generating static pages using 3 workers (18/18) in 734.7ms
 ⚠ rewrites, redirects, and headers are not applied when exporting your application, detected (headers). See more info here: https://nextjs.org/docs/messages/export-no-custom-routes
 ⚠ Statically exporting a Next.js application via `next export` disables API routes and middleware.
 This command is meant for static-only hosts, and is not necessary to make your application static.
 Pages in your application without server-side data dependencies will be automatically statically exported by `next build`, including pages powered by `getStaticProps`.
 Learn more: https://nextjs.org/docs/messages/api-routes-static-export
-✓ Finalizing page optimization in 548.2ms    
+✓ Finalizing page optimization in 542.7ms    
 
 Route (app)
 ┌ ○ /
@@ -48,7 +60,7 @@ Route (app)
 ○  (Static)  prerendered as static content
 ●  (SSG)     prerendered as static HTML (uses generateStaticParams)
 
-pete@pop-os:/home/project/Ledger-SG/apps/web
+(venv) pete@pop-os:/home/project/Ledger-SG/apps/web
 $ npm run serve
 
 > web@0.1.0 serve
@@ -66,140 +78,140 @@ $ npm run serve
    │                                           │
    └───────────────────────────────────────────┘
 
- HTTP  2/25/2026 7:23:02 AM ::1 GET /
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 34 ms
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/d59f830a2b8e768c.js
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 2 ms
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/8056f0ef1475745d.css
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/914f3bc6de5d7120.js
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 5 ms
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 3 ms
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/96d939074fee25a5.js
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/68a088aa49e6124a.js
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/f2f58a7e93290fbb.js
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/turbopack-668a51b62970d8cb.js
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 7 ms
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 11 ms
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/a2dfb6fc5208ab9b.js
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/b7091939fef7132a.js
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 9 ms
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 304 in 15 ms
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 304 in 10 ms
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 8 ms
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/400b4b25993a722a.js
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/cc80bacf0e3b3473.js
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/1e9f768250e0891c.js
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 3 ms
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 5 ms
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 4 ms
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/b60829c8d75be4c6.js
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/e0b2ef6c038449fd.js
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/media/0c89a48fa5027cee-s.p.4564287c.woff2
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 7 ms
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 10 ms
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 304 in 9 ms
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/media/70bc3e132a0a741e-s.p.15008bfb.woff2
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 304 in 1 ms
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 304 in 2 ms
- HTTP  2/25/2026 7:23:02 AM ::1 GET /dashboard.txt?_rsc=vusbg
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 1 ms
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/986e6228fa274ae6.js
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 2 ms
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/7a2488f5f9f813e2.js
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/7ec7cce980d91d6d.js
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/e1a796394f4460dc.js
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/e6db45a4c4444bae.js
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 5 ms
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 5 ms
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 10 ms
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 13 ms
- HTTP  2/25/2026 7:23:02 AM ::1 GET /_next/static/chunks/986e6228fa274ae6.js
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 304 in 1 ms
- HTTP  2/25/2026 7:23:02 AM ::1 HEAD /settings
- HTTP  2/25/2026 7:23:02 AM ::1 HEAD /reports
- HTTP  2/25/2026 7:23:02 AM ::1 HEAD /ledger
- HTTP  2/25/2026 7:23:02 AM ::1 HEAD /quotes
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 7 ms
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 7 ms
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 7 ms
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 5 ms
- HTTP  2/25/2026 7:23:02 AM ::1 GET /settings/__next._tree.txt?_rsc=18t7j
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 6 ms
- HTTP  2/25/2026 7:23:02 AM ::1 GET /reports/__next._tree.txt?_rsc=18t7j
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 1 ms
- HTTP  2/25/2026 7:23:02 AM ::1 GET /ledger/__next._tree.txt?_rsc=18t7j
- HTTP  2/25/2026 7:23:03 AM ::1 GET /quotes/__next._tree.txt?_rsc=18t7j
- HTTP  2/25/2026 7:23:02 AM ::1 Returned 200 in 4 ms
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 7 ms
- HTTP  2/25/2026 7:23:03 AM ::1 HEAD /invoices
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 1 ms
- HTTP  2/25/2026 7:23:03 AM ::1 HEAD /dashboard
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 1 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /settings/__next._head.txt?_rsc=oh8t4
- HTTP  2/25/2026 7:23:03 AM ::1 GET /settings/__next._index.txt?_rsc=585va
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 3 ms
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 3 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /invoices/__next._tree.txt?_rsc=18t7j
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 3 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /dashboard/__next._tree.txt?_rsc=18t7j
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 1 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /settings/__next.!KGRhc2hib2FyZCk.txt?_rsc=1yeh9
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 1 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /settings/__next.!KGRhc2hib2FyZCk.settings.txt?_rsc=k3k24
- HTTP  2/25/2026 7:23:03 AM ::1 GET /settings/__next.!KGRhc2hib2FyZCk.settings.__PAGE__.txt?_rsc=ibd5o
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 2 ms
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 2 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /reports/__next._head.txt?_rsc=oh8t4
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 3 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /reports/__next.!KGRhc2hib2FyZCk.reports.txt?_rsc=w96tj
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 2 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /reports/__next.!KGRhc2hib2FyZCk.reports.__PAGE__.txt?_rsc=4ung9
- HTTP  2/25/2026 7:23:03 AM ::1 GET /ledger/__next._head.txt?_rsc=oh8t4
- HTTP  2/25/2026 7:23:03 AM ::1 GET /ledger/__next.!KGRhc2hib2FyZCk.ledger.txt?_rsc=biw24
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 5 ms
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 5 ms
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 5 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /ledger/__next.!KGRhc2hib2FyZCk.ledger.__PAGE__.txt?_rsc=1ddab
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 3 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /quotes/__next._head.txt?_rsc=oh8t4
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 2 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /quotes/__next.!KGRhc2hib2FyZCk.quotes.txt?_rsc=1ar2f
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 2 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /quotes/__next.!KGRhc2hib2FyZCk.quotes.__PAGE__.txt?_rsc=orss6
- HTTP  2/25/2026 7:23:03 AM ::1 GET /_next/static/chunks/e7184bfd3bbc975e.js
- HTTP  2/25/2026 7:23:03 AM ::1 GET /_next/static/chunks/6935cd7b0b4761a3.js
- HTTP  2/25/2026 7:23:03 AM ::1 GET /invoices/__next._head.txt?_rsc=oh8t4
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 6 ms
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 304 in 6 ms
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 304 in 5 ms
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 5 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /invoices/__next.!KGRhc2hib2FyZCk.invoices.txt?_rsc=g0r00
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 2 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /invoices/__next.!KGRhc2hib2FyZCk.invoices.__PAGE__.txt?_rsc=teo4q
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 2 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /dashboard/__next._head.txt?_rsc=oh8t4
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 3 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /dashboard/__next.!KGRhc2hib2FyZCk.dashboard.txt?_rsc=16sqo
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 1 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /dashboard/__next.!KGRhc2hib2FyZCk.dashboard.__PAGE__.txt?_rsc=16vtn
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 3 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /_next/static/chunks/7ec7cce980d91d6d.js
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 304 in 1 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /_next/static/chunks/e1a796394f4460dc.js
- HTTP  2/25/2026 7:23:03 AM ::1 GET /_next/static/chunks/e6db45a4c4444bae.js
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 304 in 3 ms
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 304 in 2 ms
- HTTP  2/25/2026 7:23:03 AM ::1 HEAD /invoices/new
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 2 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /invoices/new/__next._tree.txt?_rsc=18t7j
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 2 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /invoices/new/__next._head.txt?_rsc=oh8t4
- HTTP  2/25/2026 7:23:03 AM ::1 GET /invoices/new/__next.!KGRhc2hib2FyZCk.invoices.new.txt?_rsc=1gp0d
- HTTP  2/25/2026 7:23:03 AM ::1 GET /invoices/new/__next.!KGRhc2hib2FyZCk.invoices.new.__PAGE__.txt?_rsc=x7be2
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 1 ms
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 2 ms
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 2 ms
- HTTP  2/25/2026 7:23:03 AM ::1 GET /_next/static/chunks/95bf8ed4c9f2bc27.js
- HTTP  2/25/2026 7:23:03 AM ::1 Returned 200 in 1 ms
+ HTTP  2/27/2026 12:15:32 PM ::1 GET /
+ HTTP  2/27/2026 12:15:32 PM ::1 Returned 200 in 19 ms
+ HTTP  2/27/2026 12:15:36 PM ::1 GET /_next/static/chunks/f2f58a7e93290fbb.js
+ HTTP  2/27/2026 12:15:36 PM ::1 Returned 200 in 2 ms
+ HTTP  2/27/2026 12:15:37 PM ::1 GET /_next/static/chunks/d59f830a2b8e768c.js
+ HTTP  2/27/2026 12:15:37 PM ::1 Returned 304 in 2 ms
+ HTTP  2/27/2026 12:15:37 PM ::1 GET /_next/static/chunks/8056f0ef1475745d.css
+ HTTP  2/27/2026 12:15:37 PM ::1 GET /_next/static/chunks/914f3bc6de5d7120.js
+ HTTP  2/27/2026 12:15:37 PM ::1 Returned 304 in 5 ms
+ HTTP  2/27/2026 12:15:37 PM ::1 Returned 304 in 5 ms
+ HTTP  2/27/2026 12:15:37 PM ::1 GET /_next/static/chunks/96d939074fee25a5.js
+ HTTP  2/27/2026 12:15:37 PM ::1 GET /_next/static/chunks/68a088aa49e6124a.js
+ HTTP  2/27/2026 12:15:37 PM ::1 GET /_next/static/chunks/turbopack-668a51b62970d8cb.js
+ HTTP  2/27/2026 12:15:37 PM ::1 Returned 304 in 3 ms
+ HTTP  2/27/2026 12:15:37 PM ::1 Returned 304 in 3 ms
+ HTTP  2/27/2026 12:15:37 PM ::1 Returned 304 in 6 ms
+ HTTP  2/27/2026 12:15:37 PM ::1 GET /_next/static/chunks/b7091939fef7132a.js
+ HTTP  2/27/2026 12:15:37 PM ::1 Returned 304 in 3 ms
+ HTTP  2/27/2026 12:15:37 PM ::1 GET /_next/static/chunks/a2dfb6fc5208ab9b.js
+ HTTP  2/27/2026 12:15:37 PM ::1 Returned 304 in 2 ms
+ HTTP  2/27/2026 12:15:38 PM ::1 GET /_next/static/chunks/400b4b25993a722a.js
+ HTTP  2/27/2026 12:15:38 PM ::1 GET /_next/static/chunks/cc80bacf0e3b3473.js
+ HTTP  2/27/2026 12:15:38 PM ::1 Returned 304 in 3 ms
+ HTTP  2/27/2026 12:15:38 PM ::1 Returned 304 in 2 ms
+ HTTP  2/27/2026 12:15:38 PM ::1 GET /_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2
+ HTTP  2/27/2026 12:15:38 PM ::1 Returned 304 in 2 ms
+ HTTP  2/27/2026 12:15:38 PM ::1 GET /_next/static/media/70bc3e132a0a741e-s.p.15008bfb.woff2
+ HTTP  2/27/2026 12:15:38 PM ::1 Returned 304 in 1 ms
+ HTTP  2/27/2026 12:15:38 PM ::1 GET /_next/static/media/0c89a48fa5027cee-s.p.4564287c.woff2
+ HTTP  2/27/2026 12:15:38 PM ::1 Returned 304 in 2 ms
+ HTTP  2/27/2026 12:15:38 PM ::1 GET /_next/static/chunks/1e9f768250e0891c.js
+ HTTP  2/27/2026 12:15:38 PM ::1 GET /_next/static/chunks/e0b2ef6c038449fd.js
+ HTTP  2/27/2026 12:15:38 PM ::1 Returned 304 in 2 ms
+ HTTP  2/27/2026 12:15:38 PM ::1 Returned 304 in 2 ms
+ HTTP  2/27/2026 12:15:38 PM ::1 GET /_next/static/chunks/b60829c8d75be4c6.js
+ HTTP  2/27/2026 12:15:38 PM ::1 Returned 304 in 1 ms
+ HTTP  2/27/2026 12:15:39 PM ::1 GET /dashboard.txt?_rsc=vusbg
+ HTTP  2/27/2026 12:15:39 PM ::1 Returned 200 in 1 ms
+ HTTP  2/27/2026 12:15:39 PM ::1 GET /_next/static/chunks/e1a796394f4460dc.js
+ HTTP  2/27/2026 12:15:39 PM ::1 GET /_next/static/chunks/e6db45a4c4444bae.js
+ HTTP  2/27/2026 12:15:39 PM ::1 Returned 200 in 2 ms
+ HTTP  2/27/2026 12:15:39 PM ::1 Returned 200 in 4 ms
+ HTTP  2/27/2026 12:15:39 PM ::1 GET /_next/static/chunks/986e6228fa274ae6.js
+ HTTP  2/27/2026 12:15:39 PM ::1 GET /_next/static/chunks/7a2488f5f9f813e2.js
+ HTTP  2/27/2026 12:15:39 PM ::1 Returned 304 in 2 ms
+ HTTP  2/27/2026 12:15:39 PM ::1 Returned 304 in 2 ms
+ HTTP  2/27/2026 12:15:39 PM ::1 GET /_next/static/chunks/7ec7cce980d91d6d.js
+ HTTP  2/27/2026 12:15:39 PM ::1 Returned 304 in 1 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 GET /_next/static/chunks/986e6228fa274ae6.js
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 304 in 1 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 HEAD /settings
+ HTTP  2/27/2026 12:15:40 PM ::1 HEAD /reports
+ HTTP  2/27/2026 12:15:40 PM ::1 HEAD /ledger
+ HTTP  2/27/2026 12:15:40 PM ::1 HEAD /quotes
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 200 in 10 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 200 in 10 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 200 in 4 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 200 in 4 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 GET /reports/__next._tree.txt?_rsc=18t7j
+ HTTP  2/27/2026 12:15:40 PM ::1 GET /ledger/__next._tree.txt?_rsc=18t7j
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 200 in 1 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 200 in 2 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 HEAD /invoices
+ HTTP  2/27/2026 12:15:40 PM ::1 HEAD /dashboard
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 200 in 4 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 200 in 4 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 GET /invoices/__next._tree.txt?_rsc=18t7j
+ HTTP  2/27/2026 12:15:40 PM ::1 GET /quotes/__next._tree.txt?_rsc=18t7j
+ HTTP  2/27/2026 12:15:40 PM ::1 GET /_next/static/chunks/7ec7cce980d91d6d.js
+ HTTP  2/27/2026 12:15:40 PM ::1 GET /_next/static/chunks/e1a796394f4460dc.js
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 304 in 1 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 304 in 1 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 200 in 6 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 200 in 5 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 GET /_next/static/chunks/e6db45a4c4444bae.js
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 304 in 1 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 GET /settings/__next._tree.txt?_rsc=18t7j
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 200 in 1 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 GET /reports/__next._index.txt?_rsc=585va
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 200 in 2 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 GET /dashboard/__next._tree.txt?_rsc=18t7j
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 200 in 1 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 GET /settings/__next._head.txt?_rsc=oh8t4
+ HTTP  2/27/2026 12:15:40 PM ::1 GET /reports/__next._head.txt?_rsc=oh8t4
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 200 in 5 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 200 in 5 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 HEAD /invoices/new
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 200 in 3 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 GET /settings/__next.!KGRhc2hib2FyZCk.settings.__PAGE__.txt?_rsc=ibd5o
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 200 in 3 ms
+ HTTP  2/27/2026 12:15:40 PM ::1 GET /settings/__next.!KGRhc2hib2FyZCk.settings.txt?_rsc=k3k24
+ HTTP  2/27/2026 12:15:40 PM ::1 Returned 200 in 2 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /settings/__next.!KGRhc2hib2FyZCk.txt?_rsc=1yeh9
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 2 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /reports/__next.!KGRhc2hib2FyZCk.reports.__PAGE__.txt?_rsc=4ung9
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 2 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /reports/__next.!KGRhc2hib2FyZCk.reports.txt?_rsc=w96tj
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /ledger/__next._head.txt?_rsc=oh8t4
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /ledger/__next.!KGRhc2hib2FyZCk.ledger.txt?_rsc=biw24
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 2 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 2 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 2 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /quotes/__next._head.txt?_rsc=oh8t4
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 1 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /quotes/__next.!KGRhc2hib2FyZCk.quotes.txt?_rsc=1ar2f
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 1 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /quotes/__next.!KGRhc2hib2FyZCk.quotes.__PAGE__.txt?_rsc=orss6
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 1 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /invoices/__next._head.txt?_rsc=oh8t4
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 1 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /invoices/__next.!KGRhc2hib2FyZCk.invoices.txt?_rsc=g0r00
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 1 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /invoices/__next.!KGRhc2hib2FyZCk.invoices.__PAGE__.txt?_rsc=teo4q
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 1 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /dashboard/__next._head.txt?_rsc=oh8t4
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 1 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /dashboard/__next.!KGRhc2hib2FyZCk.dashboard.txt?_rsc=16sqo
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 1 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /dashboard/__next.!KGRhc2hib2FyZCk.dashboard.__PAGE__.txt?_rsc=16vtn
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 1 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /invoices/new/__next._tree.txt?_rsc=18t7j
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 1 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /ledger/__next.!KGRhc2hib2FyZCk.ledger.__PAGE__.txt?_rsc=1ddab
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 2 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /invoices/new/__next._head.txt?_rsc=oh8t4
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /invoices/new/__next.!KGRhc2hib2FyZCk.invoices.new.txt?_rsc=1gp0d
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /invoices/new/__next.!KGRhc2hib2FyZCk.invoices.new.__PAGE__.txt?_rsc=x7be2
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 4 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 3 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /_next/static/chunks/e7184bfd3bbc975e.js
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 200 in 4 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 GET /_next/static/chunks/6935cd7b0b4761a3.js
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 304 in 3 ms
+ HTTP  2/27/2026 12:15:41 PM ::1 Returned 304 in 3 ms
+ HTTP  2/27/2026 12:15:42 PM ::1 GET /_next/static/chunks/95bf8ed4c9f2bc27.js
+ HTTP  2/27/2026 12:15:42 PM ::1 Returned 304 in 3 ms
 
