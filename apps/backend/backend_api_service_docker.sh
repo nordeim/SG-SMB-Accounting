@@ -72,7 +72,14 @@ log_header() {
 
 # Check if virtual environment exists
 check_venv() {
-    pip -V
+    if [[ ! -d "$VENV_PATH" ]]; then
+        log_error "Virtual environment not found at: $VENV_PATH"
+        log_info "Please create the virtual environment first:"
+        log_info "  python3 -m venv $VENV_PATH"
+        log_info "  source $VENV_PATH/bin/activate"
+        log_info "  pip install -e $BACKEND_DIR/[dev]"
+        exit 1
+    fi
 }
 
 # Activate virtual environment
@@ -216,10 +223,10 @@ start_service() {
     fi
     
     # Check virtual environment
-    check_venv
+    #check_venv
     
     # Activate virtual environment
-    activate_venv
+    #activate_venv
     
     # Check database connection
     if ! check_database; then
