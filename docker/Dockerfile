@@ -1,6 +1,7 @@
-# LedgerSG API Dockerfile
-# Optimized for Hugging Face Spaces (Single-Stage, Non-Root, Persistent Services)
+# LedgerSG Full-Stack Dockerfile
+# Optimized for Hugging Face Spaces with Live Frontend + Backend API Integration
 # Database Configuration: PostgreSQL 17 + Redis (localhost:6379)
+# Frontend: Next.js Standalone Mode with Backend API Integration
 FROM python:3.13-trixie
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -13,6 +14,7 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 ENV DEBIAN_FRONTEND=noninteractive
 ENV APP_PORT=7860
 ENV FRONTEND_PORT=3000
+ENV BACKEND_PORT=8000
 ENV XDG_RUNTIME_DIR=/tmp/runtime-user
 ENV PATH="/home/user/.local/bin:/usr/local/bin:${PATH}"
 
@@ -28,6 +30,12 @@ ENV DB_PASSWORD=ledgersg_secret_to_change
 ENV DB_HOST=localhost
 ENV DB_PORT=5432
 ENV REDIS_URL=redis://localhost:6379/0
+
+# Frontend Configuration for Backend API Integration
+ENV NEXT_PUBLIC_API_URL=http://localhost:8000
+ENV NEXT_OUTPUT_MODE=standalone
+ENV NODE_ENV=production
+ENV HOSTNAME=0.0.0.0
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 2. System Dependencies (Database + Dev Tools)
@@ -53,13 +61,18 @@ RUN cd /usr/bin && \
     chmod a+x /usr/bin/bun /usr/bin/uv*
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 4. Python Dependencies
+# 4. Python Virtual Environment & Dependencies
 # ──────────────────────────────────────────────────────────────────────────────
-RUN pip install --upgrade pip && \
-    pip install django-celery-beat && \
-    pip install -U django djangorestframework djangorestframework-simplejwt django-cors-headers django-filter && \
-    pip install psycopg[binary] celery[redis] redis py-moneyed pydantic weasyprint lxml python-decouple whitenoise gunicorn structlog sentry-sdk[django] argon2-cffi pytest pytest-django pytest-cov pytest-xdist model-bakery factory-boy faker httpx ruff mypy django-stubs djangorestframework-stubs pre-commit ipython django-debug-toolbar django-extensions && \
-    pip install fastapi uvicorn httpx pydantic python-multipart sqlalchemy alembic aiofiles jinja2 gunicorn 
+# Create virtual environment for the application
+RUN python3 -m venv /opt/venv && \
+    chown -R user:user /opt/venv && \
+    /opt/venv/bin/pip install --upgrade pip
+
+# Install Python dependencies in virtual environment
+RUN /opt/venv/bin/pip install django-celery-beat && \
+    /opt/venv/bin/pip install -U django djangorestframework djangorestframework-simplejwt django-cors-headers django-filter && \
+    /opt/venv/bin/pip install psycopg[binary] celery[redis] redis py-moneyed pydantic weasyprint lxml python-decouple whitenoise gunicorn structlog sentry-sdk[django] argon2-cffi pytest pytest-django pytest-cov pytest-xdist model-bakery factory-boy faker httpx ruff mypy django-stubs djangorestframework-stubs pre-commit ipython django-debug-toolbar django-extensions && \
+    /opt/venv/bin/pip install fastapi uvicorn httpx pydantic python-multipart sqlalchemy alembic aiofiles jinja2 gunicorn 
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 5. Node.js Installation (LTS 24.x)
@@ -99,12 +112,15 @@ RUN cd /app && \
     chown -R user:user /app
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 9. Frontend Build (AT BUILD TIME - NO SERVER)
+# 9. Frontend Build (AT BUILD TIME - Standalone Mode for Backend API)
 # ──────────────────────────────────────────────────────────────────────────────
 RUN cd /app/apps/web && \
     npm install && \
-    npm run build && \
-    # CRITICAL: Do NOT run serve here - only build static files
+    npm run clean && \
+    # Build with server mode for backend API integration
+    NEXT_OUTPUT_MODE=standalone NEXT_PUBLIC_API_URL=http://localhost:8000 npm run build:server && \
+    # Verify standalone build output exists
+    ls -la .next/standalone/ && \
     chown -R user:user /app/apps/web
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -262,17 +278,57 @@ else
     exit 1
 fi
 
-# Start Backend API Service
-cd /app/apps/backend && grep DB_ .env && chmod +x backend_api_service_docker.sh && ./backend_api_service_docker.sh start 0.0.0.0 8000 2
+# ──────────────────────────────────────────────────────────────────────────────
+# Start Backend API Service (Django)
+# ──────────────────────────────────────────────────────────────────────────────
+echo "🚀 Starting Backend API on port \${BACKEND_PORT}..."
+cd /app/apps/backend
+
+# Create .env file for backend
+cat > .env << ENVEOF
+DEBUG=True
+SECRET_KEY=django-secret-key-for-docker-local-development
+DB_NAME=\${DB_NAME}
+DB_USER=\${DB_USER}
+DB_PASSWORD=\${DB_PASSWORD}
+DB_HOST=\${DB_HOST}
+DB_PORT=\${DB_PORT}
+REDIS_URL=\${REDIS_URL}
+ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
+CORS_ALLOWED_ORIGINS=http://localhost:\${FRONTEND_PORT},http://127.0.0.1:\${FRONTEND_PORT}
+ENVEOF
+
+# Start Django backend in background
+sudo -u user nohup bash -c "source /opt/venv/bin/activate && python manage.py runserver 0.0.0.0:\${BACKEND_PORT}" > /tmp/backend.log 2>&1 &
+BACKEND_PID=\$!
+echo "✓ Backend PID: \${BACKEND_PID}"
+
+# Wait for backend to be ready
+for i in {1..60}; do
+    if curl -s http://localhost:\${BACKEND_PORT}/api/v1/health/ > /dev/null 2>&1 || curl -s http://localhost:\${BACKEND_PORT} > /dev/null 2>&1; then
+        echo "✓ Backend API is ready (attempt \$i)"
+        break
+    fi
+    if [ \$i -eq 60 ]; then
+        echo "⚠ Backend may not be ready yet (continuing anyway)"
+        echo "Backend log:"
+        tail -20 /tmp/backend.log 2>/dev/null || echo "  (log not available)"
+    fi
+    sleep 1
+done
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Start Frontend (AT RUNTIME - not build time!)
+# Start Frontend (AT RUNTIME - Live Server with Backend API Integration)
 # ──────────────────────────────────────────────────────────────────────────────
 echo "🚀 Starting Frontend on port \${FRONTEND_PORT}..."
 cd /app/apps/web
-sudo -u user nohup npx serve dist -l \${FRONTEND_PORT} > /tmp/frontend.log 2>&1 &
+
+# CRITICAL: Use standalone server for backend API integration
+# The standalone build output is in .next/standalone/
+sudo -u user nohup bash -c "NODE_ENV=production PORT=\${FRONTEND_PORT} HOSTNAME=0.0.0.0 node .next/standalone/server.js" > /tmp/frontend.log 2>&1 &
 FRONTEND_PID=\$!
 echo "✓ Frontend PID: \${FRONTEND_PID}"
+echo "✓ Frontend mode: Standalone (with backend API integration)"
 
 # Wait for frontend to be ready
 for i in {1..30}; do
@@ -282,6 +338,8 @@ for i in {1..30}; do
     fi
     if [ \$i -eq 30 ]; then
         echo "⚠ Frontend may not be ready yet (continuing anyway)"
+        echo "Frontend log:"
+        tail -20 /tmp/frontend.log 2>/dev/null || echo "  (log not available)"
     fi
     sleep 1
 done
@@ -295,8 +353,9 @@ echo ""
 echo "📋 Service Status:"
 echo "  • PostgreSQL: localhost:5432"
 echo "  • Redis:      localhost:6379"
-echo "  • Frontend:   http://localhost:\${FRONTEND_PORT}"
-echo "  • Backend:    http://localhost:\$APP_PORT"
+echo "  • Backend:    http://localhost:\${BACKEND_PORT} (Django API)"
+echo "  • Frontend:   http://localhost:\${FRONTEND_PORT} (Next.js with API)"
+echo "  • Web Server: http://localhost:\$APP_PORT"
 echo ""
 
 # Execute the main command (Web Server) AS USER
@@ -313,7 +372,7 @@ WORKDIR /app
 # Ensure .env file exists
 RUN touch /app/.env && chown user:user /app/.env
 
-EXPOSE ${APP_PORT} ${FRONTEND_PORT}
+EXPOSE ${APP_PORT} ${FRONTEND_PORT} ${BACKEND_PORT}
 
 # Healthcheck against the boot.py server
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
