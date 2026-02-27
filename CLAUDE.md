@@ -120,13 +120,40 @@ pytest --reuse-db --no-migrations
 - **relation "core.app_user" does not exist**: The test database is empty. Load `database_schema.sql` manually.
 - **TypeError: X() got unexpected keyword arguments**: Model and Schema out of sync. LedgerSG is **SQL-First**; update models to match DB columns.
 - **circular dependency on DB init**: FKs must be added via `ALTER TABLE` at the end of the script.
+- **TaxCode constraint violation**: SQL requires `is_input=TRUE OR is_output=TRUE OR code='NA'`. Ensure fixtures set at least one direction flag.
 
 ### Import Errors
 - **ImportError: cannot import name 'X' from 'apps.core.models'**: Check `apps/core/models/__init__.py`. New models must be explicitly exported.
 
+### Frontend Issues
+- **API connection failed**: Ensure `NEXT_PUBLIC_API_URL` is set in `.env.local` and CORS is configured on backend.
+- **npm run start serves static only**: Use `npm run start:server` for API integration (standalone mode).
+
+### Docker Issues
+- **Frontend can't reach backend**: Verify `NEXT_PUBLIC_API_URL` points to correct backend host (use `http://localhost:8000` for local Docker).
+- **Port conflicts**: Ensure ports 3000, 8000, 5432, 6379 are available before running container.
+
 ---
 
 ## 🚀 Recent Milestones
+
+### Django Model Remediation (2026-02-27) ✅
+- **22 Models Aligned**: Complete audit and alignment with SQL schema v1.0.2.
+- **TaxCode Fixed**: Removed invalid fields (`name`, `is_gst_charged`, `box_mapping`), added IRAS F5 box mappings (`f5_supply_box`, `f5_purchase_box`, `f5_tax_box`).
+- **InvoiceDocument Enhanced**: Added 28 new fields including `sequence_number`, `contact_snapshot`, `created_by`, base currency fields.
+- **Organisation Updated**: GST scheme alignment, removed non-existent `gst_scheme` from SQL.
+
+### Backend Test Infrastructure (2026-02-27) ✅
+- **52 Tests Passing**: Fixed `conftest.py` fixtures for SQL constraint compliance.
+- **TaxCode Fixtures**: Updated to use `description`, `is_input`, `is_output`, `is_claimable` fields.
+- **Contact Fixtures**: Added required `contact_type` field.
+- **GSTReturn Fixtures**: Aligned with model field structure.
+
+### Frontend Startup & Docker (2026-02-27) ✅
+- **Dual-Mode Config**: `next.config.ts` supports both static export and standalone server.
+- **API Integration**: Frontend connects to backend at `http://localhost:8000` with CORS configured.
+- **Docker Live**: Multi-service container with PostgreSQL, Redis, Django, Next.js.
+- **Standalone Mode**: Frontend runs via `node .next/standalone/server.js` for API access.
 
 ### PDF & Email Services (2026-02-27) ✅
 - **PDF Generation**: Live via WeasyPrint with IRAS-compliant templates.

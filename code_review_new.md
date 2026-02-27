@@ -450,3 +450,36 @@ Files Modified
 
 The Docker image now properly supports live frontend execution with full backend API integration! 🎉
 
+---
+
+• Documentation Update Complete ✅
+
+All four project documentation files have been updated to reflect the major milestone achievements from today's work:
+
+Summary of Changes
+
+ Document             Key Updates
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ README.md            Updated Project Status table with "22 Models Aligned" and "Docker Live", added Test Status table, added Docker Quick Start section
+ CLAUDE.md            Added 4 new milestones (Django Model Remediation, Backend Test Fixes, Frontend Startup & Docker, PDF & Email), expanded Troubleshooting section with TaxCode, Frontend API, and Docker issues
+ AGENT_BRIEF.md       Added Integration status to Current Status table, added 3 new milestone sections (Django Model Remediation, Backend Test Fixes, Frontend Startup & Docker), expanded Troubleshooting with 4 new issue types
+ ACCOMPLISHMENTS.md   Added 3 comprehensive milestone sections with detailed tables and commands, updated Executive Summary with Docker v1.0.0, expanded Lessons Learned with Model Remediation and TaxCode insights, updated Troubleshoo
+                      ting Guide, added v0.7.0 changelog entry
+
+New Milestones Documented
+
+1. Django Model Remediation (2026-02-27)
+  • 22 models aligned with SQL schema v1.0.2
+  • TaxCode: Removed invalid fields, added IRAS F5 box mappings
+  • InvoiceDocument: Added 28 new fields
+  • Organisation: GST scheme alignment
+2. Backend Test Fixes (2026-02-27)
+  • 52+ tests passing
+  • conftest.py fixtures aligned with SQL constraints
+  • TaxCode, Contact, GSTReturn fixtures updated
+3. Frontend Startup & Docker Fix (2026-02-27)
+  • Dual-mode Next.js config (export/standalone)
+  • API integration with CORS configured
+  • Multi-service Docker container live
+  • Standalone server mode for API access
+

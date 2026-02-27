@@ -112,6 +112,7 @@ LedgerSG provides comprehensive documentation for different audiences:
 | GST Test Coverage | 100% |
 | Security Headers | 7 configured |
 | Build Status | ✅ Passing |
+| API Integration | ✅ Live (Docker + Standalone) |
 
 ### Backend (Production Ready) ✅
 
@@ -122,11 +123,32 @@ LedgerSG provides comprehensive documentation for different audiences:
 | Integration | ✅ Phase 4 | 100% API coverage, FE/BE aligned |
 | Hardening | ✅ Milestone | Models restored, Schema Alignment |
 | Services | ✅ Milestone | PDF Generation & Email Delivery live |
+| Models | ✅ 22 Aligned | TaxCode, InvoiceDocument, Organisation fixed |
+| Tests | ✅ 52 Passing | SQL constraint compliance verified |
 | **Total** | **57 Endpoints** | **65+ files, ~11,200 lines, 158+ tests** |
+
+### Docker Environment (Live) ✅
+
+**Multi-service container** with live frontend-backend integration.
+
+| Service | Port | Status |
+|---------|------|--------|
+| PostgreSQL | 5432 | ✅ Running |
+| Redis | 6379 | ✅ Running |
+| Django Backend | 8000 | ✅ 57 endpoints active |
+| Next.js Frontend | 3000 | ✅ Standalone server mode |
 
 ---
 
 ## 🧪 Testing
+
+### Test Status
+
+| Test Suite | Status | Count | Coverage |
+|------------|--------|-------|----------|
+| Backend Unit | ✅ Passing | 52+ | Core models, services |
+| Frontend Unit | ✅ Passing | 114 | GST Engine 100% |
+| Integration | ✅ Verified | PDF/Email | Binary stream verified |
 
 ### Test Commands
 
@@ -142,6 +164,22 @@ pytest --reuse-db --no-migrations
 
 # Frontend unit tests (Vitest)
 cd apps/web && npm test
+
+# Frontend with coverage
+cd apps/web && npm run test:coverage
+```
+
+### Docker Quick Start
+
+```bash
+# Build and run the complete stack
+docker build -f docker/Dockerfile -t ledgersg:latest docker/
+docker run -p 3000:3000 -p 8000:8000 -p 5432:5432 -p 6379:6379 ledgersg:latest
+
+# Access the services:
+# Frontend: http://localhost:3000
+# Backend API: http://localhost:8000/api/v1/
+# Health Check: http://localhost:8000/api/v1/health/
 ```
 
 ---

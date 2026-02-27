@@ -32,10 +32,45 @@
 | Component | Version | Status | Key Metrics |
 |-----------|---------|--------|-------------|
 | **Frontend** | v0.1.0 | ✅ Production Ready | 18 static pages, 114 tests |
-| **Backend** | v0.3.1 | ✅ Production Ready | **57 API endpoints**, schema hardened |
+| **Backend** | v0.3.1 | ✅ Production Ready | **57 API endpoints**, 22 models aligned |
 | **Database** | v1.0.2 | ✅ Complete | 7 schemas, RLS enforced, 28 tables |
-| **Integration** | v0.4.0 | ✅ Complete | All API paths aligned, 100% coverage |
+| **Integration** | v0.4.0 | ✅ Complete | All API paths aligned, Docker live |
+| **Testing** | — | ✅ 52+ Passing | Backend tests SQL-compliant |
 | **Overall** | — | ✅ **Platform Ready** | **158+ tests**, WCAG AAA, IRAS Compliant |
+
+### Recent Milestone: Django Model Remediation ✅
+**Date**: 2026-02-27  
+**Status**: 22 models aligned with SQL schema
+
+| Fix | Impact |
+|-----|--------|
+| **TaxCode Model** | Removed invalid fields (`name`, `is_gst_charged`, `box_mapping`), added IRAS F5 box mappings |
+| **InvoiceDocument** | Added 28 fields (`sequence_number`, `contact_snapshot`, `created_by`, base currency fields) |
+| **Organisation** | GST scheme alignment with SQL schema |
+| **Test Fixtures** | Updated `conftest.py` for SQL constraint compliance |
+
+### Recent Milestone: Backend Test Fixes ✅
+**Date**: 2026-02-27  
+**Status**: 52+ tests passing
+
+| Fix | Impact |
+|-----|--------|
+| **conftest.py** | Fixed `tax_code_data` with `description`, `is_input`, `is_output`, `is_claimable` |
+| **Contact Fixture** | Added required `contact_type` field |
+| **GSTReturn Fixture** | Aligned with model field structure |
+| **SQL Compliance** | All fixtures comply with database constraints |
+
+### Recent Milestone: Frontend Startup & Docker ✅
+**Date**: 2026-02-27  
+**Status**: Live frontend-backend integration
+
+| Fix | Impact |
+|-----|--------|
+| **next.config.ts** | Dual-mode config (static export + standalone server) |
+| **package.json** | Added `start:server` script for standalone mode |
+| **.env.local** | API URL configuration for development |
+| **Dockerfile** | Multi-service container with live integration |
+| **CORS** | Configured for localhost:3000 ↔ localhost:8000 |
 
 ### Recent Milestone: PDF & Email Services ✅
 **Date**: 2026-02-27  
@@ -161,6 +196,21 @@ pytest --reuse-db --no-migrations
 ### SQL Circular Dependencies
 **Problem**: Database initialization fails when creating tables with foreign keys to each other.  
 **Solution**: Decouple creation order. Create tables with simple columns first, then use `ALTER TABLE ... ADD CONSTRAINT ... FOREIGN KEY` at the end of the script for circular references (e.g., `organisation` <-> `app_user`).
+
+### TaxCode Constraint Violations
+**Problem**: `check_tax_code_input_output` constraint fails during fixture creation.  
+**Cause**: SQL requires `is_input=TRUE OR is_output=TRUE OR code='NA'`.  
+**Solution**: Ensure all TaxCode fixtures set at least one of `is_input` or `is_output` to `True` (except for code='NA').
+
+### Frontend API Connection
+**Problem**: Frontend shows "API Error" or cannot fetch data.  
+**Cause**: CORS not configured or `NEXT_PUBLIC_API_URL` incorrect.  
+**Solution**: Verify `.env.local` has correct API URL and backend CORS allows frontend origin.
+
+### Docker Frontend Standalone
+**Problem**: Frontend in Docker serves static files instead of Next.js app.  
+**Cause**: `output: 'export'` mode doesn't support API routes.  
+**Solution**: Use `NEXT_OUTPUT_MODE=standalone` and run `node .next/standalone/server.js`.
 
 ---
 
