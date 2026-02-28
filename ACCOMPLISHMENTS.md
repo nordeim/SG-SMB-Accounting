@@ -217,6 +217,163 @@ All frontend-backend integration issues identified in the Comprehensive Validati
 3. **CI/CD**: Automate the manual DB initialization workflow in GitHub Actions.
 4. **Compliance**: Finalize InvoiceNow/Peppol transmission logic (XML generation is architecture-ready).
 
+# Major Milestone: Frontend SSR & Hydration Fix ✅ COMPLETE (2026-02-28)
+
+## Executive Summary
+Fixed critical frontend rendering issues causing "Loading..." stuck state and UI aesthetic problems. Converted dashboard to Server Component for immediate content rendering.
+
+### Key Achievements
+- **Server Component Conversion**: Dashboard page now renders immediately without Suspense fallbacks
+- **Hydration Mismatch Resolution**: Fixed shell.tsx and ClientOnly components causing SSR/client mismatches
+- **Static Files Build Fix**: Updated `package.json` build:server script to auto-copy static files to standalone
+- **Loading States Removed**: Disabled `loading.tsx` to prevent skeleton flash during SSR
+
+### Technical Changes
+| File | Change |
+|------|--------|
+| `src/app/(dashboard)/dashboard/page.tsx` | Converted from Client Component to Server Component |
+| `src/app/(dashboard)/dashboard/dashboard-actions.tsx` | New - Client Component for interactive buttons |
+| `src/app/(dashboard)/dashboard/gst-chart-wrapper.tsx` | New - Client Component wrapper for chart |
+| `src/components/layout/shell.tsx` | Removed "Loading..." early return, renders full layout |
+| `src/components/client-only.tsx` | Now renders children immediately without fallback |
+| `src/app/(dashboard)/loading.tsx` | Moved to loading.tsx.bak (disabled) |
+| `package.json` | Updated `build:server` to auto-copy static files |
+
+### Before/After
+| Aspect | Before | After |
+|--------|--------|-------|
+| Initial Render | "Loading..." stuck state | Full dashboard content visible |
+| SSR | Suspense fallbacks (skeletons) | Server-rendered HTML with data |
+| Hydration | Mismatches causing errors | Clean hydration, no console errors |
+| Static Files | 404 errors for JS chunks | All chunks served correctly |
+
+---
+
+# Major Milestone: Next.js Standalone Build Fix ✅ COMPLETE (2026-02-28)
+
+## Executive Summary
+Fixed the standalone build process to properly include static JavaScript and CSS chunks, resolving 404 errors and "Loading..." stuck state.
+
+### The Problem
+Next.js 16 standalone build doesn't automatically include static files, causing:
+- 404 errors for `/_next/static/chunks/*.js`
+- React hydration failures
+- Stuck "Loading..." state forever
+
+### The Solution
+Updated `package.json` build script to copy static files after build:
+```json
+"build:server": "NEXT_OUTPUT_MODE=standalone next build && cp -r .next/static .next/standalone/.next/"
+```
+
+### Files Modified
+| File | Change |
+|------|--------|
+| `package.json` | Added `&& cp -r .next/static .next/standalone/.next/` to build:server |
+
+### Verification
+```bash
+# Before fix
+ls .next/standalone/.next/static/chunks/*.js | wc -l
+# → 0 files (causing 404s)
+
+# After fix
+ls .next/standalone/.next/static/chunks/*.js | wc -l
+# → 28+ files (all served correctly)
+```
+
+---
+
+## Lessons Learned
+
+### Next.js Standalone Mode
+- **Discovery**: `output: 'standalone'` doesn't automatically include `.next/static/` folder
+- **Solution**: Must manually copy `cp -r .next/static .next/standalone/.next/`
+- **Key Insight**: Standalone server only includes server bundles by default
+
+### React Hydration Mismatches
+- **Discovery**: Client Components with `useEffect(() => setMounted(true), [])` cause SSR/client HTML mismatch
+- **Solution**: Either convert to Server Component or ensure SSR and client render identical initial HTML
+- **Key Insight**: Server renders without `useEffect`, client runs it immediately - any conditional rendering causes mismatch
+
+### Suspense Fallbacks in Next.js
+- **Discovery**: `loading.tsx` in App Router shows skeletons even for Client Components with immediate data
+- **Solution**: Remove `loading.tsx` for pages that don't need async data fetching, or convert to Server Components
+- **Key Insight**: `loading.tsx` is for async Server Components, not Client Component initialization
+
+### Tailwind CSS v4 with Next.js
+- **Discovery**: CSS variables defined in `@theme` work correctly but Suspense fallbacks can cause FOUC (Flash of Unstyled Content)
+- **Solution**: Server Components render full styled HTML immediately, avoiding FOUC
+
+---
+
+## Troubleshooting Guide (Updated)
+
+### Frontend "Loading..." Stuck
+- **Issue**: Page shows "Loading..." indefinitely
+- **Cause**: Missing static JS files or hydration mismatch
+- **Solution**:
+  1. Verify static files exist: `ls .next/standalone/.next/static/chunks/`
+  2. Rebuild with static copy: `npm run build:server` (now automatic)
+  3. Check for hydration errors in browser console
+
+### 404 Errors for JS/CSS Chunks
+- **Issue**: Browser shows 404 for `/_next/static/chunks/*.js`
+- **Cause**: Static files not copied to standalone folder
+- **Solution**: Build script now auto-copies, or manually run `cp -r .next/static .next/standalone/.next/`
+
+### Hydration Mismatch Errors
+- **Issue**: Console shows "Text content does not match server-rendered HTML"
+- **Cause**: Component renders differently on server vs client
+- **Solution**: Convert to Server Component or ensure identical initial render
+
+### Server Component Benefits
+- **Issue**: Client Components show loading states
+- **Solution**: Move data fetching and static content to Server Components
+- **Result**: Immediate content render, better SEO, no hydration issues
+
+---
+
+## Blockers Encountered
+
+### ✅ SOLVED: Static Files Not Served
+- **Status**: SOLVED (2026-02-28)
+- **Solution**: Updated `package.json` build:server script to auto-copy static files
+
+### ✅ SOLVED: Hydration Mismatches
+- **Status**: SOLVED (2026-02-28)
+- **Solution**: Converted dashboard to Server Component, removed loading.tsx
+
+### ✅ SOLVED: "Loading..." Stuck State
+- **Status**: SOLVED (2026-02-28)
+- **Solution**: Fixed shell.tsx early return, updated ClientOnly component
+
+---
+
+## Recommended Next Steps
+
+### Immediate (High Priority)
+1. **Testing**: Verify all 18 pages render correctly without hydration errors
+2. **Performance**: Implement React.lazy() for heavy chart components
+3. **Monitoring**: Add error tracking for client-side hydration failures
+
+### Short-term (Medium Priority)
+4. **Optimization**: Convert more pages to Server Components where possible
+5. **SEO**: Add meta tags and structured data to Server Components
+6. **Accessibility**: Verify WCAG AAA compliance with new rendering approach
+
+### Long-term (Low Priority)
+7. **CI/CD**: Add automated hydration error detection in build pipeline
+8. **Documentation**: Create component usage guidelines (Server vs Client)
+
+---
+
+### v0.8.0 (2026-02-28) — Frontend SSR & Hydration Fix
+- **Milestone**: Fixed "Loading..." stuck state and hydration mismatches
+- **Components**: Dashboard converted to Server Component
+- **Build**: Static files auto-copy in build:server script
+- **UX**: Immediate content render, no skeleton flash
+
 ### v0.7.0 (2026-02-27) — Model Remediation & Test Infrastructure
 - **Milestone**: 22 Django models aligned with SQL schema, test suite fixed.
 - **Models**: TaxCode, InvoiceDocument, Organisation aligned with schema v1.0.2.

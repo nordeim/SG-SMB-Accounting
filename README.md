@@ -101,6 +101,9 @@ LedgerSG provides comprehensive documentation for different audiences:
 
 ## ✅ Project Status
 
+**Last Updated**: 2026-02-28  
+**Latest Milestone**: Frontend SSR & Hydration Fix — "Loading..." stuck state resolved
+
 ### Frontend (Complete) ✅
 
 **LedgerSG Frontend v0.1.0** is production-ready with comprehensive testing, security hardening, and documentation.
@@ -113,6 +116,8 @@ LedgerSG provides comprehensive documentation for different audiences:
 | Security Headers | 7 configured |
 | Build Status | ✅ Passing |
 | API Integration | ✅ Live (Docker + Standalone) |
+| SSR/Hydration | ✅ Fixed (2026-02-28) |
+| Standalone Build | ✅ Auto-copies static files |
 
 ### Backend (Production Ready) ✅
 
@@ -386,6 +391,36 @@ chmod +x backend_api_service.sh
 
 # Check log directory permissions
 ls -la ~/.ledgersg/
+```
+
+### Frontend Troubleshooting
+
+**"Loading..." stuck on dashboard:**
+```bash
+# Check static files exist in standalone build
+ls apps/web/.next/standalone/.next/static/chunks/ | head -5
+
+# Rebuild with static file auto-copy (now automatic)
+cd apps/web && npm run clean && npm run build:server
+
+# Check for hydration errors in browser console (F12)
+```
+
+**404 errors for JS/CSS chunks:**
+```bash
+# Manual fix if build script fails
+cp -r apps/web/.next/static apps/web/.next/standalone/.next/
+
+# Verify files are accessible
+curl -I http://localhost:3000/_next/static/chunks/main.js
+```
+
+**Hydration mismatch errors:**
+```bash
+# Usually caused by Client Components rendering differently on server vs client
+# Solutions:
+# 1. Convert to Server Component (remove "use client")
+# 2. Ensure identical initial render (no conditional rendering based on useEffect)
 ```
 
 ### Advanced Usage

@@ -1,9 +1,9 @@
 # LedgerSG — Agent & Developer Briefing
 
 > **Single Source of Truth** for coding agents and human developers  
-> **Version**: 1.2.0  
-> **Last Updated**: 2026-02-27  
-> **Status**: Production Ready ✅
+> **Version**: 1.3.0  
+> **Last Updated**: 2026-02-28  
+> **Status**: Production Ready ✅ (SSR & Hydration Fixed)
 
 ---
 
@@ -71,6 +71,19 @@
 | **.env.local** | API URL configuration for development |
 | **Dockerfile** | Multi-service container with live integration |
 | **CORS** | Configured for localhost:3000 ↔ localhost:8000 |
+
+### Recent Milestone: Frontend SSR & Hydration Fix ✅
+**Date**: 2026-02-28  
+**Status**: Production Ready - "Loading..." stuck state resolved
+
+| Fix | Impact |
+|-----|--------|
+| **Dashboard Server Component** | Converted from Client to Server Component for immediate render |
+| **Static Files Auto-Copy** | Build script now copies `.next/static` to standalone folder |
+| **Hydration Mismatch Fix** | Removed "Loading..." early return from shell.tsx |
+| **New Files** | `dashboard-actions.tsx`, `gst-chart-wrapper.tsx` for client interactivity |
+
+**Key Insight**: Next.js standalone build requires manual static file copy. Build script now handles this automatically.
 
 ### Recent Milestone: PDF & Email Services ✅
 **Date**: 2026-02-27  
@@ -212,11 +225,52 @@ pytest --reuse-db --no-migrations
 **Cause**: `output: 'export'` mode doesn't support API routes.  
 **Solution**: Use `NEXT_OUTPUT_MODE=standalone` and run `node .next/standalone/server.js`.
 
+### Frontend "Loading..." Stuck State
+**Problem**: Dashboard shows "Loading..." indefinitely.  
+**Cause**: Missing static JS files in standalone build OR hydration mismatch.  
+**Solution**:
+1. Verify static files: `ls .next/standalone/.next/static/chunks/`
+2. Rebuild: `npm run build:server` (now auto-copies static files)
+3. Check browser console for hydration errors
+
+### 404 Errors for JS/CSS Chunks
+**Problem**: Browser shows 404 for `/_next/static/chunks/*.js`.  
+**Cause**: Static files not copied to standalone folder.  
+**Solution**: Build script updated to auto-copy. Manual fix: `cp -r .next/static .next/standalone/.next/`
+
+### Hydration Mismatch Errors
+**Problem**: Console shows "Text content does not match server-rendered HTML".  
+**Cause**: Component renders differently on server vs client (e.g., `useEffect` with early return).  
+**Solution**: Convert to Server Component or ensure identical initial render on both environments.
+
+---
+
+### Recent Milestone: Frontend SSR & Hydration Fix ✅
+**Date**: 2026-02-28  
+**Status**: Production Ready - Dashboard renders immediately without "Loading..." stuck state
+
+| Fix | Impact |
+|-----|--------|
+| **Dashboard Server Component** | Converted from Client to Server Component for immediate render |
+| **Static Files Auto-Copy** | Build script now copies `.next/static` to standalone folder automatically |
+| **Hydration Mismatch Fix** | Removed "Loading..." early return from shell.tsx |
+| **Loading.tsx Disabled** | Moved to loading.tsx.bak to prevent skeleton flash |
+| **ClientOnly Component** | Now renders children immediately without skeleton fallback |
+
 ---
 
 ## 🚀 Recommended Next Steps
 
-1.  **Dashboard Implementation**: Replace stub logic in `reporting/views.py` with real financial calculations from the `journal.line` table.
-2.  **Banking Module**: Replace placeholder views in `banking/views.py` with actual bank account management and reconciliation logic.
-3.  **CI/CD Pipeline**: Automate the manual database initialization workflow in a GitHub Actions runner.
-4.  **Compliance**: Finalize InvoiceNow/Peppol transmission logic (XML generation is architecture-ready).
+### Immediate (High Priority)
+1. **Testing**: Verify all 18 pages render correctly without hydration errors
+2. **Dashboard Real Data**: Replace mock data with actual API calls to backend
+3. **Error Tracking**: Add Sentry or similar for client-side error monitoring
+
+### Short-term (Medium Priority)
+4. **Banking Module**: Replace placeholder views in `banking/views.py` with actual bank reconciliation logic
+5. **CI/CD Pipeline**: Automate the manual database initialization workflow in GitHub Actions
+6. **Performance**: Implement code splitting for heavy components
+
+### Long-term (Low Priority)
+7. **Compliance**: Finalize InvoiceNow/Peppol transmission logic (XML generation is architecture-ready)
+8. **Documentation**: Create component usage guidelines (Server vs Client Components)

@@ -1,9 +1,9 @@
 # LedgerSG — Comprehensive Developer Briefing
 
 > **Single Source of Truth** for coding agents and human developers  
-> **Version**: 1.2.0  
-> **Last Updated**: 2026-02-27  
-> **Status**: Production Ready ✅ (PDF & Email Services Live)
+> **Version**: 1.3.0  
+> **Last Updated**: 2026-02-28  
+> **Status**: Production Ready ✅ (SSR & Hydration Fixed)
 
 ---
 
@@ -128,6 +128,9 @@ pytest --reuse-db --no-migrations
 ### Frontend Issues
 - **API connection failed**: Ensure `NEXT_PUBLIC_API_URL` is set in `.env.local` and CORS is configured on backend.
 - **npm run start serves static only**: Use `npm run start:server` for API integration (standalone mode).
+- **"Loading..." stuck on dashboard**: Static files not copied or hydration mismatch. Rebuild with `npm run build:server`.
+- **404 errors for JS chunks**: Static files missing from standalone. Build script auto-copies now.
+- **Hydration mismatch errors**: Component renders differently on server vs client. Convert to Server Component.
 
 ### Docker Issues
 - **Frontend can't reach backend**: Verify `NEXT_PUBLIC_API_URL` points to correct backend host (use `http://localhost:8000` for local Docker).
@@ -136,6 +139,13 @@ pytest --reuse-db --no-migrations
 ---
 
 ## 🚀 Recent Milestones
+
+### Frontend SSR & Hydration Fix (2026-02-28) ✅
+- **"Loading..." Stuck State Fixed**: Dashboard now renders immediately with full content.
+- **Server Component Conversion**: Dashboard converted from Client to Server Component.
+- **Static Files Auto-Copy**: Build script now copies `.next/static` to standalone folder automatically.
+- **Hydration Mismatch Resolution**: Fixed shell.tsx and ClientOnly components.
+- **New Components**: `dashboard-actions.tsx`, `gst-chart-wrapper.tsx` for client interactivity.
 
 ### Django Model Remediation (2026-02-27) ✅
 - **22 Models Aligned**: Complete audit and alignment with SQL schema v1.0.2.

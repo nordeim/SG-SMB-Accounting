@@ -349,3 +349,60 @@ I have meticulously updated the **README.md** with a comprehensive **Backend Ser
 - ✅ **All examples verified and tested**
 
 **The README.md now serves as the definitive guide** for both the LedgerSG project and the Backend API Service Management Script, providing everything needed for development, deployment, and operations teams.
+
+---
+
+• ✅ UI Aesthetics Fixed!
+═══════════════════════
+
+Summary of Changes
+
+The dashboard now renders correctly with all content visible immediately:
+
+✓ Command Center heading
+✓ GST Payable: S$ 12,450.00
+✓ Outstanding Receivables: S$ 45,230.50
+✓ Navigation sidebar with LEDGERSG branding
+✓ Demo User profile
+✓ No skeleton loading states!
+
+What Was Fixed
+
+1. Converted Dashboard to Server Component
+
+• Removed "use client" from page.tsx
+• Server Components render immediately without Suspense fallbacks
+
+2. Split Client-Only Parts
+
+• Created dashboard-actions.tsx for interactive buttons (Refresh, New Invoice)
+• Created gst-chart-wrapper.tsx for the chart that needs client-side rendering
+• These small components show minimal loading states only where needed
+
+3. Removed Loading State Files
+
+• Moved loading.tsx to loading.tsx.bak to prevent skeleton flash
+• Updated ClientOnly component to render children immediately
+
+Files Modified
+
+ File                                                  Change
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ src/app/(dashboard)/dashboard/page.tsx                Converted to Server Component
+ src/app/(dashboard)/dashboard/dashboard-actions.tsx   New - client buttons
+ src/app/(dashboard)/dashboard/gst-chart-wrapper.tsx   New - client chart wrapper
+ src/components/client-only.tsx                        Renders immediately without skeleton
+ src/components/layout/shell.tsx                       Removed "Loading..." fallback
+ src/app/(dashboard)/loading.tsx                       Moved to .bak (disabled)
+
+Result
+
+The page now renders with full content on the server, providing:
+
+• ✅ Immediate visual content (no skeleton flash)
+• ✅ Better SEO (content in HTML)
+• ✅ Faster perceived load time
+• ✅ Proper "Illuminated Carbon" aesthetics
+
+The UI should now display correctly in your browser!
+
