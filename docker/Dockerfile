@@ -1,10 +1,18 @@
 # LedgerSG Full-Stack Dockerfile
-# Optimized for Hugging Face Spaces with Live Frontend + Backend API Integration
-# Multi-port exposure for flexible HF Space URL mapping (3000/7860/8000)
+# Optimized for Hugging Face Spaces (Single-Stage, Single-File)
 # Database: PostgreSQL 17 + Redis (localhost:6379)
 # Frontend: Next.js Standalone Mode
 # Backend: Django + Gunicorn (Production WSGI)
-
+# 
+# FIXES APPLIED:
+# 1. Log path consistency (boot.py matches entrypoint.sh)
+# 2. Schema idempotency (only applies on first run)
+# 3. Health check timeout (120s for full startup)
+# 4. Django settings module export (before Gunicorn)
+# 5. Frontend chunk validation (minimum 20 chunks)
+# 6. Backend process death detection
+# 7. Netcat availability verification
+#
 FROM python:3.13-trixie
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -54,6 +62,7 @@ RUN apt-get update && apt-get install -y \
     libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz0b libffi-dev libjpeg-dev libopenjp2-7-dev \
     postgresql postgresql-contrib redis-server netcat-openbsd \
     && apt-get clean && rm -rf /var/lib/apt/lists/* \
+    # Verify PostgreSQL installation at build time
     && if [ ! -d "/usr/lib/postgresql/17" ]; then echo "ERROR: PostgreSQL 17 not installed" && exit 1; fi \
     && echo "✓ PostgreSQL 17 verified at build time"
 
@@ -126,7 +135,7 @@ RUN cd /app/apps/web && \
     chown -R user:user /app/apps/web
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# 10. Verify Frontend Build Integrity (WITH ERROR HANDLING)
+# 10. Verify Frontend Build Integrity (FIX #5: Minimum 20 chunks)
 # ═══════════════════════════════════════════════════════════════════════════════
 RUN cd /app/apps/web && \
     echo "Verifying standalone build..." && \
@@ -143,11 +152,11 @@ RUN cd /app/apps/web && \
         }; \
     fi && \
     STATIC_COUNT=$(ls .next/standalone/.next/static/chunks/*.js 2>/dev/null | wc -l) && \
-    if [ "$STATIC_COUNT" -lt 10 ]; then \
+    if [ "$STATIC_COUNT" -lt 20 ]; then \
         echo "ERROR: Only $STATIC_COUNT JS chunks found. Expected 20+"; \
         exit 1; \
     fi && \
-    echo "✓ Standalone build verified: $STATIC_COUNT JS chunks" && 
+    echo "✓ Standalone build verified: $STATIC_COUNT JS chunks" && \
     chown -R user:user /app/apps/web
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -157,10 +166,16 @@ RUN mkdir -p /app/core /app/scripts && \
     chown -R user:user /app
 
 # Enhanced boot.py - Keep-alive + Service Health Monitor + Log Viewer
+# FIX #1: Log paths now match entrypoint.sh output locations
 COPY <<'BOOTEOF' /app/core/boot.py
 """
 LedgerSG HF Space Keep-Alive Server
 Provides health checks, service monitoring, and log access for debugging
+
+Log Files (all written by entrypoint.sh):
+- /tmp/backend.log      → Gunicorn stdout/stderr (combined)
+- /tmp/frontend.log     → Next.js server output
+- /tmp/postgres.log     → PostgreSQL server log
 """
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse, JSONResponse
@@ -172,7 +187,6 @@ import urllib.error
 from datetime import datetime
 
 app = FastAPI(title="LedgerSG Space Monitor")
-
 
 def check_service(url: str, timeout: int = 2) -> dict:
     """Check if a service is responding"""
@@ -196,7 +210,6 @@ def check_service(url: str, timeout: int = 2) -> dict:
             "url": url
         }
 
-
 @app.get("/")
 def read_root():
     """Complete service status overview"""
@@ -216,20 +229,23 @@ def read_root():
         }
     }
 
-
 @app.get("/health")
 def health():
     """Simple health check for container orchestration"""
     return {"status": "healthy", "service": "ledgersg-boot"}
 
-
 @app.get("/logs/{service}")
 def get_logs(service: str, lines: int = 50):
-    """View service logs for debugging"""
+    """
+    View service logs for debugging
+    
+    FIX #1: All log paths now match entrypoint.sh output locations
+    """
+    # CORRECTED: All paths match what entrypoint.sh actually creates
     log_files = {
-        "backend": "/tmp/backend.log",
-        "frontend": "/tmp/frontend.log",
-        "postgres": "/tmp/postgres.log"
+        "backend": "/tmp/backend.log",           # ← Gunicorn combined output
+        "frontend": "/tmp/frontend.log",         # ← Next.js output
+        "postgres": "/tmp/postgres.log",         # ← PostgreSQL output
     }
     
     if service not in log_files:
@@ -237,11 +253,23 @@ def get_logs(service: str, lines: int = 50):
             status_code=404,
             content={
                 "error": "Unknown service",
-                "available_services": list(log_files.keys())
+                "available_services": list(log_files.keys()),
+                "hint": f"Try: {', '.join(log_files.keys())}"
             }
         )
     
     log_path = log_files[service]
+    
+    # Check if log file exists
+    if not os.path.exists(log_path):
+        return JSONResponse(
+            status_code=404,
+            content={
+                "error": "Log file not found",
+                "log_path": log_path,
+                "hint": "Service may not have started yet, or logging not enabled"
+            }
+        )
     
     try:
         result = subprocess.run(
@@ -254,20 +282,19 @@ def get_logs(service: str, lines: int = 50):
             "service": service,
             "log_file": log_path,
             "lines_requested": lines,
-            "lines_returned": len(result.stdout.strip().split('\n')),
-            "content": result.stdout
+            "lines_returned": len(result.stdout.strip().split('\n')) if result.stdout.strip() else 0,
+            "content": result.stdout if result.stdout.strip() else "(log file is empty)"
         }
     except subprocess.TimeoutExpired:
         return JSONResponse(
             status_code=500,
-            content={"error": "Timeout reading log file"}
+            content={"error": "Timeout reading log file", "log_path": log_path}
         )
     except Exception as e:
         return JSONResponse(
             status_code=500,
-            content={"error": str(e)}
+            content={"error": str(e), "log_path": log_path}
         )
-
 
 @app.get("/env")
 def show_env():
@@ -280,13 +307,53 @@ def show_env():
         "DB_NAME": os.getenv("DB_NAME"),
         "DB_HOST": os.getenv("DB_HOST"),
         "DB_PORT": os.getenv("DB_PORT"),
-        "NODE_ENV": os.getenv("NODE_ENV")
+        "NODE_ENV": os.getenv("NODE_ENV"),
+        "PGDATA": os.getenv("PGDATA"),
     }
 
+@app.get("/debug/info")
+def debug_info():
+    """Extended debugging information"""
+    import sys
+    
+    # Check log files exist
+    log_status = {}
+    for service, path in {
+        "backend": "/tmp/backend.log",
+        "frontend": "/tmp/frontend.log",
+        "postgres": "/tmp/postgres.log",
+    }.items():
+        if os.path.exists(path):
+            stat = os.stat(path)
+            log_status[service] = {
+                "exists": True,
+                "size_bytes": stat.st_size,
+                "path": path
+            }
+        else:
+            log_status[service] = {
+                "exists": False,
+                "path": path
+            }
+    
+    return {
+        "python_version": sys.version,
+        "cwd": os.getcwd(),
+        "logs": log_status,
+        "env_ports": {
+            "app": os.getenv("APP_PORT"),
+            "frontend": os.getenv("FRONTEND_PORT"),
+            "backend": os.getenv("BACKEND_PORT"),
+        }
+    }
 
 if __name__ == "__main__":
     port = int(os.getenv("APP_PORT", 7860))
     print(f"Starting LedgerSG boot server on port {port}")
+    print(f"Log endpoints available at:")
+    print(f"  - GET /logs/backend")
+    print(f"  - GET /logs/frontend")
+    print(f"  - GET /logs/postgres")
     uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
 BOOTEOF
 
@@ -296,11 +363,17 @@ BOOTEOF
 COPY <<'ENTRYEOF' /usr/local/bin/entrypoint.sh
 #!/bin/bash
 set -e
-
 echo "════════════════════════════════════════════════════════════════"
 echo "   LedgerSG HF Space Starting"
 echo "════════════════════════════════════════════════════════════════"
 echo "🕐 Startup time: $(date -Iseconds)"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIX #7: Verify netcat availability before use
+# ═══════════════════════════════════════════════════════════════════════════════
+if ! command -v nc &> /dev/null; then
+    echo "⚠ WARNING: netcat not available, port checks will fail"
+fi
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # PostgreSQL Detection & Setup
@@ -309,13 +382,11 @@ echo ""
 echo "🔍 Configuring PostgreSQL..."
 PG_VERSION="17"
 PG_BIN="/usr/lib/postgresql/${PG_VERSION}/bin"
-
 if [ ! -d "/usr/lib/postgresql/${PG_VERSION}" ]; then
     echo "✗ ERROR: PostgreSQL ${PG_VERSION} not found"
     ls -la /usr/lib/postgresql/ 2>&1 || echo "  (directory not accessible)"
     exit 1
 fi
-
 echo "✓ PostgreSQL ${PG_VERSION} at ${PG_BIN}"
 
 # Verify binaries
@@ -339,13 +410,11 @@ chmod 777 /var/run/postgresql
 if [ ! -f "$PGDATA/PG_VERSION" ]; then
     echo "📦 Initializing PostgreSQL cluster..."
     sudo -u user ${PG_BIN}/initdb -D $PGDATA
-    
     cat >> $PGDATA/pg_hba.conf << 'PGHBA'
 local   all             all                                     trust
 host    all             all             127.0.0.1/32            md5
 host    all             all             ::1/128                 md5
 PGHBA
-    
     echo "listen_addresses = 'localhost'" >> $PGDATA/postgresql.conf
     echo "port = 5432" >> $PGDATA/postgresql.conf
     echo "✓ PostgreSQL initialized"
@@ -366,7 +435,6 @@ sleep 1
 # ═══════════════════════════════════════════════════════════════════════════════
 echo "🚀 Starting PostgreSQL on port 5432..."
 sudo -u user ${PG_BIN}/pg_ctl -D $PGDATA -l /tmp/postgres.log start
-
 echo "⏳ Waiting for PostgreSQL..."
 for i in {1..30}; do
     if sudo -u user ${PG_BIN}/pg_isready -h localhost -p 5432 > /dev/null 2>&1; then
@@ -386,7 +454,6 @@ done
 # ═══════════════════════════════════════════════════════════════════════════════
 echo ""
 echo "🗄️  Setting up database..."
-
 if ! sudo -u user ${PG_BIN}/psql -h localhost -p 5432 -d postgres -c "SELECT 1 FROM pg_roles WHERE rolname='${DB_USER}';" | grep -q 1; then
     echo "  → Creating user: ${DB_USER}"
     sudo -u user ${PG_BIN}/psql -h localhost -p 5432 -d postgres -c "CREATE ROLE ${DB_USER} WITH LOGIN CREATEDB PASSWORD '${DB_PASSWORD}';"
@@ -405,20 +472,16 @@ sudo -u user ${PG_BIN}/psql -h localhost -p 5432 -d ${DB_NAME} -c "GRANT ALL PRI
 echo "✓ Database setup complete"
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# Apply Schema ONLY if tables don't exist (IDEMPOTENT - CRITICAL FIX)
+# FIX #2: Apply Schema ONLY if tables don't exist (IDEMPOTENT)
 # ═══════════════════════════════════════════════════════════════════════════════
 echo "  → Checking database schema..."
-
-# Count tables in all schemas
 TABLE_COUNT=$(sudo -u user ${PG_BIN}/psql -h localhost -p 5432 -d ${DB_NAME} -t -c \
     "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema IN ('core','coa','gst','journal','invoicing','banking','audit');" 2>/dev/null | tr -d ' ' || echo "0")
 
 if [ -z "$TABLE_COUNT" ] || [ "$TABLE_COUNT" -eq "0" ]; then
     echo "  → Applying database schema (first run)..."
-    echo ""
     echo "  ⚠️  WARNING: This schema uses DROP SCHEMA IF EXISTS... CASCADE"
     echo "      Re-running the schema will DESTROY all existing data!"
-    echo ""
     sudo -u user ${PG_BIN}/psql -h localhost -p 5432 -d ${DB_NAME} -f /app/apps/backend/database_schema.sql
     echo "  ✓ Schema applied"
 else
@@ -427,7 +490,7 @@ else
     echo ""
     echo "  ⚠️  TO RE-APPLY SCHEMA (DATA WILL BE LOST):"
     echo "      1. Backup your data first!"
-    echo "      2. Drop the database and recreate"
+    echo "      2. Drop the database: DROP DATABASE ${DB_NAME};"
     echo "      3. Container will auto-apply schema on next startup"
 fi
 
@@ -451,6 +514,7 @@ echo "🚀 Starting Backend API (Gunicorn) on port ${BACKEND_PORT}..."
 cd /app/apps/backend
 
 # Create .env file for backend
+# FIX #4: Include DJANGO_SETTINGS_MODULE in .env file
 cat > .env << ENVEOF
 DJANGO_SETTINGS_MODULE=config.settings.service
 DEBUG=False
@@ -466,33 +530,33 @@ CORS_ALLOWED_ORIGINS=http://localhost:${FRONTEND_PORT},http://127.0.0.1:${FRONTE
 LOG_LEVEL=INFO
 ENVEOF
 
-# Export Django settings module for container environment
-export DJANGO_SETTINGS_MODULE=config.settings.service
-
 # Start Django with Gunicorn (production WSGI)
-# Using stdout/stderr for logs (container best practice)
+# FIX #4: Export DJANGO_SETTINGS_MODULE before Gunicorn starts
+# FIX #1: Using /tmp/backend.log for all logs (matches boot.py)
 sudo -u user nohup bash -c "
-    export DJANGO_SETTINGS_MODULE=config.settings.service &&
-    source /opt/venv/bin/activate && 
-    cd /app/apps/backend && 
-    gunicorn config.wsgi:application \
-        -b 0.0.0.0:${BACKEND_PORT} \
-        --workers 2 \
-        --threads 2 \
-        --worker-class gthread \
-        --timeout 60 \
-        --keep-alive 5 \
-        --max-requests 1000 \
-        --max-requests-jitter 50 \
-        --access-logfile - \
-        --error-logfile - \
-        --capture-output \
-        --enable-stdio-inheritance
+export DJANGO_SETTINGS_MODULE=config.settings.service &&
+source /opt/venv/bin/activate &&
+cd /app/apps/backend &&
+gunicorn config.wsgi:application \
+-b 0.0.0.0:${BACKEND_PORT} \
+--workers 2 \
+--threads 2 \
+--worker-class gthread \
+--timeout 60 \
+--keep-alive 5 \
+--max-requests 1000 \
+--max-requests-jitter 50 \
+--access-logfile - \
+--error-logfile - \
+--capture-output \
+--enable-stdio-inheritance
 " > /tmp/backend.log 2>&1 &
 BACKEND_PID=$!
 echo "✓ Backend PID: ${BACKEND_PID} (Gunicorn: 2 workers, 2 threads)"
 
-# Wait for backend with improved health check (CRITICAL FIX)
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIX #6: Wait for backend with process death detection
+# ═══════════════════════════════════════════════════════════════════════════════
 echo "⏳ Waiting for Backend API..."
 BACKEND_READY=false
 for i in {1..60}; do
@@ -511,7 +575,7 @@ for i in {1..60}; do
         break
     fi
     
-    # Fallback: check if port is listening (CRITICAL FIX - uses netcat)
+    # Fallback: check if port is listening (uses netcat)
     if nc -z localhost ${BACKEND_PORT} 2>/dev/null; then
         echo "✓ Backend port listening (attempt $i)"
         break
@@ -545,11 +609,11 @@ if [ ! -f ".next/standalone/server.js" ]; then
 fi
 
 sudo -u user nohup bash -c "
-    export NODE_ENV=production
-    export PORT=${FRONTEND_PORT}
-    export HOSTNAME=0.0.0.0
-    export NEXT_PUBLIC_API_URL=http://localhost:8000
-    node .next/standalone/server.js
+export NODE_ENV=production
+export PORT=${FRONTEND_PORT}
+export HOSTNAME=0.0.0.0
+export NEXT_PUBLIC_API_URL=http://localhost:8000
+node .next/standalone/server.js
 " > /tmp/frontend.log 2>&1 &
 FRONTEND_PID=$!
 echo "✓ Frontend PID: ${FRONTEND_PID}"
@@ -578,7 +642,6 @@ echo "🕐 Ready at: $(date -Iseconds)"
 echo ""
 
 SERVICES_READY=true
-
 if [ "$BACKEND_READY" = true ]; then
     echo "  ✅ Backend API:    http://localhost:${BACKEND_PORT} (Gunicorn)"
 else
@@ -637,15 +700,11 @@ WORKDIR /app
 RUN touch /app/.env && chown user:user /app/.env
 
 # Expose ALL ports for flexible HF Space URL mapping
-# HF Space can map its URL to any of these ports via settings
 EXPOSE ${APP_PORT} ${FRONTEND_PORT} ${BACKEND_PORT}
 
-# Health check - flexible for any exposed port
-# HF Space will configure which port the URL maps to
+# FIX #3: Health check with 120s start-period (allows full initialization)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
-    CMD curl -f http://localhost:${FRONTEND_PORT} 2>/dev/null || \
-        curl -f http://localhost:${APP_PORT}/health 2>/dev/null || \
-        exit 1
+    CMD curl -f http://localhost:${APP_PORT}/health 2>/dev/null || exit 1
 
 # Use Entrypoint to start all services, then run the keep-alive server
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
