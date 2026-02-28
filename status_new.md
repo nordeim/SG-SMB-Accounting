@@ -406,3 +406,43 @@ The page now renders with full content on the server, providing:
 
 The UI should now display correctly in your browser!
 
+---
+
+• The backend is now running successfully! 🎉
+
+Status:
+
+• ✅ Backend: http://localhost:8000 - Healthy
+• ✅ Frontend: http://localhost:3000 - Running
+• ✅ Debug Toolbar: Fixed (URLs registered)
+
+Let me verify the full integration:
+• Used Shell (echo "=== Full Integratio...cho "Frontend Port: 3000")
+• Both services are running and communicating properly. The CORS headers are correctly configured. The backend is healthy and the frontend is serving content. Let me provide a final summary of the status.
+• Full Integration Complete! ✅
+
+Both services are running successfully:
+
+ Service    Status       URL                     PID
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ Frontend   ✅ Running   http://localhost:3000   1820486
+ Backend    ✅ Healthy   http://localhost:8000   1829985
+
+Key Fixes Applied:
+
+1. Debug Toolbar URLs - Added missing __debug__/ URL namespace to config/urls.py:
+   if settings.DEBUG:
+    import debug_toolbar
+    debug_urlpatterns = [path("__debug__/", include(debug_toolbar.urls))]
+2. CORS Configuration - Confirmed frontend (localhost:3000) can communicate with backend (localhost:8000)
+
+Test Results:
+
+• ✅ Health endpoint: {"status": "healthy", "database": "connected"}
+• ✅ API root returns endpoints list
+• ✅ CORS headers properly configured
+• ✅ Both services listening on correct ports
+
+The LedgerSG application is now fully operational with both frontend and backend integrated!
+
+

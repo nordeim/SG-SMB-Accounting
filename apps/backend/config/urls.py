@@ -9,8 +9,16 @@ from django.contrib import admin
 from django.urls import path, include
 from django.http import JsonResponse
 from django.db import connection
+from django.conf import settings
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+
+# Debug toolbar URLs (only in debug mode)
+if settings.DEBUG:
+    import debug_toolbar
+    debug_urlpatterns = [path("__debug__/", include(debug_toolbar.urls))]
+else:
+    debug_urlpatterns = []
 
 
 @api_view(["GET"])
@@ -108,7 +116,7 @@ except ImportError:
     pass
 
 
-urlpatterns = [
+urlpatterns = debug_urlpatterns + [
     # Health check
     path("health/", health_check, name="health"),
     

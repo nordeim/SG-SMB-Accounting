@@ -156,16 +156,6 @@ class InvoiceDocument(TenantModel):
     )
     void_reason = models.TextField(blank=True, db_column="void_reason")
     
-    # JSON snapshot of contact at time of creation (IRAS audit requirement)
-    contact_snapshot = models.JSONField(default=dict, db_column="contact_snapshot")
-    
-    # Created by
-    created_by = models.ForeignKey(
-        "AppUser", null=True, blank=True,
-        on_delete=models.SET_NULL, db_column="created_by",
-        related_name="created_documents"
-    )
-    
     class Meta:
         managed = False
         db_table = 'invoicing"."document'

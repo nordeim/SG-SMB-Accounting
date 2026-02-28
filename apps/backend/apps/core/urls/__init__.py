@@ -12,6 +12,7 @@ from apps.core.views.organisations import (
     FiscalYearListView,
     OrganisationSummaryView,
 )
+from apps.core.views.dashboard import DashboardView
 
 
 # Non-org-scoped URLs
@@ -36,4 +37,7 @@ org_scoped_urlpatterns = [
     
     # Organisation summary - mounted at api/v1/{org_id}/summary/
     path("summary/", OrganisationSummaryView.as_view(), name="org-summary"),
+    
+    # Dashboard - mounted at api/v1/{org_id}/dashboard/
+    path("dashboard/", DashboardView.as_view(), name="org-dashboard"),
 ]

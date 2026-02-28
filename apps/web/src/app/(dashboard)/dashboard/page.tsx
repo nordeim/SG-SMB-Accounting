@@ -4,21 +4,58 @@ import {
   TrendingUp,
   TrendingDown,
   AlertTriangle,
-  Receipt,
   FileText,
   PieChart,
   Calendar,
-  RefreshCw,
 } from "lucide-react";
-import { createMockDashboardMetrics } from "@/shared/schemas/dashboard";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { DashboardActions } from "./dashboard-actions";
 import { GSTChartWrapper } from "./gst-chart-wrapper";
+import { fetchDashboardData, isAuthenticated } from "@/lib/server/api-client";
 
-// Server Component - renders immediately without Suspense
-export default function DashboardPage() {
-  const data = createMockDashboardMetrics();
+// Revalidate page every 60 seconds (ISR)
+export const revalidate = 60;
+
+// Default organization ID (in production, this comes from user context)
+const DEFAULT_ORG_ID = "00000000-0000-0000-0000-000000000001";
+
+/**
+ * Dashboard Page - Server Component
+ * 
+ * Fetches real-time dashboard data from the backend API.
+ * Uses HTTP-only cookies for authentication (no JWT exposure in client).
+ */
+export default async function DashboardPage() {
+  // Check authentication server-side
+  const authenticated = await isAuthenticated();
+  
+  if (!authenticated) {
+    redirect("/login");
+  }
+
+  // Fetch dashboard data from backend
+  let data;
+  try {
+    data = await fetchDashboardData(DEFAULT_ORG_ID);
+  } catch (error) {
+    console.error("Failed to fetch dashboard data:", error);
+    // Fall back to empty state or error UI
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="text-center">
+          <AlertTriangle className="h-12 w-12 text-alert mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-text-primary mb-2">
+            Failed to load dashboard
+          </h2>
+          <p className="text-text-secondary">
+            Please try refreshing the page
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -329,6 +366,11 @@ export default function DashboardPage() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Last Updated Footer */}
+      <div className="text-right text-xs text-text-muted">
+        Last updated: {new Date(data.last_updated).toLocaleString()}
       </div>
     </div>
   );
