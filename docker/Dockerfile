@@ -221,8 +221,6 @@ def get_logs(service: str, lines: int = 50):
     """View service logs for debugging"""
     log_files = {
         "backend": "/tmp/backend.log",
-        "backend_error": "/tmp/backend_error.log",
-        "backend_access": "/tmp/backend_access.log",
         "frontend": "/tmp/frontend.log",
         "postgres": "/tmp/postgres.log"
     }
@@ -438,6 +436,7 @@ cd /app/apps/backend
 
 # Create .env file for backend
 cat > .env << ENVEOF
+DJANGO_SETTINGS_MODULE=config.settings.service
 DEBUG=False
 SECRET_KEY=django-secret-key-for-hf-space-$(date +%s)
 DB_NAME=${DB_NAME}
@@ -451,9 +450,13 @@ CORS_ALLOWED_ORIGINS=http://localhost:${FRONTEND_PORT},http://127.0.0.1:${FRONTE
 LOG_LEVEL=INFO
 ENVEOF
 
+# Export Django settings module for container environment
+export DJANGO_SETTINGS_MODULE=config.settings.service
+
 # Start Django with Gunicorn (production WSGI)
 # Using stdout/stderr for logs (container best practice)
 sudo -u user nohup bash -c "
+    export DJANGO_SETTINGS_MODULE=config.settings.service &&
     source /opt/venv/bin/activate && 
     cd /app/apps/backend && 
     gunicorn config.wsgi:application \
