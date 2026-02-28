@@ -54,7 +54,16 @@ please meticulously review  @README.md , @Project_Architecture_Document.md, @AGE
 
 ---
 
-Awesome job on your meticulous review, analysis and planning. Please keep up the good work in your rigorous and meticulous approach to planning and execution. Now, please meticulously review the runtime error
+Awesome job on your meticulous review, analysis and planning. Please keep up the good work in your rigorous and meticulous approach to planning and execution. Now, please meticulously review the runtime error.
+
+---
+
+please meticulously plan to conduct a comprehensive, exhaustive, critical and systematic code review audit for quality, fit-for-use (meet requirements as claimed) and security. put on the hat as the top security auditor/reviewer. then generate a detailed comprehensive report on the quality, fit-for-use and security aspects. use extensive web research to answer any of your doubts.
+
+You will conduct a multi-dimensional audit of the LedgerSG platform, examining:
+- Security: Authentication, authorization, data protection, injection vulnerabilities
+- Quality: Code standards, architecture adherence, test coverage
+- Fit-for-Use: IRAS compliance, functional completeness, production readiness
 
 ---
 
