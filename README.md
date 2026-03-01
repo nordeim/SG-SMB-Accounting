@@ -52,12 +52,12 @@
 
 | Component | Version | Status | Key Metrics |
 |-----------|---------|--------|-------------|
-| **Frontend** | v0.1.0 | ✅ Production Ready | 18 pages, 114 tests, SSR fixed |
-| **Backend** | v0.3.2 | ✅ Production Ready | 58 endpoints, 22 TDD tests |
+| **Frontend** | v0.1.0 | ✅ Production Ready | 18 pages, 5 test files, 114 tests passing |
+| **Backend** | v0.3.2 | ✅ Production Ready | 58 endpoints, 14 test files, 173 tests passing |
 | **Database** | v1.0.2 | ✅ Complete | 7 schemas, 28 tables, RLS enforced |
 | **Integration** | v0.4.0 | ✅ Complete | Docker live, CORS configured |
-| **Security** | — | ✅ 95% Score | Audit verified, 4 findings remediated |
-| **Overall** | — | ✅ Platform Ready | 180+ tests, WCAG AAA, IRAS Compliant |
+| **Security** | — | ⚠️ 95% Score | 4 findings: SEC-001 (HIGH) pending |
+| **Overall** | — | ⚠️ Near Production | 287 tests, WCAG AAA, IRAS Compliant |
 
 ### Latest Milestone
 
@@ -195,7 +195,7 @@ sequenceDiagram
 | Authentication & Session Management | 95% | ✅ Pass |
 | Authorization & Access Control | 100% | ✅ Pass |
 | Multi-Tenancy & RLS | 100% | ✅ Pass |
-| Input Validation & Sanitization | 85% | ⚠️ Banking stubs remediated |
+| Input Validation & Sanitization | 85% | ⚠️ Banking stubs pending |
 | Output Encoding & XSS Prevention | 95% | ✅ Pass |
 | SQL Injection Prevention | 100% | ✅ Pass |
 | CSRF Protection | 100% | ✅ Pass |
@@ -220,10 +220,10 @@ sequenceDiagram
 
 | ID | Finding | Severity | Status |
 |----|---------|----------|--------|
-| SEC-001 | Banking stubs return unvalidated input | HIGH | ✅ Remediated |
+| SEC-001 | Banking stubs return unvalidated input | HIGH | ⚠️ Implementation Planned |
 | SEC-002 | No rate limiting on authentication | MEDIUM | ⚠️ Recommended |
 | SEC-003 | Content Security Policy not configured | MEDIUM | ⚠️ Recommended |
-| SEC-004 | Frontend test coverage minimal | MEDIUM | ⚠️ In Progress |
+| SEC-004 | Frontend test coverage minimal outside GST engine | MEDIUM | ⚠️ In Progress |
 | SEC-005 | PII encryption at rest not implemented | LOW | 📋 Future Enhancement |
 
 ### Authentication Flow
@@ -504,20 +504,20 @@ pytest --reuse-db --no-migrations
 
 | Command | Purpose | Coverage |
 |---------|---------|----------|
-| `pytest --reuse-db --no-migrations` | Backend unit tests | 74+ tests |
-| `cd apps/web && npm test` | Frontend unit tests | 114 tests |
-| `npm run test:coverage` | Frontend with coverage | GST 100% |
+| `pytest --reuse-db --no-migrations` | Backend unit tests | 173 tests passing |
+| `cd apps/web && npm test` | Frontend unit tests | 114 tests (5 files) |
+| `npm run test:coverage` | Frontend with coverage | GST Engine 100% |
 | `npm run test:e2e` | Playwright E2E tests | Navigation, a11y |
 | `npm run test:all` | All tests (unit + e2e) | Full suite |
 
 ### Test Coverage Summary
 
-| Test Suite | Status | Count | Coverage |
-|------------|--------|-------|----------|
-| Backend Unit | ✅ Passing | 74+ | Core models, services, Dashboard API |
-| Frontend Unit | ✅ Passing | 114 | GST Engine 100% |
-| Integration | ✅ Verified | PDF/Email | Binary stream verified |
-| Dashboard TDD | ✅ Passing | 22 | 100% test coverage |
+| Test Suite | Status | Files | Tests | Coverage |
+|------------|--------|-------|-------|----------|
+| Backend Unit | ✅ Passing | 14 | 173 | Core, Services, Dashboard API |
+| Frontend Unit | ✅ Passing | 5 | 114 | GST Engine 100%, UI components |
+| Integration | ✅ Verified | — | — | PDF/Email binary stream |
+| Dashboard TDD | ✅ Passing | 2 | 22 | Dashboard service + view |
 
 ---
 

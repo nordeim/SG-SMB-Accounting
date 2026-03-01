@@ -2,9 +2,9 @@
 
 > **Direct Backend API Interaction via Command Line**  
 > **For AI Agents and Advanced Users**  
-> **Version**: 1.0.0  
-> **Last Updated**: 2026-02-26  
-> **Status**: Production Ready
+> **Version**: 1.0.1
+> **Last Updated**: 2026-03-01
+> **Status**: Near Production Ready (SEC-001 pending)
 
 ---
 
@@ -342,13 +342,15 @@ Org-scoped endpoints require:
 
 ### Banking (5)
 
-| Method | Endpoint | Permissions | Description |
-|--------|----------|-------------|-------------|
-| GET | `/api/v1/{orgId}/bank-accounts/` | IsOrgMember | List accounts |
-| POST | `/api/v1/{orgId}/bank-accounts/` | CanManageBanking | Create account |
-| GET | `/api/v1/{orgId}/payments/` | IsOrgMember | List payments |
-| POST | `/api/v1/{orgId}/payments/receive/` | CanManageBanking | Receive payment |
-| POST | `/api/v1/{orgId}/payments/make/` | CanManageBanking | Make payment |
+> **⚠️ SECURITY WARNING (SEC-001 HIGH):** Banking endpoints are currently **stub implementations** that return unvalidated input without persistence. These endpoints should **NOT be used in production**. See Security Audit for remediation status.
+
+| Method | Endpoint | Permissions | Description | Status |
+|--------|----------|-------------|-------------|--------|
+| GET | `/api/v1/{orgId}/bank-accounts/` | IsOrgMember | List accounts | ⚠️ STUB |
+| POST | `/api/v1/{orgId}/bank-accounts/` | CanManageBanking | Create account | ⚠️ STUB |
+| GET | `/api/v1/{orgId}/payments/` | IsOrgMember | List payments | ⚠️ STUB |
+| POST | `/api/v1/{orgId}/payments/receive/` | CanManageBanking | Receive payment | ⚠️ STUB |
+| POST | `/api/v1/{orgId}/payments/make/` | CanManageBanking | Make payment | ⚠️ STUB |
 
 ---
 
@@ -845,4 +847,5 @@ For API-related questions:
 
 **End of Guide**
 
-*Last validated against codebase: 2026-02-26*
+*Last validated against codebase: 2026-03-01*
+*Security status: SEC-001 (HIGH) pending - Banking endpoints are stubs*

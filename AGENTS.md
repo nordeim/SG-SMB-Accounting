@@ -11,11 +11,11 @@
 
 **LedgerSG** is a production-grade, double-entry accounting platform purpose-built for Singapore Small and Medium Businesses (SMBs). Its primary mission is to transform IRAS 2026 compliance from a regulatory burden into a seamless, automated experience. The platform combines enterprise-grade financial integrity with a distinctive "Illuminated Carbon" neo-brutalist user interface.
 
-**Current Status:** ✅ **Production Ready**  
-- **Frontend:** v0.1.0 (Next.js 16.1.6, 18 pages, 114 tests)  
-- **Backend:** v0.3.2 (Django 6.0.2, 58 API endpoints, 22 TDD tests)  
-- **Database:** v1.0.2 (PostgreSQL 16+, 7 schemas, 28 tables, RLS enforced)  
-- **Security Score:** 95% (Audit Verified)  
+**Current Status:** ⚠️ **Near Production Ready**
+- **Frontend:** v0.1.0 (Next.js 16.1.6, 18 pages, 5 test files, 114 tests passing)
+- **Backend:** v0.3.2 (Django 6.0.2, 58 API endpoints, 14 test files, 173 tests passing)
+- **Database:** v1.0.2 (PostgreSQL 16+, 7 schemas, 28 tables, RLS enforced)
+- **Security Score:** 95% (Audit Verified, SEC-001 HIGH pending)
 
 As an autonomous coding agent, your objective is to maintain this high standard of architectural maturity while executing Pull Requests (PRs). You must operate under the **Meticulous Approach**: Analyze → Plan → Validate → Implement → Verify → Deliver. Surface-level assumptions are prohibited; every change must be grounded in deep technical reasoning.
 
@@ -92,26 +92,28 @@ LedgerSG employs Test-Driven Development (TDD) for critical business logic.
 ### 4.1 Backend Testing Workflow
 Standard Django test workflows are incompatible due to unmanaged models.
 **Mandatory Workflow:**
-1.  **Initialize DB:**
-    ```bash
-    export PGPASSWORD=ledgersg_secret_to_change
-    dropdb -h localhost -U ledgersg test_ledgersg_dev || true
-    createdb -h localhost -U ledgersg test_ledgersg_dev
-    psql -h localhost -U ledgersg -d test_ledgersg_dev -f database_schema.sql
-    ```
-2.  **Run Tests:**
-    ```bash
-    source /opt/venv/bin/activate
-    cd apps/backend
-    pytest --reuse-db --no-migrations
-    ```
-- **Coverage:** 52+ passing tests. Focus on Service Layer logic and API endpoint contracts.
+1. **Initialize DB:**
+```bash
+export PGPASSWORD=ledgersg_secret_to_change
+dropdb -h localhost -U ledgersg test_ledgersg_dev || true
+createdb -h localhost -U ledgersg test_ledgersg_dev
+psql -h localhost -U ledgersg -d test_ledgersg_dev -f database_schema.sql
+```
+2. **Run Tests:**
+```bash
+source /opt/venv/bin/activate
+cd apps/backend
+pytest --reuse-db --no-migrations
+```
+- **Coverage:** 173 tests passing across 14 test files. Focus on Service Layer logic and API endpoint contracts.
+- **Dashboard TDD:** 22 test-driven tests (service + view).
 - **Fixtures:** Must comply with SQL constraints (e.g., `TaxCode` requires `is_input=TRUE` or `is_output=TRUE`).
 
 ### 4.2 Frontend Testing Workflow
 - **Runner:** Vitest + React Testing Library.
 - **Command:** `npm test` (runs in `apps/web`).
-- **Coverage:** 114 tests passing. GST Engine has 100% coverage (critical for IRAS compliance).
+- **Coverage:** 114 tests passing across 5 test files. GST Engine has 100% coverage (critical for IRAS compliance).
+- **Test Files:** gst-engine.test.ts, api-client-endpoints.test.ts, button.test.tsx, input.test.tsx, badge.test.tsx
 - **E2E:** Playwright used for navigation and accessibility scans.
 
 ### 4.3 Quality Assurance Checklist

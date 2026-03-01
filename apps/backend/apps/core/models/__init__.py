@@ -26,6 +26,7 @@ from .currency import Currency
 from .audit_event_log import AuditEventLog
 from .exchange_rate import ExchangeRate
 from .organisation_setting import OrganisationSetting
+from .bank_transaction import BankTransaction
 
 __all__ = [
     "AppUser",
@@ -52,4 +53,5 @@ __all__ = [
     "ExchangeRate",
     "OrganisationSetting",
     "AuditEventLog",
+    "BankTransaction",
 ]

@@ -1292,22 +1292,28 @@ CREATE TRIGGER trg_payment_updated_at
 -- A single invoice can have multiple partial payments.
 
 CREATE TABLE banking.payment_allocation (
-    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    org_id              UUID NOT NULL REFERENCES core.organisation(id),
-    payment_id          UUID NOT NULL REFERENCES banking.payment(id) ON DELETE CASCADE,
-    document_id         UUID NOT NULL REFERENCES invoicing.document(id) ON DELETE RESTRICT,
-    allocated_amount    NUMERIC(10,4) NOT NULL,
-    base_allocated_amount NUMERIC(10,4) NOT NULL,           -- SGD equivalent
-    created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    org_id UUID NOT NULL REFERENCES core.organisation(id),
+    payment_id UUID NOT NULL REFERENCES banking.payment(id) ON DELETE CASCADE,
+    document_id UUID NOT NULL REFERENCES invoicing.document(id) ON DELETE RESTRICT,
+    allocated_amount NUMERIC(10,4) NOT NULL,
+    base_allocated_amount NUMERIC(10,4) NOT NULL, -- SGD equivalent
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     CONSTRAINT chk_allocated_positive CHECK (allocated_amount > 0),
     UNIQUE(payment_id, document_id)
 );
 
 COMMENT ON TABLE banking.payment_allocation
-    IS 'Maps payments to invoices. Supports partial payments and split allocations.';
+IS 'Maps payments to invoices. Supports partial payments and split allocations.';
 
+CREATE TRIGGER trg_payment_allocation_updated_at
+    BEFORE UPDATE ON banking.payment_allocation
+    FOR EACH ROW EXECUTE FUNCTION core.set_updated_at();
 
+-- ──────────────────────────────────────────────
+-- 8d. Bank Transaction (Imported Bank Feed)
 -- ──────────────────────────────────────────────
 -- 8d. Bank Transaction (Imported Bank Feed)
 -- ──────────────────────────────────────────────
@@ -1587,9 +1593,51 @@ END;
 $$;
 
 COMMENT ON FUNCTION core.next_document_number
-    IS 'Thread-safe sequential document number generator. Uses SELECT FOR UPDATE to prevent gaps.';
+IS 'Thread-safe sequential document number generator. Uses SELECT FOR UPDATE to prevent gaps.';
 
+-- ──────────────────────────────────────────────
+-- 10c2. Get Next Document Number (Raw)
+-- ──────────────────────────────────────────────
+-- Returns just the next sequential number (without prefix)
+-- Used by banking module for payment numbering
 
+CREATE OR REPLACE FUNCTION core.get_next_document_number(
+    p_org_id UUID,
+    p_document_type VARCHAR(30)
+)
+RETURNS BIGINT
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_next BIGINT;
+BEGIN
+    -- Lock the sequence row for this org + type (prevents concurrent gaps)
+    SELECT next_number
+    INTO v_next
+    FROM core.document_sequence
+    WHERE org_id = p_org_id AND document_type = p_document_type
+    FOR UPDATE;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'No document sequence configured for org % type %',
+            p_org_id, p_document_type;
+    END IF;
+
+    -- Increment
+    UPDATE core.document_sequence
+    SET next_number = next_number + 1,
+        updated_at = NOW()
+    WHERE org_id = p_org_id AND document_type = p_document_type;
+
+    RETURN v_next;
+END;
+$$;
+
+COMMENT ON FUNCTION core.get_next_document_number
+IS 'Returns next sequential number (without prefix) for banking payment numbering.';
+
+-- ──────────────────────────────────────────────
+-- 10d. Validate Journal Entry Balance
 -- ──────────────────────────────────────────────
 -- 10d. Validate Journal Entry Balance
 -- ──────────────────────────────────────────────
