@@ -56,18 +56,20 @@
 | **Backend** | v0.3.2 | ✅ Production Ready | 58 endpoints, 14 test files, 173 tests passing |
 | **Database** | v1.0.3 | ✅ Complete | 7 schemas, 28 tables, RLS enforced |
 | **Integration** | v0.4.0 | ✅ Complete | Docker live, CORS configured |
-| **Banking** | v0.5.0 | ✅ SEC-001 Remediated | 29 tests, validated endpoints |
+| **Banking** | v0.6.0 | ✅ SEC-001 Remediated | 55 tests (services + views), 13 validated endpoints |
 | **Security** | — | ⚠️ 95% Score | 3 findings remaining (SEC-002, SEC-003, SEC-004) |
-| **Overall** | — | ⚠️ Near Production | 316 tests, WCAG AAA, IRAS Compliant |
+| **Overall** | — | ⚠️ Near Production | 342 tests, WCAG AAA, IRAS Compliant |
 
 ### Latest Milestone
 
 **🎉 SEC-001 Banking Module Remediation (HIGH Severity)** — 2026-03-02
-- ✅ 29 test-driven tests passing (14 bank account + 15 payment)
-- ✅ All stub implementations replaced with validated endpoints
+- ✅ **55 TDD Tests Passing**: Comprehensive coverage (14 bank account + 15 payment + 7 reconciliation + 11 view/serializer + 8 allocation)
+- ✅ All stub implementations replaced with validated endpoints (13 endpoints)
 - ✅ Database schema enhanced: `updated_at` column, `get_next_document_number()` function
-- ✅ Comprehensive service layer with audit logging
+- ✅ Comprehensive service layer with audit logging (BankAccountService, PaymentService, ReconciliationService)
 - ✅ Multi-currency payment support with FX gain/loss tracking
+- ✅ API View tests validating serializer input at API layer
+- ✅ Fixed `UNRECONCILE` audit action to use valid `DELETE` action per database constraint
 
 ---
 
@@ -516,11 +518,11 @@ pytest --reuse-db --no-migrations
 
 | Test Suite | Status | Files | Tests | Coverage |
 |------------|--------|-------|-------|----------|
-| Backend Unit | ✅ Passing | 16 | 202 | Core, Services, Dashboard, Banking |
+| Backend Unit | ✅ Passing | 18 | 228 | Core, Services, Dashboard, Banking |
 | Frontend Unit | ✅ Passing | 5 | 114 | GST Engine 100%, UI components |
 | Integration | ✅ Verified | — | — | PDF/Email binary stream |
 | Dashboard TDD | ✅ Passing | 2 | 22 | Dashboard service + view |
-| Banking TDD | ✅ Passing | 2 | 29 | Bank account + payment services |
+| Banking TDD | ✅ Passing | 5 | 55 | Bank account + payment + reconciliation + allocation + views |
 
 ---
 
@@ -820,7 +822,9 @@ refactor: extract invoice validation to service layer
 
 ### Immediate (High Priority)
 
-- [x] **Banking Module** — Replace stubs with validated bank reconciliation logic (SEC-001) ✅ COMPLETE
+- [x] | **Banking Module** — Replace stubs with validated bank reconciliation logic (SEC-001) ✅ COMPLETE
+- [ ] **Reconciliation Tests** — Add tests for ReconciliationService ✅ COMPLETE
+- [ ] **View Tests** — Add API endpoint tests for banking serializers ✅ COMPLETE
 - [ ] **Organization Context** — Replace hardcoded `DEFAULT_ORG_ID` with dynamic org selection
 - [ ] **Error Handling** — Add retry logic and fallback UI for dashboard API failures
 - [ ] **Rate Limiting** — Implement `django-ratelimit` on authentication endpoints (SEC-002)

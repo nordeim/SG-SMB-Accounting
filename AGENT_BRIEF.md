@@ -1,9 +1,9 @@
 # LedgerSG — Agent & Developer Briefing
 
 > **Single Source of Truth** for coding agents and human developers
-> **Version**: 1.4.0
+> **Version**: 1.5.0
 > **Last Updated**: 2026-03-02
-> **Status**: Production Ready ✅ (SEC-001 Remediated)
+> **Status**: Production Ready ✅ (SEC-001 Fully Remediated)
 
 ---
 
@@ -32,24 +32,26 @@
 | Component | Version | Status | Key Metrics |
 |-----------|---------|--------|-------------|
 | **Frontend** | v0.1.0 | ✅ Production Ready | 18 static pages, 114 tests |
-| **Backend** | v0.3.2 | ✅ Production Ready | **58 API endpoints**, 202 tests |
+| **Backend** | v0.3.2 | ✅ Production Ready | **58 API endpoints**, 228 tests |
 | **Database** | v1.0.3 | ✅ Complete | 7 schemas, RLS enforced, 28 tables |
-| **Banking** | v0.5.0 | ✅ SEC-001 Remediated | 29 tests, validated endpoints |
-| **Testing** | — | ✅ 316+ Passing | Backend + Frontend tests verified |
-| **Overall** | — | ✅ **Platform Ready** | **316+ tests**, WCAG AAA, IRAS Compliant |
+| **Banking** | v0.6.0 | ✅ SEC-001 Fully Remediated | 55 tests, 13 validated endpoints |
+| **Testing** | — | ✅ 342+ Passing | Backend + Frontend tests verified |
+| **Overall** | — | ✅ **Platform Ready** | **342+ tests**, WCAG AAA, IRAS Compliant |
 
-### Recent Milestone: SEC-001 Banking Module Remediation ✅
+### Recent Milestone: SEC-001 Banking Module Remediation (Complete) ✅
 **Date**: 2026-03-02
-**Status**: HIGH Severity Finding Remediated
+**Status**: HIGH Severity Finding Fully Remediated
 
 | Fix | Impact |
 |-----|--------|
-| **29 TDD Tests** | 14 bank account + 15 payment tests, 100% pass rate |
+| **55 TDD Tests** | 14 bank account + 15 payment + 7 reconciliation + 11 view/serializer + 8 allocation tests |
 | **Validated Endpoints** | 13 endpoints replacing 5 unvalidated stubs |
 | **Service Layer** | BankAccountService, PaymentService, ReconciliationService |
+| **View Layer** | Serializers validated at API layer (BankAccountCreateSerializer, PaymentReceiveSerializer, etc.) |
 | **Schema Enhancements** | `updated_at` column, `get_next_document_number()` function |
 | **Audit Logging** | All operations logged to audit.event_log |
 | **Multi-Currency** | FX gain/loss tracking with base currency conversion |
+| **Bug Fixes** | Fixed `UNRECONCILE` → `DELETE` audit action, fixed `account_type.name` → `account_type.upper()` |
 
 ### Recent Milestone: Django Model Remediation ✅
 **Date**: 2026-02-27  
@@ -329,11 +331,11 @@ VALUES (org_uuid, 'PAYMENT_RECEIVED', 'RCP-', 1, 5), (org_uuid, 'PAYMENT_MADE', 
 ### Immediate (High Priority)
 1. **Journal Entry Integration**: Align JournalService field names with JournalEntry model
 2. **Organization Context**: Replace hardcoded `DEFAULT_ORG_ID` with dynamic org selection
-3. **Bank Reconciliation Tests**: Add tests for ReconciliationService
-4. **Rate Limiting**: Implement `django-ratelimit` on authentication endpoints (SEC-002)
+3. ~~**Bank Reconciliation Tests**: Add tests for ReconciliationService~~ ✅ COMPLETE
+4. ~~**View Tests**: Add comprehensive endpoint tests for banking API~~ ✅ COMPLETE
+5. **Rate Limiting**: Implement `django-ratelimit` on authentication endpoints (SEC-002)
 
 ### Short-term (Medium Priority)
-5. **API Tests**: Add comprehensive endpoint tests for banking API
 6. **Frontend Integration**: Connect banking pages to validated backend endpoints
 7. **Content Security Policy**: Configure CSP headers (SEC-003)
 8. **Error Handling**: Add retry logic for payment processing

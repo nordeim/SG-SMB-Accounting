@@ -1,9 +1,9 @@
 # LedgerSG — Comprehensive Developer Briefing
 
 > **Single Source of Truth** for coding agents and human developers
-> **Version**: 1.4.0
+> **Version**: 1.5.0
 > **Last Updated**: 2026-03-02
-> **Status**: Production Ready ✅ (SEC-001 Remediated)
+> **Status**: Production Ready ✅ (SEC-001 Fully Remediated)
 
 ---
 
@@ -33,10 +33,11 @@
 | Component | Version | Status | Key Metrics |
 |-----------|---------|--------|-------------|
 | **Frontend** | v0.1.0 | ✅ Production Ready | 18 static pages, 114 tests |
-| **Backend** | v0.3.2 | ✅ Production Ready | **58 API endpoints**, 202 tests |
+| **Backend** | v0.3.2 | ✅ Production Ready | **58 API endpoints**, 228 tests |
 | **Database** | v1.0.3 | ✅ Complete | 7 schemas, RLS enforced, 28 tables |
-| **Banking** | v0.5.0 | ✅ SEC-001 Remediated | 29 tests, validated endpoints |
-| **Overall** | — | ✅ **Platform Ready** | **316+ tests**, WCAG AAA, IRAS Compliant |
+| **Banking** | v0.6.0 | ✅ SEC-001 Fully Remediated | 55 tests (services + views), 13 endpoints |
+| **Testing** | — | ✅ 342+ Passing | Backend + Frontend tests verified |
+| **Overall** | — | ✅ **Platform Ready** | **342+ tests**, WCAG AAA, IRAS Compliant |
 
 ---
 
@@ -168,13 +169,15 @@ pytest --reuse-db --no-migrations
 
 ## 🚀 Recent Milestones
 
-### SEC-001 Banking Module Remediation (2026-03-02) ✅
-- **Test-Driven Development**: 29 tests written (14 bank account + 15 payment)
+### SEC-001 Banking Module Remediation (2026-03-02) ✅ COMPLETE
+- **Test-Driven Development**: 55 tests written (14 bank account + 15 payment + 7 reconciliation + 11 view/serializer + 8 allocation)
 - **All Stubs Replaced**: 13 validated API endpoints
 - **Service Layer**: BankAccountService, PaymentService, ReconciliationService
+- **View Layer**: Serializers validated at API layer (BankAccountCreateSerializer, PaymentReceiveSerializer, etc.)
 - **Database Enhancements**: `updated_at` column, `get_next_document_number()` function
 - **Multi-Currency**: FX gain/loss tracking with base currency conversion
 - **Audit Logging**: All operations logged to audit.event_log
+- **Bug Fixes**: Fixed `UNRECONCILE` → `DELETE` audit action, fixed `account_type.name` → `account_type.upper()`
 
 ### Dashboard API & Real Data Integration (TDD) (2026-02-28) ✅
 - **Test-Driven Development**: 22 tests written first, then implemented (Red → Green)
