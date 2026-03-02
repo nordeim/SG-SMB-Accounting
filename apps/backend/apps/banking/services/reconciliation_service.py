@@ -360,7 +360,7 @@ class ReconciliationService:
         AuditEventLog.objects.create(
             org_id=org_id,
             user_id=user_id,
-            action="UNRECONCILE",
+            action="DELETE",
             entity_schema="banking",
             entity_table="bank_transaction",
             entity_id=transaction_obj.id,

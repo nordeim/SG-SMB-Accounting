@@ -449,6 +449,63 @@ class PaymentService:
         )
 
     @staticmethod
+    @transaction.atomic()
+    def unallocate(
+        org_id: UUID,
+        allocation_id: UUID,
+        user_id: Optional[UUID] = None,
+    ) -> None:
+        """
+        Remove an allocation from a payment.
+
+        Args:
+            org_id: Organisation UUID
+            allocation_id: PaymentAllocation UUID
+            user_id: User performing the action
+
+        Raises:
+            ResourceNotFound: If allocation not found
+            ValidationError: If allocation belongs to different org
+        """
+        try:
+            allocation = PaymentAllocation.objects.get(id=allocation_id, org_id=org_id)
+        except PaymentAllocation.DoesNotExist:
+            raise ResourceNotFound(f"Allocation {allocation_id} not found")
+
+        payment = allocation.payment
+        document = allocation.document
+
+        # Store old values for audit
+        old_amount = allocation.allocated_amount
+
+        # Delete allocation
+        allocation.delete()
+
+        # Update document status if needed
+        total_allocated = sum(
+            a.allocated_amount for a in PaymentAllocation.objects.filter(document=document)
+        )
+        if total_allocated == Decimal("0.0000"):
+            document.status = "APPROVED"
+            document.save()
+
+        # Audit log
+        AuditEventLog.objects.create(
+            org_id=org_id,
+            user_id=user_id,
+            action="DELETE",  # Using DELETE since UNALLOCATE is not in check constraint
+            entity_schema="banking",
+            entity_table="payment_allocation",
+            entity_id=allocation_id,
+            old_data={
+                "payment_id": str(payment.id),
+                "document_id": str(document.id),
+                "allocated_amount": str(old_amount),
+                "operation": "UNALLOCATE",
+            },
+        )
+
+    @staticmethod
     def _create_payment_journal_entry(
         org_id: UUID,
         payment: Payment,
